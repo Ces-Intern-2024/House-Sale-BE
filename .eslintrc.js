@@ -38,5 +38,11 @@ module.exports = {
             },
           ],
           'no-console': 1,
+          'eqeqeq': 'error',
+          'no-await-in-loop': 'error',
+          'no-class-assign': 'error',
+          'no-dupe-else-if': 'error',
+          'no-duplicate-imports': 'error',
+          'max-depth': ["error", 3]
     }
 }
