@@ -8,7 +8,14 @@ module.exports = (sequelize, DataTypes) => {
     }
     Districts.init(
         {
-            name: DataTypes.STRING
+            districtId: {
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                allowNull: false
+            },
+            name: {
+                type: DataTypes.STRING
+            }
         },
         {
             sequelize,

@@ -3,9 +3,9 @@ const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
     class Properties extends Model {
         static associate(models) {
-            Properties.belongsTo(models.Features, { foreignKey: 'featureId' })
-            Properties.belongsTo(models.Categories, { foreignKey: 'categoryId' })
-            Properties.belongsTo(models.Districts, { foreignKey: 'districtId' })
+            Properties.belongsTo(models.Features, { foreignKey: 'featureId', as: 'feature' })
+            Properties.belongsTo(models.Categories, { foreignKey: 'categoryId', as: 'category' })
+            Properties.belongsTo(models.Districts, { foreignKey: 'districtId', as: 'district' })
             Properties.hasMany(models.Images, { foreignKey: 'propertyId' })
             Properties.belongsToMany(models.Users, { through: 'Favorites' })
             Properties.hasMany(models.Messages, {
@@ -15,9 +15,13 @@ module.exports = (sequelize, DataTypes) => {
     }
     Properties.init(
         {
-            name: {
-                type: DataTypes.STRING,
+            propertyId: {
+                type: DataTypes.INTEGER,
+                primaryKey: true,
                 allowNull: false
+            },
+            name: {
+                type: DataTypes.STRING
             },
             code: {
                 type: DataTypes.STRING,
@@ -29,14 +33,33 @@ module.exports = (sequelize, DataTypes) => {
             },
             featureId: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                references: {
+                    model: 'Features',
+                    key: 'featureId'
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'SET NULL'
             },
             categoryId: {
                 type: DataTypes.INTEGER,
-                allowNull: false
+                references: {
+                    model: 'Categories',
+                    key: 'categoryId'
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'SET NULL'
             },
             districtId: {
                 type: DataTypes.INTEGER,
+                references: {
+                    model: 'Districts',
+                    key: 'districtId'
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'SET NULL'
+            },
+            imageUrl: {
+                type: DataTypes.STRING,
                 allowNull: false
             },
             location: {
