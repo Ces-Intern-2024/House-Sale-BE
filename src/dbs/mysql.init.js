@@ -1,9 +1,12 @@
 const { Sequelize } = require('sequelize')
 
-const sequelize = new Sequelize('house_sale', 'root', null, {
-    host: 'localhost',
-    dialect: 'mysql'
+const { DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_DIALECT } = process.env
+const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
+    host: DB_HOST,
+    dialect: DB_DIALECT,
+    logging: false
 })
+
 const connectionDatabase = async () => {
     try {
         await sequelize.authenticate()

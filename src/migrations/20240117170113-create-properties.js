@@ -47,6 +47,10 @@ module.exports = {
                 onUpdate: 'CASCADE',
                 onDelete: 'SET NULL'
             },
+            imageUrl: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
             location: {
                 type: Sequelize.STRING,
                 allowNull: false

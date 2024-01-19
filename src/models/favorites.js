@@ -2,7 +2,7 @@ const { Model } = require('sequelize')
 
 module.exports = (sequelize) => {
     class Favorites extends Model {
-        static associate() {}
+        static associate(models) {}
     }
     Favorites.init(
         {},
@@ -11,4 +11,5 @@ module.exports = (sequelize) => {
             modelName: 'Favorites'
         }
     )
+    return Favorites
 }
