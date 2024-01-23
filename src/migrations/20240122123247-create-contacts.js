@@ -1,32 +1,37 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('Favorites', {
-            favoriteId: {
+        await queryInterface.createTable('Contacts', {
+            contactId: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            userId: {
-                type: Sequelize.INTEGER,
-                allowNull: false,
-                references: {
-                    model: 'Users',
-                    key: 'userId'
-                },
-                onUpdate: 'CASCADE',
-                onDelete: 'CASCADE'
-            },
             propertyId: {
                 type: Sequelize.INTEGER,
-                allowNull: false,
                 references: {
                     model: 'Properties',
                     key: 'propertyId'
                 },
                 onUpdate: 'CASCADE',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
+            },
+            name: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
+            email: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
+            phone: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
+            message: {
+                type: Sequelize.TEXT,
+                allowNull: false
             },
             createdAt: {
                 allowNull: false,
@@ -40,7 +45,7 @@ module.exports = {
             }
         })
     },
-    async down(queryInterface) {
-        await queryInterface.dropTable('Favorites')
+    async down(queryInterface, Sequelize) {
+        await queryInterface.dropTable('Contacts')
     }
 }

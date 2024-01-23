@@ -3,18 +3,31 @@ const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
     class Districts extends Model {
         static associate(models) {
-            Districts.hasMany(models.Properties, { foreignKey: 'districtId' })
+            Districts.belongsTo(models.Provinces, {
+                foreignKey: 'provinceCode'
+            })
+            Districts.hasMany(models.Wards, { foreignKey: 'wardCode' })
+            Districts.hasMany(models.Locations, { foreignKey: 'districtCode' })
         }
     }
     Districts.init(
         {
-            districtId: {
-                type: DataTypes.INTEGER,
+            districtCode: {
+                type: DataTypes.STRING,
                 primaryKey: true,
                 allowNull: false
             },
-            name: {
-                type: DataTypes.STRING
+            nameEn: DataTypes.STRING,
+            fullNameEn: DataTypes.STRING,
+            codeName: DataTypes.STRING,
+            provinceCode: {
+                type: DataTypes.STRING,
+                references: {
+                    model: 'Provinces',
+                    key: 'provinceCode'
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'SET NULL'
             }
         },
         {

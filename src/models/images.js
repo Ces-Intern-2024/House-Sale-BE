@@ -8,8 +8,14 @@ module.exports = (sequelize, DataTypes) => {
     }
     Images.init(
         {
-            propertyId: DataTypes.INTEGER,
-            url: DataTypes.STRING
+            propertyId: {
+                type: DataTypes.INTEGER,
+                references: {
+                    model: 'Properties',
+                    key: 'propertyId'
+                }
+            },
+            imageUrl: DataTypes.STRING
         },
         {
             sequelize,

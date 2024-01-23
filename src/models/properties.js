@@ -5,10 +5,11 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             Properties.belongsTo(models.Features, { foreignKey: 'featureId', as: 'feature' })
             Properties.belongsTo(models.Categories, { foreignKey: 'categoryId', as: 'category' })
-            Properties.belongsTo(models.Districts, { foreignKey: 'districtId', as: 'district' })
+            Properties.belongsTo(models.Locations, { foreignKey: 'locationId', as: 'location' })
+            Properties.belongsTo(models.Users, { foreignKey: 'userId', as: 'user' })
             Properties.hasMany(models.Images, { foreignKey: 'propertyId' })
-            Properties.belongsToMany(models.Users, { through: 'Favorites' })
-            Properties.hasMany(models.Messages, {
+            Properties.belongsToMany(models.Users, { through: 'FavoriteProperties' })
+            Properties.hasMany(models.Contacts, {
                 foreignKey: 'propertyId'
             })
         }
@@ -17,17 +18,26 @@ module.exports = (sequelize, DataTypes) => {
         {
             propertyId: {
                 type: DataTypes.INTEGER,
+                autoIncrement: true,
                 primaryKey: true,
                 allowNull: false
             },
-            name: {
-                type: DataTypes.STRING
+            userId: {
+                type: {
+                    type: DataTypes.INTEGER,
+                    references: {
+                        model: 'Users',
+                        key: 'userId'
+                    },
+                    onUpdate: 'CASCADE',
+                    onDelete: 'SET NULL'
+                }
             },
-            code: {
+            name: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
-            slug: {
+            code: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
@@ -49,22 +59,14 @@ module.exports = (sequelize, DataTypes) => {
                 onUpdate: 'CASCADE',
                 onDelete: 'SET NULL'
             },
-            districtId: {
+            locationId: {
                 type: DataTypes.INTEGER,
                 references: {
-                    model: 'Districts',
-                    key: 'districtId'
+                    model: 'Locations',
+                    key: 'locationId'
                 },
                 onUpdate: 'CASCADE',
                 onDelete: 'SET NULL'
-            },
-            imageUrl: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
-            location: {
-                type: DataTypes.STRING,
-                allowNull: false
             },
             price: {
                 type: DataTypes.DECIMAL(10, 2),
@@ -94,13 +96,13 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
-            direction: {
-                type: DataTypes.STRING,
-                allowNull: true
-            },
             numberOfFloor: {
                 type: DataTypes.INTEGER,
                 allowNull: false
+            },
+            direction: {
+                type: DataTypes.STRING,
+                allowNull: true
             },
             description: {
                 type: DataTypes.TEXT,
@@ -109,7 +111,16 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             sequelize,
-            modelName: 'Properties'
+            modelName: 'Properties',
+            indexes: [
+                {
+                    unique: true,
+                    fields: ['name']
+                },
+                {
+                    fields: ['locationId']
+                }
+            ]
         }
     )
     return Properties
