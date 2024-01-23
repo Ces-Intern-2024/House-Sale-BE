@@ -3,16 +3,30 @@ const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
     class Users extends Model {
         static associate(models) {
-            Users.belongsToMany(models.Properties, { through: 'Favorites' })
+            Users.belongsTo(models.Roles, { foreignKey: 'roleId' })
+            Users.belongsToMany(models.Properties, { through: 'FavoriteProperties' })
+            Users.hasMany(models.Payments, { foreignKey: 'userId' })
+            Users.hasMany(models.Properties, { foreignKey: 'userId' })
         }
     }
     Users.init(
         {
-            name: {
-                type: DataTypes.STRING,
-                allowNull: false
+            userId: {
+                allowNull: false,
+                autoIncrement: true,
+                primaryKey: true,
+                type: DataTypes.INTEGER
             },
-            phone: {
+            roleId: {
+                type: DataTypes.INTEGER,
+                references: {
+                    model: 'Roles',
+                    key: 'roleId'
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'SET NULL'
+            },
+            name: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
@@ -20,7 +34,18 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false
             },
-            isAdmin: DataTypes.BOOLEAN
+            phone: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
+            password: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
+            status: {
+                type: DataTypes.BOOLEAN,
+                allowNull: true
+            }
         },
         {
             sequelize,

@@ -1,37 +1,36 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('Messages', {
-            messageId: {
+        await queryInterface.createTable('Users', {
+            userId: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            clientName: {
-                type: Sequelize.STRING,
-                allowNull: false
-            },
-            clientPhone: {
-                type: Sequelize.STRING,
-                allowNull: false
-            },
-            clientEmail: {
-                type: Sequelize.STRING,
-                allowNull: false
-            },
-            propertyId: {
+            roleId: {
                 type: Sequelize.INTEGER,
-                allowNull: true,
                 references: {
-                    model: 'Properties',
-                    key: 'propertyId'
+                    model: 'Roles',
+                    key: 'roleId'
                 },
                 onUpdate: 'CASCADE',
                 onDelete: 'SET NULL'
             },
-            messageContent: {
-                type: Sequelize.TEXT,
+            name: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
+            email: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
+            phone: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
+            password: {
+                type: Sequelize.STRING,
                 allowNull: false
             },
             status: {
@@ -51,6 +50,6 @@ module.exports = {
         })
     },
     async down(queryInterface) {
-        await queryInterface.dropTable('Messages')
+        await queryInterface.dropTable('Users')
     }
 }
