@@ -1,81 +1,76 @@
 const db = require('../models')
 const { BadRequestError } = require('../core/error.response')
+const { isValidKeyOfModel, transformPropertyData } = require('../utils')
 
-const isValidPK = async (model, id, errorMessage) => {
-    if (!id) {
-        return null
-    }
-
-    const validEntity = await model.findByPk(id)
-    if (!validEntity) {
-        throw new BadRequestError(errorMessage)
-    }
-    return validEntity
-}
-
-const getAllProperties = async ({ featureId, categoryId, districtId }) => {
+const getAllProperties = async ({ featureId, categoryId }) => {
     const conditions = {}
-
-    if (featureId) {
-        conditions['$feature.featureId$'] = (await isValidPK(
-            db.Features,
-            featureId,
-            'This feature is not available yet. Please try again.'
-        ))
-            ? featureId
-            : null
+    const validFeatureId = await isValidKeyOfModel(
+        db.Features,
+        featureId,
+        'This feature is not available yet. Please try again.'
+    )
+    if (validFeatureId) {
+        conditions.featureId = validFeatureId
     }
+    const validCategoryId = await isValidKeyOfModel(
+        db.Categories,
+        categoryId,
+        'This category is not available yet. Please try again.'
+    )
     if (categoryId) {
-        conditions['$category.categoryId$'] = (await isValidPK(
-            db.Categories,
-            categoryId,
-            'This category is not available yet. Please try again.'
-        ))
-            ? categoryId
-            : null
-    }
-    if (districtId) {
-        conditions['$district.districtId$'] = (await isValidPK(
-            db.Districts,
-            districtId,
-            'This district is not available yet. Please try again.'
-        ))
-            ? districtId
-            : null
+        conditions.categoryId = validCategoryId
     }
 
-    const properties = await db.Properties.findAll({
+    const properties = await db.Properties.scope(
+        'includeImages',
+        'includeCategory',
+        'includeFeature',
+        'includeLocation'
+    ).findAll({
         include: [
-            { model: db.Features, attributes: ['name'], as: 'feature' },
-            { model: db.Categories, attributes: ['name'], as: 'category' },
-            { model: db.Districts, attributes: ['name'], as: 'district' }
+            {
+                model: db.Users,
+                as: 'seller'
+            }
         ],
-        where: conditions,
-        attributes: { exclude: ['categoryId', 'featureId', 'districtId'] },
-        raw: true
+        where: conditions
     })
+
     if (!properties) {
         throw new BadRequestError('Error ocurred when find properties')
     }
 
-    const transformedProperties = properties.map((property) => {
-        const {
-            'category.name': categoryName,
-            'feature.name': featureName,
-            'district.name': districtName,
-            ...rest
-        } = property
-        return {
-            ...rest,
-            feature: featureName,
-            category: categoryName,
-            district: districtName
-        }
+    const updatedProperties = properties.map((property) => transformPropertyData(property))
+
+    return { count: properties.length, properties: updatedProperties }
+}
+
+const getProperty = async (propertyId) => {
+    const property = await db.Properties.scope(
+        'includeImages',
+        'includeCategory',
+        'includeFeature',
+        'includeLocation'
+    ).findOne({
+        include: [
+            {
+                model: db.Users,
+                as: 'seller'
+            }
+        ],
+        where: { propertyId }
     })
 
-    return transformedProperties
+    if (!property) {
+        throw new BadRequestError('This property is not available now. Please try another property!')
+    }
+
+    const updatedProperty = transformPropertyData(property)
+
+    return updatedProperty
 }
 
 module.exports = {
-    getAllProperties
+    getAllProperties,
+    getProperty
 }

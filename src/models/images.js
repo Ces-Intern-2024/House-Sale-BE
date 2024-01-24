@@ -8,6 +8,12 @@ module.exports = (sequelize, DataTypes) => {
     }
     Images.init(
         {
+            imageId: {
+                type: DataTypes.INTEGER,
+                autoIncrement: true,
+                primaryKey: true,
+                allowNull: false
+            },
             propertyId: {
                 type: DataTypes.INTEGER,
                 references: {

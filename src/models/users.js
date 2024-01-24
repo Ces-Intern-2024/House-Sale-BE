@@ -12,10 +12,10 @@ module.exports = (sequelize, DataTypes) => {
     Users.init(
         {
             userId: {
-                allowNull: false,
-                autoIncrement: true,
+                type: DataTypes.INTEGER,
                 primaryKey: true,
-                type: DataTypes.INTEGER
+                allowNull: false,
+                autoIncrement: true
             },
             roleId: {
                 type: DataTypes.INTEGER,

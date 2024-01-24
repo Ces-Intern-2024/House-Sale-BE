@@ -10,6 +10,16 @@ const getAllProperties = async (req, res) => {
     }).send(res)
 }
 
+const getProperty = async (req, res) => {
+    const { propertyId } = req.params
+    const property = await propertyService.getProperty(propertyId)
+    new OK({
+        message: 'Get property success!',
+        metaData: property
+    }).send(res)
+}
+
 module.exports = {
-    getAllProperties
+    getAllProperties,
+    getProperty
 }
