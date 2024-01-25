@@ -23,7 +23,13 @@ const transformPropertyData = (property) => {
     return updatedProperty
 }
 
+const mapAndTransformProperties = (properties) => {
+    const updatedProperties = properties.map((property) => transformPropertyData(property))
+    return { count: properties.length, properties: updatedProperties }
+}
+
 module.exports = {
     isValidKeyOfModel,
-    transformPropertyData
+    transformPropertyData,
+    mapAndTransformProperties
 }

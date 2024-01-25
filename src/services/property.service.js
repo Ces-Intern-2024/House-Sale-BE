@@ -1,6 +1,7 @@
+const { Op } = require('sequelize')
 const db = require('../models')
-const { BadRequestError } = require('../core/error.response')
-const { isValidKeyOfModel, transformPropertyData } = require('../utils')
+const { isValidKeyOfModel } = require('../utils')
+const { propertiesRepo } = require('../models/repo')
 
 const getAllProperties = async ({ featureId, categoryId }) => {
     const conditions = {}
@@ -21,56 +22,26 @@ const getAllProperties = async ({ featureId, categoryId }) => {
         conditions.categoryId = validCategoryId
     }
 
-    const properties = await db.Properties.scope(
-        'includeImages',
-        'includeCategory',
-        'includeFeature',
-        'includeLocation'
-    ).findAll({
-        include: [
-            {
-                model: db.Users,
-                as: 'seller'
-            }
-        ],
-        where: conditions
-    })
-
-    if (!properties) {
-        throw new BadRequestError('Error ocurred when find properties')
-    }
-
-    const updatedProperties = properties.map((property) => transformPropertyData(property))
-
-    return { count: properties.length, properties: updatedProperties }
+    return propertiesRepo.getAllPropertiesByConditions(conditions)
 }
 
 const getProperty = async (propertyId) => {
-    const property = await db.Properties.scope(
-        'includeImages',
-        'includeCategory',
-        'includeFeature',
-        'includeLocation'
-    ).findOne({
-        include: [
-            {
-                model: db.Users,
-                as: 'seller'
-            }
-        ],
-        where: { propertyId }
-    })
+    const conditions = { propertyId }
+    return propertiesRepo.getPropertyByConditions(conditions)
+}
 
-    if (!property) {
-        throw new BadRequestError('This property is not available now. Please try another property!')
+const getPropertiesByKeyword = async (keyword) => {
+    const formattedKeyword = keyword.trim()
+    const conditions = {
+        name: {
+            [Op.like]: `%${formattedKeyword}%`
+        }
     }
-
-    const updatedProperty = transformPropertyData(property)
-
-    return updatedProperty
+    return propertiesRepo.getAllPropertiesByConditions(conditions)
 }
 
 module.exports = {
     getAllProperties,
-    getProperty
+    getProperty,
+    getPropertiesByKeyword
 }
