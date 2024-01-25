@@ -4,7 +4,8 @@ const asyncHandler = require('../../middlewares/asyncHandler')
 
 const router = express.Router()
 
-router.get('', asyncHandler(propertyController.getAllProperties))
+router.get('/search', asyncHandler(propertyController.getPropertiesByKeyword))
 router.get('/:propertyId', asyncHandler(propertyController.getProperty))
+router.get('', asyncHandler(propertyController.getAllProperties))
 
 module.exports = router
