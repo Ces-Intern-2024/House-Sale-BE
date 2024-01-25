@@ -6,12 +6,10 @@ module.exports = (sequelize, DataTypes) => {
             Properties.belongsTo(models.Features, { foreignKey: 'featureId', as: 'feature' })
             Properties.belongsTo(models.Categories, { foreignKey: 'categoryId', as: 'category' })
             Properties.belongsTo(models.Locations, { foreignKey: 'locationId', as: 'location' })
-            Properties.belongsTo(models.Users, { foreignKey: 'userId', as: 'user' })
-            Properties.hasMany(models.Images, { foreignKey: 'propertyId' })
+            Properties.belongsTo(models.Users, { foreignKey: 'userId', as: 'seller' })
+            Properties.hasMany(models.Images, { foreignKey: 'propertyId', as: 'images' })
             Properties.belongsToMany(models.Users, { through: 'FavoriteProperties' })
-            Properties.hasMany(models.Contacts, {
-                foreignKey: 'propertyId'
-            })
+            Properties.hasMany(models.Contacts, { foreignKey: 'propertyId' })
         }
     }
     Properties.init(
@@ -120,7 +118,50 @@ module.exports = (sequelize, DataTypes) => {
                 {
                     fields: ['locationId']
                 }
-            ]
+            ],
+            defaultScope: {},
+            scopes: {
+                activeProperty: {
+                    where: {
+                        status: true
+                    }
+                },
+                includeImages: {
+                    include: [
+                        {
+                            model: sequelize.models.Images,
+                            as: 'images',
+                            attributes: ['imageUrl']
+                        }
+                    ]
+                },
+                includeCategory: {
+                    include: [
+                        {
+                            model: sequelize.models.Categories,
+                            attributes: ['categoryId', 'name'],
+                            as: 'category'
+                        }
+                    ]
+                },
+                includeFeature: {
+                    include: [
+                        {
+                            model: sequelize.models.Features,
+                            attributes: ['featureId', 'name'],
+                            as: 'feature'
+                        }
+                    ]
+                },
+                includeLocation: {
+                    include: [
+                        {
+                            model: sequelize.models.Locations,
+                            as: 'location'
+                        }
+                    ]
+                }
+            }
         }
     )
     return Properties
