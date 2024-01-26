@@ -1,15 +1,16 @@
 const { BadRequestError } = require('../core/error.response')
 
-const isValidKeyOfModel = async (model, id, errorMessage) => {
-    if (!id) {
+const isValidKeyOfModel = async (model, key, errorMessage) => {
+    if (!key) {
         return null
     }
 
-    const validEntity = await model.findByPk(id)
+    const validEntity = await model.findByPk(key)
     if (!validEntity) {
         throw new BadRequestError(errorMessage)
     }
-    return id
+
+    return key
 }
 
 const transformPropertyData = (property) => {
@@ -20,16 +21,31 @@ const transformPropertyData = (property) => {
     delete propertyJson.locationId
     const propertyImageList = propertyJson.images?.map((image) => image.imageUrl)
     const updatedProperty = { ...propertyJson, images: propertyImageList }
+
     return updatedProperty
 }
 
-const mapAndTransformProperties = (properties) => {
+const mapAndTransformProperties = ({ propertiesData, page, limit }) => {
+    const { count: totalItems, rows: properties } = propertiesData
     const updatedProperties = properties.map((property) => transformPropertyData(property))
-    return { count: properties.length, properties: updatedProperties }
+    const totalPages = Math.ceil(totalItems / limit)
+
+    return { totalPages, currentPage: page, totalItems, properties: updatedProperties }
+}
+
+const getExistingKeysInObject = (object, keys) => {
+    return keys.reduce((newObj, key) => {
+        if (object && Object.prototype.hasOwnProperty.call(object, key) && Object.keys(object[key]).length > 0) {
+            return { ...newObj, [key]: object[key] }
+        }
+
+        return newObj
+    }, {})
 }
 
 module.exports = {
     isValidKeyOfModel,
     transformPropertyData,
-    mapAndTransformProperties
+    mapAndTransformProperties,
+    getExistingKeysInObject
 }

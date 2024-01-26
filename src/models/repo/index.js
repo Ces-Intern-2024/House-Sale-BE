@@ -1,1 +1,1 @@
-module.exports.propertiesRepo = require('./properties.repo')
+module.exports.propertyRepo = require('./property.repo')

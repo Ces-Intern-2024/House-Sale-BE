@@ -1,15 +1,6 @@
 const { propertyService } = require('../services')
 const { OK } = require('../core/success.response')
 
-const getPropertiesByKeyword = async (req, res) => {
-    const { keyword } = req.query
-    const properties = await propertyService.getPropertiesByKeyword(keyword)
-    new OK({
-        message: 'Get list properties by keyword success!',
-        metaData: properties
-    }).send(res)
-}
-
 const getAllProperties = async (req, res) => {
     const options = req.query
     const properties = await propertyService.getAllProperties(options)
@@ -30,6 +21,5 @@ const getProperty = async (req, res) => {
 
 module.exports = {
     getAllProperties,
-    getProperty,
-    getPropertiesByKeyword
+    getProperty
 }
