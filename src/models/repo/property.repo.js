@@ -106,6 +106,7 @@ const getAllPropertiesByOptions = async ({ validOptions, queries }) => {
                 as: 'seller'
             }
         ],
+        distinct: true,
         where: validOptions,
         offset: (page - 1) * limit,
         limit,

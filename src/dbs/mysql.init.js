@@ -6,8 +6,13 @@ const db = config[env]
 
 const sequelize = new Sequelize(db.database, db.username, db.password, {
     host: db.host,
+    port: db.port,
     dialect: db.dialect,
-    logging: false
+    logging: false,
+    query: {
+        raw: true
+    },
+    timezone: '+07:00'
 })
 
 const connectionDatabase = async () => {
