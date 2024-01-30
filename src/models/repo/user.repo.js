@@ -3,6 +3,36 @@ const { BadRequestError } = require('../../core/error.response')
 const { isValidKeyOfModel } = require('../../utils')
 
 /**
+ * Get user by userId
+ * @param {id} userId
+ * @returns {Promise<User>}
+ */
+const getUserById = async (userId) => {
+    try {
+        return db.Users.findByPk(userId)
+    } catch (error) {
+        throw new BadRequestError('An error occurred while checking user exist.')
+    }
+}
+
+/**
+ * Get user by email
+ * @param {*} email
+ * @returns {Promise<User>}
+ */
+const getUserByEmail = async (email) => {
+    try {
+        return db.Users.findOne({
+            where: {
+                email
+            }
+        })
+    } catch (error) {
+        throw new BadRequestError('An error occurred while checking user exist.')
+    }
+}
+
+/**
  * Check if email is already taken
  * @param {string} email
  * @returns {Promise<boolean>}
@@ -40,7 +70,10 @@ const isValidUserInformation = async (userBody) => {
         throw new BadRequestError(error.message)
     }
 }
+
 module.exports = {
+    getUserById,
+    getUserByEmail,
     isEmailTaken,
     isValidUserInformation
 }
