@@ -1,12 +1,19 @@
 const passport = require('passport')
 const { AuthFailureError } = require('../core/error.response')
+const { tokenRepo } = require('../models/repo')
 
-const verifyCallback = (req, resolve, reject) => (err, user) => {
-    if (err || !user) {
-        return reject(new AuthFailureError('Please Authenticate'))
+const verifyCallback = (req, resolve, reject) => async (err, user) => {
+    try {
+        const accessToken = req.headers.authorization.split(' ')[1]
+        if (err || !user || !(await tokenRepo.isValidAccessToken(accessToken, user.userId))) {
+            throw new AuthFailureError('Please Authenticate')
+        }
+
+        req.user = user
+        resolve()
+    } catch (error) {
+        reject(error)
     }
-    req.user = user
-    resolve()
 }
 
 const authentication = async (req, res, next) => {

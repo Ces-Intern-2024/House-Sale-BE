@@ -13,5 +13,6 @@ router.use(authentication)
 router.get('/checkAuth', (req, res) => {
     res.send('Check Auth Success!')
 })
+router.post('/logout', validate(userValidation.logout), asyncHandler(userController.logout))
 
 module.exports = router
