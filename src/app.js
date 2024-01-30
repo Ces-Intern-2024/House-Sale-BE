@@ -2,6 +2,8 @@ const express = require('express')
 require('dotenv').config()
 const cors = require('cors')
 const morgan = require('morgan')
+const passport = require('passport')
+const { jwtStrategy } = require('./config/passport.config')
 const handleError = require('./middlewares/handleError')
 
 const app = express()
@@ -15,6 +17,9 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use(cors())
 app.options('*', cors())
+
+app.use(passport.initialize())
+passport.use('jwt', jwtStrategy)
 
 app.use(require('./routes'))
 

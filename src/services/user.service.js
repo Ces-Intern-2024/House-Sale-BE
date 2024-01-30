@@ -1,8 +1,40 @@
 const bcrypt = require('bcrypt')
-const { BadRequestError } = require('../core/error.response')
+const { BadRequestError, AuthFailureError } = require('../core/error.response')
 const { userRepo } = require('../models/repo')
 const db = require('../models')
 const { generateAuthTokens } = require('./token.service')
+
+/**
+ *
+ * @param {Object} userBody -user email and password
+ * @returns {Promise<User, Tokens>} - return user and new tokens
+ */
+const login = async (userBody) => {
+    const { email, password } = userBody
+    const user = await userRepo.getUserByEmail(email)
+    if (!user) {
+        throw new BadRequestError('Email not registered!')
+    }
+
+    const isMatchPassword = await bcrypt.compare(password, user.password)
+    if (!isMatchPassword) {
+        throw new AuthFailureError('Incorrect email or password')
+    }
+
+    const { userId } = user
+    const tokens = await generateAuthTokens(userId)
+    if (!tokens) {
+        throw new BadRequestError('Failed creating tokens')
+    }
+
+    const userInfo = {
+        userId: user.userId,
+        email: user.email,
+        fullName: user.fullName
+    }
+
+    return { user: userInfo, tokens }
+}
 
 /**
  * Create new user
@@ -41,6 +73,8 @@ const register = async (userBody) => {
 
     return { newUser: userInfo, tokens }
 }
+
 module.exports = {
+    login,
     register
 }
