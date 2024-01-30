@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             Wards.belongsTo(models.Districts, { foreignKey: 'districtCode' })
             Wards.hasMany(models.Locations, { foreignKey: 'wardCode' })
+            Wards.hasMany(models.Users, { foreignKey: 'wardCode' })
         }
     }
     Wards.init(

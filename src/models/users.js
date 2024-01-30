@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
             Users.belongsToMany(models.Properties, { through: 'FavoriteProperties' })
             Users.hasMany(models.Payments, { foreignKey: 'userId' })
             Users.hasMany(models.Properties, { foreignKey: 'userId' })
+            Users.belongsTo(models.Wards, { foreignKey: 'wardCode' })
+            Users.belongsTo(models.Districts, { foreignKey: 'districtCode' })
+            Users.belongsTo(models.Provinces, { foreignKey: 'provinceCode' })
+            Users.hasMany(models.Tokens, { foreignKey: 'userId' })
         }
     }
     Users.init(
@@ -26,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
                 onUpdate: 'CASCADE',
                 onDelete: 'SET NULL'
             },
-            name: {
+            fullName: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
@@ -42,9 +46,42 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false
             },
+            avatar: {
+                type: DataTypes.STRING,
+                allowNull: true
+            },
+            wardCode: {
+                type: DataTypes.STRING,
+                references: {
+                    model: 'Wards',
+                    key: 'wardCode'
+                }
+            },
+            districtCode: {
+                type: DataTypes.STRING,
+                references: {
+                    model: 'Districts',
+                    key: 'districtCode'
+                }
+            },
+            provinceCode: {
+                type: DataTypes.STRING,
+                references: {
+                    model: 'Provinces',
+                    key: 'provinceCode'
+                }
+            },
+            street: {
+                type: DataTypes.STRING,
+                allowNull: true
+            },
+            address: {
+                type: DataTypes.STRING,
+                allowNull: true
+            },
             status: {
                 type: DataTypes.BOOLEAN,
-                allowNull: true
+                defaultValue: true
             }
         },
         {
