@@ -17,7 +17,7 @@ module.exports = {
                 onUpdate: 'CASCADE',
                 onDelete: 'SET NULL'
             },
-            name: {
+            fullName: {
                 type: Sequelize.STRING,
                 allowNull: false
             },
@@ -35,7 +35,38 @@ module.exports = {
             },
             status: {
                 type: Sequelize.BOOLEAN,
-                allowNull: false
+                defaultValue: true
+            },
+            avatar: {
+                type: Sequelize.STRING,
+                allowNull: true
+            },
+            wardCode: {
+                type: Sequelize.STRING,
+                references: {
+                    model: 'Wards',
+                    key: 'wardCode'
+                }
+            },
+            districtCode: {
+                type: Sequelize.STRING,
+                references: {
+                    model: 'Districts',
+                    key: 'districtCode'
+                }
+            },
+            provinceCode: {
+                type: Sequelize.STRING,
+                references: {
+                    model: 'Provinces',
+                    key: 'provinceCode'
+                }
+            },
+            street: {
+                type: Sequelize.STRING
+            },
+            address: {
+                type: Sequelize.STRING
             },
             createdAt: {
                 allowNull: false,

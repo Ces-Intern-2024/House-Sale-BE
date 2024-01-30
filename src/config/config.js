@@ -8,7 +8,10 @@ const development = {
     password: process.env.DEV_DB_PASSWORD,
     database: process.env.DEV_DB_NAME,
     host: process.env.DEV_DB_HOST,
-    dialect: 'mysql'
+    port: process.env.DEV_DB_PORT,
+    logging: false,
+    dialect: 'mysql',
+    timezone: '+07:00'
 }
 
 const production = {
@@ -16,7 +19,9 @@ const production = {
     password: process.env.PRO_DB_PASSWORD,
     database: process.env.PRO_DB_NAME,
     host: process.env.PRO_DB_HOST,
-    dialect: 'mysql'
+    logging: false,
+    dialect: 'mysql',
+    timezone: '+07:00'
 }
 
 module.exports = {

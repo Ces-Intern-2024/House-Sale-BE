@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
             })
             Districts.hasMany(models.Wards, { foreignKey: 'wardCode' })
             Districts.hasMany(models.Locations, { foreignKey: 'districtCode' })
+            Districts.hasMany(models.Users, { foreignKey: 'districtCode' })
         }
     }
     Districts.init(
