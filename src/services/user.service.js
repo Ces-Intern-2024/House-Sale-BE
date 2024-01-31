@@ -2,7 +2,38 @@ const bcrypt = require('bcrypt')
 const { BadRequestError, AuthFailureError, NotFoundError } = require('../core/error.response')
 const { userRepo, tokenRepo } = require('../models/repo')
 const db = require('../models')
-const { generateAuthTokens } = require('./token.service')
+const { generateAuthTokens, verifyRefreshToken } = require('./token.service')
+const { tokenTypes } = require('../config/tokens.config')
+
+/**
+ * Remove refreshToken and generate new accessToken, new refreshToken
+ * @param {string} refreshToken
+ * @returns {Promise<Tokens>}
+ */
+const refreshTokens = async (refreshToken) => {
+    const tokens = await verifyRefreshToken({ refreshToken, type: tokenTypes.REFRESH })
+    if (!tokens) {
+        throw new NotFoundError('Tokens not found')
+    }
+
+    const { tokenId, userId } = tokens
+    const user = await userRepo.getUserById(userId)
+    if (!user) {
+        throw new NotFoundError('User not found')
+    }
+
+    const removedTokens = await tokenRepo.removeTokensByTokenId(tokenId)
+    if (!removedTokens) {
+        throw new BadRequestError('Error ocurred when logout!')
+    }
+
+    const newTokens = await generateAuthTokens(userId)
+    if (!newTokens) {
+        throw new BadRequestError('Failed creating new tokens')
+    }
+
+    return newTokens
+}
 
 /**
  * logout and remove refreshToken
@@ -94,6 +125,7 @@ const register = async (userBody) => {
 }
 
 module.exports = {
+    refreshTokens,
     logout,
     login,
     register

@@ -3,7 +3,31 @@ const moment = require('moment')
 const { jwtConfig } = require('../config/jwt.config')
 const { tokenTypes } = require('../config/tokens.config')
 const db = require('../models')
-const { BadRequestError } = require('../core/error.response')
+const { BadRequestError, NotFoundError } = require('../core/error.response')
+
+/**
+ * Verify refreshToken and return tokens (or throw an error if it is not valid)
+ * @param {string} refreshToken
+ * @param {string} type
+ * @returns {Promise<Tokens>}
+ */
+const verifyRefreshToken = async ({ refreshToken, type }) => {
+    const payload = jwt.verify(refreshToken, jwtConfig.secret)
+    if (!payload || type !== payload.type) {
+        throw new BadRequestError('Error ocurred when verify refreshToken')
+    }
+    const tokens = await db.Tokens.findOne({
+        where: {
+            userId: payload.sub,
+            refreshToken
+        }
+    })
+    if (!tokens) {
+        throw new NotFoundError('Tokens not found')
+    }
+
+    return tokens
+}
 
 /**
  * Generate token
@@ -20,6 +44,7 @@ const generateToken = (userId, expires, type, secret = jwtConfig.secret) => {
         exp: expires.unix(),
         type
     }
+
     return jwt.sign(payload, secret)
 }
 
@@ -69,5 +94,6 @@ const generateAuthTokens = async (userId) => {
 }
 
 module.exports = {
+    verifyRefreshToken,
     generateAuthTokens
 }
