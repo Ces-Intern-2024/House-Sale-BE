@@ -9,6 +9,7 @@ const router = express.Router()
 
 router.post('/register', validate(userValidation.register), asyncHandler(userController.register))
 router.post('/login', validate(userValidation.login), asyncHandler(userController.login))
+router.post('/refreshTokens', validate(userValidation.refreshToken), asyncHandler(userController.refreshTokens))
 router.use(authentication)
 router.get('/checkAuth', (req, res) => {
     res.send('Check Auth Success!')

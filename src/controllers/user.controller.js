@@ -1,6 +1,15 @@
 const { Created, OK } = require('../core/success.response')
 const { userService } = require('../services')
 
+const refreshTokens = async (req, res) => {
+    const { refreshToken } = req.body
+    const newTokens = await userService.refreshTokens(refreshToken)
+    new Created({
+        message: 'Create new accessToken success!',
+        metaData: newTokens
+    }).send(res)
+}
+
 const logout = async (req, res) => {
     const userId = req.user?.userId
     const { refreshToken } = req.body
@@ -27,6 +36,7 @@ const register = async (req, res) => {
 }
 
 module.exports = {
+    refreshTokens,
     logout,
     login,
     register
