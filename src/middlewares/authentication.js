@@ -4,8 +4,8 @@ const { tokenRepo } = require('../models/repo')
 
 const verifyCallback = (req, resolve, reject) => async (err, user) => {
     try {
-        const accessToken = req.headers.authorization.split(' ')[1]
-        if (err || !user || !(await tokenRepo.isValidAccessToken(accessToken, user.userId))) {
+        const accessToken = req.headers.authorization?.split(' ')[1]
+        if (err || !user || !accessToken || !(await tokenRepo.isValidAccessToken(accessToken, user.userId))) {
             throw new AuthFailureError('Please Authenticate')
         }
 

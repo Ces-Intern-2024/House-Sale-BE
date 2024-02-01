@@ -39,9 +39,17 @@ const refreshToken = {
     })
 }
 
+const changePassword = {
+    body: Joi.object().keys({
+        currentPassword: Joi.string().required().custom(password),
+        newPassword: Joi.string().required().custom(password)
+    })
+}
+
 module.exports = {
     register,
     login,
     logout,
-    refreshToken
+    refreshToken,
+    changePassword
 }

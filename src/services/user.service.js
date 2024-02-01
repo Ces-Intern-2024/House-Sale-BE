@@ -4,6 +4,40 @@ const { userRepo, tokenRepo } = require('../models/repo')
 const db = require('../models')
 const { generateAuthTokens, verifyRefreshToken } = require('./token.service')
 const { tokenTypes } = require('../config/tokens.config')
+const { hashPassword } = require('../utils')
+
+/**
+ * Change user password
+ * @param {Object} userObject
+ * @param {id} userObject.userId
+ * @param {string} userObject.currentPassword
+ * @param {string} userObject.newPassword
+ * @throws {NotFoundError} if user not exist
+ * @throws {AuthFailureError} if password not match
+ * @throws {BadRequestError} if update password failed
+ */
+const changePassword = async ({ userId, currentPassword, newPassword }) => {
+    const user = await userRepo.getUserById(userId)
+    if (!user) {
+        throw new NotFoundError('Not found user')
+    }
+
+    const isMatchPassword = await bcrypt.compare(currentPassword, user.password)
+    if (!isMatchPassword) {
+        throw new AuthFailureError('Incorrect current password')
+    }
+    if (newPassword === currentPassword) {
+        throw new BadRequestError(
+            'New Password cannot be same as your current password. Please choose a different password.'
+        )
+    }
+
+    const hashedPassword = await hashPassword(newPassword)
+    const isUpdatedUser = await user.update({ password: hashedPassword })
+    if (!isUpdatedUser) {
+        throw new BadRequestError('Failed update password')
+    }
+}
 
 /**
  * Remove refreshToken and generate new accessToken, new refreshToken
@@ -37,7 +71,7 @@ const refreshTokens = async (refreshToken) => {
 
 /**
  * logout and remove refreshToken
- * @param {Object} userBody - refreshToken
+ * @param {Object} userBody - userId & refreshToken
  * @returns {Promise<boolean>}
  */
 const logout = async ({ userId, refreshToken }) => {
@@ -101,8 +135,7 @@ const register = async (userBody) => {
         throw new BadRequestError('User information not valid.')
     }
 
-    const roundsSalt = 10
-    const hashedPassword = await bcrypt.hash(password, roundsSalt)
+    const hashedPassword = await hashPassword(password)
     const newUser = await db.Users.create({ ...userBody, password: hashedPassword })
     if (!newUser) {
         throw new BadRequestError('Failed creating new user.')
@@ -128,5 +161,6 @@ module.exports = {
     refreshTokens,
     logout,
     login,
-    register
+    register,
+    changePassword
 }

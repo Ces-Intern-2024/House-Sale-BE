@@ -1,4 +1,10 @@
+const bcrypt = require('bcrypt')
 const { BadRequestError } = require('../core/error.response')
+
+const hashPassword = async (password) => {
+    const roundsSalt = 10
+    return bcrypt.hash(password, roundsSalt)
+}
 
 const isValidKeyOfModel = async (model, key, errorMessage) => {
     if (!key) {
@@ -44,6 +50,7 @@ const getExistingKeysInObject = (object, keys) => {
 }
 
 module.exports = {
+    hashPassword,
     isValidKeyOfModel,
     transformPropertyData,
     mapAndTransformProperties,
