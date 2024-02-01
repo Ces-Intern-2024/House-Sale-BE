@@ -7,6 +7,31 @@ const { tokenTypes } = require('../config/tokens.config')
 const { hashPassword } = require('../utils')
 
 /**
+ * Change the user's phone number and throw an error if it's the same as the old phone number.
+ * @param {Object} params
+ * @param {string} params.userId
+ * @param {string} params.newPhoneNumber - The new phone number to set.
+ * @throws {BadRequestError} - Throws error if the user is not found, or if the new phone number is the same as the old one.
+ */
+const changePhoneNumber = async ({ userId, newPhoneNumber }) => {
+    const user = await userRepo.getUserById(userId)
+    if (!user) {
+        throw new BadRequestError('Not found user')
+    }
+
+    if (newPhoneNumber === user.phone) {
+        throw new BadRequestError(
+            'New phone number cannot be same as your current phone number. Please choose a different phone number.'
+        )
+    }
+
+    const updatedUser = await user.update({ phone: newPhoneNumber })
+    if (!updatedUser) {
+        throw new BadRequestError('Failed update phone number')
+    }
+}
+
+/**
  * Change user password
  * @param {Object} userObject
  * @param {id} userObject.userId
@@ -158,6 +183,7 @@ const register = async (userBody) => {
 }
 
 module.exports = {
+    changePhoneNumber,
     refreshTokens,
     logout,
     login,
