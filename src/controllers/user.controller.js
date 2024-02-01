@@ -1,6 +1,15 @@
 const { Created, OK } = require('../core/success.response')
 const { userService } = require('../services')
 
+const changePhoneNumber = async (req, res) => {
+    const userId = req.user?.userId
+    const { newPhoneNumber } = req.body
+    await userService.changePhoneNumber({ userId, newPhoneNumber })
+    new OK({
+        message: 'Your phone number has been changed successfully.!'
+    }).send(res)
+}
+
 const changePassword = async (req, res) => {
     const userId = req.user?.userId
     const { currentPassword, newPassword } = req.body
@@ -45,6 +54,7 @@ const register = async (req, res) => {
 }
 
 module.exports = {
+    changePhoneNumber,
     refreshTokens,
     logout,
     login,
