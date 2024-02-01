@@ -1,6 +1,15 @@
 const { Created, OK } = require('../core/success.response')
 const { userService } = require('../services')
 
+const changePassword = async (req, res) => {
+    const userId = req.user?.userId
+    const { currentPassword, newPassword } = req.body
+    await userService.changePassword({ userId, currentPassword, newPassword })
+    new OK({
+        message: 'Your password has been changed successfully.'
+    }).send(res)
+}
+
 const refreshTokens = async (req, res) => {
     const { refreshToken } = req.body
     const newTokens = await userService.refreshTokens(refreshToken)
@@ -39,5 +48,6 @@ module.exports = {
     refreshTokens,
     logout,
     login,
-    register
+    register,
+    changePassword
 }
