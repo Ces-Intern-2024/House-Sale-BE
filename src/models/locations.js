@@ -3,9 +3,9 @@ const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
     class Locations extends Model {
         static associate(models) {
-            Locations.belongsTo(models.Wards, { foreignKey: 'wardCode' })
-            Locations.belongsTo(models.Districts, { foreignKey: 'districtCode' })
-            Locations.belongsTo(models.Provinces, { foreignKey: 'provinceCode' })
+            Locations.belongsTo(models.Wards, { foreignKey: 'wardCode', as: 'ward' })
+            Locations.belongsTo(models.Districts, { foreignKey: 'districtCode', as: 'district' })
+            Locations.belongsTo(models.Provinces, { foreignKey: 'provinceCode', as: 'province' })
             Locations.hasMany(models.Properties, { foreignKey: 'locationId' })
         }
     }
