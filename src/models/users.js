@@ -3,13 +3,13 @@ const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
     class Users extends Model {
         static associate(models) {
-            Users.belongsTo(models.Roles, { foreignKey: 'roleId' })
+            Users.belongsTo(models.Roles, { foreignKey: 'roleId', as: 'role' })
             Users.belongsToMany(models.Properties, { through: 'FavoriteProperties' })
             Users.hasMany(models.Payments, { foreignKey: 'userId' })
             Users.hasMany(models.Properties, { foreignKey: 'userId' })
-            Users.belongsTo(models.Wards, { foreignKey: 'wardCode' })
-            Users.belongsTo(models.Districts, { foreignKey: 'districtCode' })
-            Users.belongsTo(models.Provinces, { foreignKey: 'provinceCode' })
+            Users.belongsTo(models.Wards, { foreignKey: 'wardCode', as: 'ward' })
+            Users.belongsTo(models.Districts, { foreignKey: 'districtCode', as: 'district' })
+            Users.belongsTo(models.Provinces, { foreignKey: 'provinceCode', as: 'province' })
             Users.hasMany(models.Tokens, { foreignKey: 'userId' })
         }
     }
