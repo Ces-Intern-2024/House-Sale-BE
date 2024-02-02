@@ -1,6 +1,55 @@
 const db = require('..')
-const { BadRequestError } = require('../../core/error.response')
+const { BadRequestError, NotFoundError } = require('../../core/error.response')
 const { isValidKeyOfModel } = require('../../utils')
+
+const commonUserProfileScope = [
+    {
+        model: db.Roles,
+        as: 'role',
+        attributes: ['roleId', 'roleName']
+    },
+    {
+        model: db.Wards,
+        as: 'ward',
+        attributes: ['wardCode', 'fullNameEn']
+    },
+    {
+        model: db.Provinces,
+        as: 'province',
+        attributes: ['provinceCode', 'fullNameEn']
+    },
+    {
+        model: db.Districts,
+        as: 'district',
+        attributes: ['districtCode', 'fullNameEn']
+    }
+]
+
+const commonExcludeAttributes = ['roleId', 'password', 'wardCode', 'districtCode', 'provinceCode']
+
+/**
+ * Get user profile
+ * @param {id} userId
+ * @returns {Promise<User>}
+ */
+const getUserProfile = async (userId) => {
+    try {
+        const userProfile = await db.Users.findOne({
+            where: {
+                userId
+            },
+            include: commonUserProfileScope,
+            attributes: { exclude: commonExcludeAttributes }
+        })
+        if (!userProfile) {
+            throw new NotFoundError('User profile not found')
+        }
+
+        return userProfile
+    } catch (error) {
+        throw new BadRequestError('Error ocurred when get user profile')
+    }
+}
 
 /**
  * Get user by userId
@@ -72,6 +121,7 @@ const isValidUserInformation = async (userBody) => {
 }
 
 module.exports = {
+    getUserProfile,
     getUserById,
     getUserByEmail,
     isEmailTaken,

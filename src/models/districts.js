@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
                     key: 'provinceCode'
                 },
                 onUpdate: 'CASCADE',
-                onDelete: 'SET NULL'
+                onDelete: 'CASCADE'
             }
         },
         {

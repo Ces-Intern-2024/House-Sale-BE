@@ -23,7 +23,9 @@ module.exports = (sequelize, DataTypes) => {
                 references: {
                     model: 'Districts',
                     key: 'districtCode'
-                }
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE'
             }
         },
         {

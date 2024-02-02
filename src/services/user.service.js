@@ -7,6 +7,25 @@ const { tokenTypes } = require('../config/tokens.config')
 const { hashPassword } = require('../utils')
 
 /**
+ * Get user profile and throw error if not found user
+ * @param {id} userId
+ * @returns {Promise<User>}
+ */
+const getProfile = async (userId) => {
+    const user = await userRepo.getUserById(userId)
+    if (!user) {
+        throw new NotFoundError('User not found')
+    }
+
+    const userProfile = await userRepo.getUserProfile(userId)
+    if (!userProfile) {
+        throw new NotFoundError('User profile not found')
+    }
+
+    return userProfile
+}
+
+/**
  * Change the user's phone number and throw an error if it's the same as the old phone number.
  * @param {Object} params
  * @param {string} params.userId
@@ -183,6 +202,7 @@ const register = async (userBody) => {
 }
 
 module.exports = {
+    getProfile,
     changePhoneNumber,
     refreshTokens,
     logout,

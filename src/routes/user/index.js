@@ -21,5 +21,6 @@ router.post(
     validate(userValidation.changePhoneNumber),
     asyncHandler(userController.changePhoneNumber)
 )
+router.get('/profile', asyncHandler(userController.getProfile))
 
 module.exports = router
