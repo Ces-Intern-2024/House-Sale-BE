@@ -7,6 +7,25 @@ const { tokenTypes } = require('../config/tokens.config')
 const { hashPassword } = require('../utils')
 
 /**
+ * Update user's avatar
+ * @param {Object} params
+ * @param {id} userId
+ * @param {string} imageUrl - image url for user's avatar
+ * @returns {Promise<boolean>}
+ */
+const updateAvatar = async ({ userId, imageUrl }) => {
+    const user = await userRepo.getUserById(userId)
+    if (!user) {
+        throw new NotFoundError('User not found')
+    }
+
+    const updatedAvatar = await db.Users.update({ avatar: imageUrl }, { where: { userId } })
+    if (!updatedAvatar) {
+        throw new BadRequestError('Update your avatar failed')
+    }
+}
+
+/**
  * Get user profile and throw error if not found user
  * @param {id} userId
  * @returns {Promise<User>}
@@ -202,6 +221,7 @@ const register = async (userBody) => {
 }
 
 module.exports = {
+    updateAvatar,
     getProfile,
     changePhoneNumber,
     refreshTokens,

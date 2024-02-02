@@ -1,6 +1,15 @@
 const { Created, OK } = require('../core/success.response')
 const { userService } = require('../services')
 
+const updateAvatar = async (req, res) => {
+    const userId = req.user?.userId
+    const { imageUrl } = req.body
+    await userService.updateAvatar({ userId, imageUrl })
+    new OK({
+        message: 'Your avatar had been changed successfully!'
+    }).send(res)
+}
+
 const getProfile = async (req, res) => {
     const userId = req.user?.userId
     const profile = await userService.getProfile(userId)
@@ -63,6 +72,7 @@ const register = async (req, res) => {
 }
 
 module.exports = {
+    updateAvatar,
     getProfile,
     changePhoneNumber,
     refreshTokens,
