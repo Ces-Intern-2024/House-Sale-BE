@@ -22,5 +22,6 @@ router.post(
     asyncHandler(userController.changePhoneNumber)
 )
 router.get('/profile', asyncHandler(userController.getProfile))
+router.post('/update-avatar', validate(userValidation.updateAvatar), asyncHandler(userController.updateAvatar))
 
 module.exports = router

@@ -57,11 +57,18 @@ const changePhoneNumber = {
         })
 }
 
+const updateAvatar = {
+    body: Joi.object().required().keys({
+        imageUrl: Joi.string().required()
+    })
+}
+
 module.exports = {
     register,
     login,
     logout,
     refreshToken,
     changePassword,
-    changePhoneNumber
+    changePhoneNumber,
+    updateAvatar
 }
