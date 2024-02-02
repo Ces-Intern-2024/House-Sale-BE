@@ -125,41 +125,6 @@ module.exports = (sequelize, DataTypes) => {
                     where: {
                         status: true
                     }
-                },
-                includeImages: {
-                    include: [
-                        {
-                            model: sequelize.models.Images,
-                            as: 'images',
-                            attributes: ['imageUrl']
-                        }
-                    ]
-                },
-                includeCategory: {
-                    include: [
-                        {
-                            model: sequelize.models.Categories,
-                            attributes: ['categoryId', 'name'],
-                            as: 'category'
-                        }
-                    ]
-                },
-                includeFeature: {
-                    include: [
-                        {
-                            model: sequelize.models.Features,
-                            attributes: ['featureId', 'name'],
-                            as: 'feature'
-                        }
-                    ]
-                },
-                includeLocation: {
-                    include: [
-                        {
-                            model: sequelize.models.Locations,
-                            as: 'location'
-                        }
-                    ]
                 }
             }
         }

@@ -3,7 +3,36 @@ const db = require('..')
 const { BadRequestError } = require('../../core/error.response')
 const { mapAndTransformProperties, transformPropertyData, isValidKeyOfModel } = require('../../utils')
 
-const commonScope = ['includeImages', 'includeCategory', 'includeFeature', 'includeLocation']
+const propertyScopes = {
+    feature: {
+        model: db.Features,
+        attributes: ['featureId', 'name'],
+        as: 'feature'
+    },
+    category: {
+        model: db.Categories,
+        attributes: ['categoryId', 'name'],
+        as: 'category'
+    },
+    location: {
+        model: db.Locations,
+        as: 'location',
+        attributes: { exclude: ['createdAt', 'updatedAt'] }
+    },
+    images: {
+        model: db.Images,
+        as: 'images',
+        attributes: ['imageUrl']
+    },
+    seller: {
+        model: db.Users,
+        as: 'seller'
+    }
+}
+const getAllPropertiesScopes = ['feature', 'category', 'location', 'images', 'seller']
+const getAllPropertiesBySellerScopes = ['feature', 'category', 'location', 'images']
+
+const getScopesArray = (scopes) => scopes.map((scope) => propertyScopes[scope])
 
 const validatePropertyOptions = async ({
     keyword,
@@ -99,13 +128,8 @@ const validatePropertyOptions = async ({
 
 const getAllPropertiesByOptions = async ({ validOptions, queries }) => {
     const { page, limit, orderBy, sortBy } = queries
-    const propertiesData = await db.Properties.scope(commonScope).findAndCountAll({
-        include: [
-            {
-                model: db.Users,
-                as: 'seller'
-            }
-        ],
+    const propertiesData = await db.Properties.findAndCountAll({
+        include: getScopesArray(getAllPropertiesScopes),
         distinct: true,
         where: validOptions,
         offset: (page - 1) * limit,
@@ -120,14 +144,27 @@ const getAllPropertiesByOptions = async ({ validOptions, queries }) => {
     return mapAndTransformProperties({ propertiesData, page, limit })
 }
 
+const getAllPropertiesBySellerOptions = async ({ validOptions, queries, sellerId }) => {
+    const { page, limit, orderBy, sortBy } = queries
+    const propertiesData = await db.Properties.findAndCountAll({
+        include: getScopesArray(getAllPropertiesBySellerScopes),
+        where: { ...validOptions, userId: sellerId },
+        distinct: true,
+        offset: (page - 1) * limit,
+        limit,
+        order: [[orderBy, sortBy]]
+    })
+
+    if (!propertiesData) {
+        throw new BadRequestError('Error ocurred when find properties')
+    }
+
+    return mapAndTransformProperties({ propertiesData, page, limit })
+}
+
 const getPropertyByOptions = async (options) => {
-    const property = await db.Properties.scope(commonScope).findOne({
-        include: [
-            {
-                model: db.Users,
-                as: 'seller'
-            }
-        ],
+    const property = await db.Properties.findOne({
+        include: getScopesArray(getAllPropertiesScopes),
         where: options
     })
 
@@ -138,4 +175,9 @@ const getPropertyByOptions = async (options) => {
     return transformPropertyData(property)
 }
 
-module.exports = { validatePropertyOptions, getAllPropertiesByOptions, getPropertyByOptions }
+module.exports = {
+    validatePropertyOptions,
+    getAllPropertiesByOptions,
+    getPropertyByOptions,
+    getAllPropertiesBySellerOptions
+}
