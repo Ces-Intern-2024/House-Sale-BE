@@ -1,7 +1,5 @@
 const Joi = require('joi')
 
-const directionEnum = ['North', 'South', 'West', 'East', 'north', 'south', 'west', 'east']
-
 const getAllProperties = {
     query: Joi.object().keys({
         keyword: Joi.string(),
@@ -22,7 +20,6 @@ const getAllProperties = {
         numberOfBedRoomTo: Joi.number(),
         numberOfToiletFrom: Joi.number(),
         numberOfToiletTo: Joi.number(),
-        direction: Joi.string().valid(...directionEnum),
         page: Joi.number(),
         limit: Joi.number(),
         orderBy: Joi.string().valid('Price', 'price'),

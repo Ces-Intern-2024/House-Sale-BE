@@ -15,8 +15,14 @@ app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use(cors())
-app.options('*', cors())
+app.use(
+    cors({
+        origin: 'http://localhost:3000',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        credentials: true,
+        optionsSuccessStatus: 204
+    })
+)
 
 app.use(passport.initialize())
 passport.use('jwt', jwtStrategy)
