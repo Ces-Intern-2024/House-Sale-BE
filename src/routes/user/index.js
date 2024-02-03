@@ -7,7 +7,8 @@ const { userValidation } = require('../../validations')
 
 const router = express.Router()
 
-router.post('/register', validate(userValidation.register), asyncHandler(userController.register))
+router.post('/register-user', validate(userValidation.registerUser), asyncHandler(userController.registerUser))
+router.post('/register-seller', validate(userValidation.registerSeller), asyncHandler(userController.registerSeller))
 router.post('/login', validate(userValidation.login), asyncHandler(userController.login))
 router.post('/refreshTokens', validate(userValidation.refreshToken), asyncHandler(userController.refreshTokens))
 router.use(authentication())

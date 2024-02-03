@@ -5,6 +5,7 @@ const db = require('../models')
 const { generateAuthTokens, verifyRefreshToken } = require('./token.service')
 const { tokenTypes } = require('../config/tokens.config')
 const { hashPassword } = require('../utils')
+const { rolesId } = require('../config/roles.config')
 
 /**
  * Update user's avatar
@@ -184,22 +185,55 @@ const login = async (userBody) => {
 }
 
 /**
+ * Create new seller
+ * @param {Object} userBody - seller information
+ * @returns {Promise<User, Tokens>} - return new seller and tokens
+ */
+const registerSeller = async (userBody) => {
+    const { email, password } = userBody
+    if (await userRepo.isEmailTaken(email)) {
+        throw new BadRequestError('Seller already exists! Please register with another email.')
+    }
+
+    if (!(await userRepo.isValidUserInformation(userBody))) {
+        throw new BadRequestError('Seller information not valid.')
+    }
+
+    const hashedPassword = await hashPassword(password)
+    const newUser = await db.Users.create({ ...userBody, password: hashedPassword, roleId: rolesId.Seller })
+    if (!newUser) {
+        throw new BadRequestError('Failed creating new seller.')
+    }
+
+    const { userId } = newUser
+    const tokens = await generateAuthTokens(userId)
+    if (!tokens) {
+        await db.Users.destroy({ where: { userId } })
+        throw new BadRequestError('Failed creating tokens')
+    }
+
+    const userInfo = {
+        userId: newUser.userId,
+        email: newUser.email,
+        fullName: newUser.fullName
+    }
+
+    return { newSeller: userInfo, tokens }
+}
+
+/**
  * Create new user
  * @param {Object} userBody - user information
  * @returns {Promise<User, Tokens>} - return new user and tokens
  */
-const register = async (userBody) => {
+const registerUser = async (userBody) => {
     const { email, password } = userBody
     if (await userRepo.isEmailTaken(email)) {
         throw new BadRequestError('User already exists! Please register with another email.')
     }
 
-    if (!(await userRepo.isValidUserInformation(userBody))) {
-        throw new BadRequestError('User information not valid.')
-    }
-
     const hashedPassword = await hashPassword(password)
-    const newUser = await db.Users.create({ ...userBody, password: hashedPassword })
+    const newUser = await db.Users.create({ email, password: hashedPassword, roleId: rolesId.User })
     if (!newUser) {
         throw new BadRequestError('Failed creating new user.')
     }
@@ -227,6 +261,7 @@ module.exports = {
     refreshTokens,
     logout,
     login,
-    register,
+    registerSeller,
+    registerUser,
     changePassword
 }

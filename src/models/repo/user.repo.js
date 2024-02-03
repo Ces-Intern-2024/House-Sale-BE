@@ -106,9 +106,8 @@ const isEmailTaken = async (email) => {
  */
 const isValidUserInformation = async (userBody) => {
     try {
-        const { roleId, provinceCode, districtCode, wardCode } = userBody
+        const { provinceCode, districtCode, wardCode } = userBody
         const validKeys = await Promise.all([
-            isValidKeyOfModel(db.Roles, roleId, 'This role is not available yet, Please try again'),
             isValidKeyOfModel(db.Provinces, provinceCode, 'This province is not available yet. Please try again.'),
             isValidKeyOfModel(db.Districts, districtCode, 'This district is not available yet. Please try again.'),
             isValidKeyOfModel(db.Wards, wardCode, 'This ward is not available yet. Please try again.')

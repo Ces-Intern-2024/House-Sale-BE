@@ -1,7 +1,7 @@
 const passport = require('passport')
 const { AuthFailureError } = require('../core/error.response')
 const { tokenRepo } = require('../models/repo')
-const rolesConfig = require('../config/roles.config')
+const { rolesConfig } = require('../config/roles.config')
 
 const verifyCallback = (req, resolve, reject, role) => async (err, user) => {
     try {

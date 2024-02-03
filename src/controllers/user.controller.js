@@ -63,10 +63,18 @@ const login = async (req, res) => {
     }).send(res)
 }
 
-const register = async (req, res) => {
-    const result = await userService.register(req.body)
+const registerSeller = async (req, res) => {
+    const result = await userService.registerSeller(req.body)
     new Created({
-        message: 'Register success!',
+        message: 'Registration success for new user!',
+        metaData: result
+    }).send(res)
+}
+
+const registerUser = async (req, res) => {
+    const result = await userService.registerUser(req.body)
+    new Created({
+        message: 'Registration success for new seller!',
         metaData: result
     }).send(res)
 }
@@ -75,9 +83,10 @@ module.exports = {
     updateAvatar,
     getProfile,
     changePhoneNumber,
+    changePassword,
     refreshTokens,
     logout,
     login,
-    register,
-    changePassword
+    registerSeller,
+    registerUser
 }

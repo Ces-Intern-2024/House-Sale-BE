@@ -19,7 +19,7 @@ module.exports = {
             },
             fullName: {
                 type: Sequelize.STRING,
-                allowNull: false
+                allowNull: true
             },
             email: {
                 type: Sequelize.STRING,
@@ -27,7 +27,7 @@ module.exports = {
             },
             phone: {
                 type: Sequelize.STRING,
-                allowNull: false
+                allowNull: true
             },
             password: {
                 type: Sequelize.STRING,
@@ -46,27 +46,32 @@ module.exports = {
                 references: {
                     model: 'Wards',
                     key: 'wardCode'
-                }
+                },
+                allowNull: true
             },
             districtCode: {
                 type: Sequelize.STRING,
                 references: {
                     model: 'Districts',
                     key: 'districtCode'
-                }
+                },
+                allowNull: true
             },
             provinceCode: {
                 type: Sequelize.STRING,
                 references: {
                     model: 'Provinces',
                     key: 'provinceCode'
-                }
+                },
+                allowNull: true
             },
             street: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING,
+                allowNull: true
             },
             address: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING,
+                allowNull: true
             },
             createdAt: {
                 allowNull: false,
