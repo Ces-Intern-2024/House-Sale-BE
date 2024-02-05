@@ -175,7 +175,21 @@ const getPropertyByOptions = async (options) => {
     return transformPropertyData(property)
 }
 
+const createNewProperty = async ({ propertyOptions, userId, locationId }) => {
+    const newProperty = await db.Properties.create({
+        ...propertyOptions,
+        locationId,
+        userId
+    })
+    if (!newProperty) {
+        throw new BadRequestError('Error occurred when create your property!')
+    }
+
+    return newProperty
+}
+
 module.exports = {
+    createNewProperty,
     validatePropertyOptions,
     getAllPropertiesByOptions,
     getPropertyByOptions,

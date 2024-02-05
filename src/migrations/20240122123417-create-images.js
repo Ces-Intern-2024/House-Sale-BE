@@ -13,10 +13,13 @@ module.exports = {
                 references: {
                     model: 'Properties',
                     key: 'propertyId'
-                }
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE'
             },
             imageUrl: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING,
+                allowNull: false
             },
             createdAt: {
                 allowNull: false,

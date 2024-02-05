@@ -1,3 +1,5 @@
 module.exports.propertyRepo = require('./property.repo')
 module.exports.userRepo = require('./user.repo')
 module.exports.tokenRepo = require('./token.repo')
+module.exports.locationRepo = require('./location.repo')
+module.exports.imageRepo = require('./image.repo')

@@ -10,7 +10,12 @@ const getProperty = async (propertyId) => {
     return propertyRepo.getPropertyByOptions(options)
 }
 
+const createNewProperty = async ({ propertyOptions, userId, locationId }) => {
+    return propertyRepo.createNewProperty({ propertyOptions, userId, locationId })
+}
+
 module.exports = {
     getAllProperties,
-    getProperty
+    getProperty,
+    createNewProperty
 }

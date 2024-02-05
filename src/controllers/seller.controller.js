@@ -1,5 +1,34 @@
-const { sellerService } = require('../services')
-const { OK } = require('../core/success.response')
+const { sellerService, locationService, propertyService, imageService } = require('../services')
+const { OK, Created } = require('../core/success.response')
+
+const createNewProperty = async (req, res) => {
+    const sellerId = req.user?.userId
+    const { provinceCode, districtCode, wardCode, street, address, images, ...propertyOptions } = req.body
+
+    const newLocation = await locationService.createNewLocation({
+        provinceCode,
+        districtCode,
+        wardCode,
+        street,
+        address
+    })
+
+    const newProperty = await propertyService.createNewProperty({
+        userId: sellerId,
+        locationId: newLocation.locationId,
+        propertyOptions
+    })
+
+    const newPropertyImages = await imageService.addImagesToProperty({
+        propertyId: newProperty.propertyId,
+        images
+    })
+
+    new Created({
+        message: 'New property had been created successfully!',
+        metaData: { ...newProperty.dataValues, images: newPropertyImages }
+    }).send(res)
+}
 
 const getAllProperties = async (req, res) => {
     const sellerId = req.user?.userId
@@ -12,5 +41,6 @@ const getAllProperties = async (req, res) => {
 }
 
 module.exports = {
+    createNewProperty,
     getAllProperties
 }

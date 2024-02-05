@@ -30,10 +30,12 @@ module.exports = {
                 }
             },
             street: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING,
+                allowNull: false
             },
             address: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING,
+                allowNull: true
             },
             createdAt: {
                 allowNull: false,
