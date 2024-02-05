@@ -6,7 +6,7 @@ const { propertyValidation } = require('../../validations')
 
 const router = express.Router()
 
-router.get('/:propertyId', validate(propertyValidation.getProperty), asyncHandler(propertyController.getProperty))
 router.get('', validate(propertyValidation.getAllProperties), asyncHandler(propertyController.getAllProperties))
+router.get('/:propertyId', validate(propertyValidation.getProperty), asyncHandler(propertyController.getProperty))
 
 module.exports = router

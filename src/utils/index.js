@@ -25,10 +25,8 @@ const transformPropertyData = (property) => {
     delete propertyJson.featureId
     delete propertyJson.categoryId
     delete propertyJson.locationId
-    const propertyImageList = propertyJson.images?.map((image) => image.imageUrl)
-    const updatedProperty = { ...propertyJson, images: propertyImageList }
 
-    return updatedProperty
+    return propertyJson
 }
 
 const mapAndTransformProperties = ({ propertiesData, page, limit }) => {

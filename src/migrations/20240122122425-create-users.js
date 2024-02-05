@@ -15,7 +15,8 @@ module.exports = {
                     key: 'roleId'
                 },
                 onUpdate: 'CASCADE',
-                onDelete: 'SET NULL'
+                onDelete: 'CASCADE',
+                allowNull: false
             },
             fullName: {
                 type: Sequelize.STRING,
@@ -35,7 +36,8 @@ module.exports = {
             },
             status: {
                 type: Sequelize.BOOLEAN,
-                defaultValue: true
+                defaultValue: true,
+                allowNull: false
             },
             avatar: {
                 type: Sequelize.STRING,

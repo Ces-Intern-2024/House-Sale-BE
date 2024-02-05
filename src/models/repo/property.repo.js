@@ -22,15 +22,16 @@ const propertyScopes = {
     images: {
         model: db.Images,
         as: 'images',
-        attributes: ['imageUrl']
+        attributes: ['imageId', 'imageUrl']
     },
     seller: {
         model: db.Users,
-        as: 'seller'
+        as: 'seller',
+        attributes: ['userId', 'fullName', 'email', 'phone', 'avatar']
     }
 }
-const getAllPropertiesScopes = ['feature', 'category', 'location', 'images', 'seller']
-const getAllPropertiesBySellerScopes = ['feature', 'category', 'location', 'images']
+const userScopes = ['feature', 'category', 'location', 'images', 'seller']
+const sellerScopes = ['feature', 'category', 'location', 'images']
 
 const getScopesArray = (scopes) => scopes.map((scope) => propertyScopes[scope])
 
@@ -129,7 +130,7 @@ const validatePropertyOptions = async ({
 const getAllPropertiesByOptions = async ({ validOptions, queries }) => {
     const { page, limit, orderBy, sortBy } = queries
     const propertiesData = await db.Properties.findAndCountAll({
-        include: getScopesArray(getAllPropertiesScopes),
+        include: getScopesArray(userScopes),
         distinct: true,
         where: validOptions,
         offset: (page - 1) * limit,
@@ -147,7 +148,7 @@ const getAllPropertiesByOptions = async ({ validOptions, queries }) => {
 const getAllPropertiesBySellerOptions = async ({ validOptions, queries, sellerId }) => {
     const { page, limit, orderBy, sortBy } = queries
     const propertiesData = await db.Properties.findAndCountAll({
-        include: getScopesArray(getAllPropertiesBySellerScopes),
+        include: getScopesArray(sellerScopes),
         where: { ...validOptions, userId: sellerId },
         distinct: true,
         offset: (page - 1) * limit,
@@ -164,12 +165,25 @@ const getAllPropertiesBySellerOptions = async ({ validOptions, queries, sellerId
 
 const getPropertyByOptions = async (options) => {
     const property = await db.Properties.findOne({
-        include: getScopesArray(getAllPropertiesScopes),
+        include: getScopesArray(userScopes),
         where: options
     })
 
     if (!property) {
         throw new BadRequestError('This property is not available now. Please try another property!')
+    }
+
+    return transformPropertyData(property)
+}
+
+const getPropertyBySellerOptions = async (options) => {
+    const property = await db.Properties.findOne({
+        include: getScopesArray(sellerScopes),
+        where: options
+    })
+
+    if (!property) {
+        throw new BadRequestError('This property of seller is not available now. Please try another property!')
     }
 
     return transformPropertyData(property)
@@ -181,6 +195,7 @@ const createNewProperty = async ({ propertyOptions, userId, locationId }) => {
         locationId,
         userId
     })
+
     if (!newProperty) {
         throw new BadRequestError('Error occurred when create your property!')
     }
@@ -189,6 +204,7 @@ const createNewProperty = async ({ propertyOptions, userId, locationId }) => {
 }
 
 module.exports = {
+    getPropertyBySellerOptions,
     createNewProperty,
     validatePropertyOptions,
     getAllPropertiesByOptions,

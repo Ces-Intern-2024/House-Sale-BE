@@ -14,6 +14,7 @@ module.exports = {
                     model: 'Properties',
                     key: 'propertyId'
                 },
+                allowNull: false,
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE'
             },

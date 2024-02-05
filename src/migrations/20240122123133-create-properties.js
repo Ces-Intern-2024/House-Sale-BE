@@ -16,6 +16,7 @@ module.exports = {
                         model: 'Users',
                         key: 'userId'
                     },
+                    allowNull: false,
                     onUpdate: 'CASCADE',
                     onDelete: 'CASCADE'
                 },
@@ -33,6 +34,7 @@ module.exports = {
                         model: 'Features',
                         key: 'featureId'
                     },
+                    allowNull: false,
                     onUpdate: 'CASCADE',
                     onDelete: 'CASCADE'
                 },
@@ -42,6 +44,7 @@ module.exports = {
                         model: 'Categories',
                         key: 'categoryId'
                     },
+                    allowNull: false,
                     onUpdate: 'CASCADE',
                     onDelete: 'CASCADE'
                 },
@@ -52,7 +55,8 @@ module.exports = {
                         key: 'locationId'
                     },
                     onUpdate: 'CASCADE',
-                    onDelete: 'CASCADE'
+                    onDelete: 'CASCADE',
+                    allowNull: false
                 },
                 price: {
                     type: Sequelize.DECIMAL(10, 2),
