@@ -33,7 +33,34 @@ const getProperty = {
     })
 }
 
+const createNewProperty = {
+    body: Joi.object()
+        .required()
+        .keys({
+            name: Joi.string().required(),
+            code: Joi.string().required(),
+            featureId: Joi.number().required(),
+            categoryId: Joi.number().required(),
+            provinceCode: Joi.string().required(),
+            districtCode: Joi.string().required(),
+            wardCode: Joi.string().required(),
+            street: Joi.string().required(),
+            address: Joi.string().required(),
+            landArea: Joi.number().required(),
+            areaOfUse: Joi.number().required(),
+            numberOfFloor: Joi.number().required(),
+            numberOfBedRoom: Joi.number().required(),
+            numberOfToilet: Joi.number().required(),
+            price: Joi.number().required(),
+            currencyCode: Joi.string().required(),
+            direction: Joi.string(),
+            description: Joi.string(),
+            images: Joi.array().items(Joi.string().required()).required()
+        })
+}
+
 module.exports = {
+    createNewProperty,
     getProperty,
     getAllProperties
 }

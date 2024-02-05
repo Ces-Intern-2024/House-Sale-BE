@@ -17,7 +17,7 @@ module.exports = {
                         key: 'userId'
                     },
                     onUpdate: 'CASCADE',
-                    onDelete: 'SET NULL'
+                    onDelete: 'CASCADE'
                 },
                 name: {
                     type: Sequelize.STRING,
@@ -25,7 +25,7 @@ module.exports = {
                 },
                 code: {
                     type: Sequelize.STRING,
-                    allowNull: false
+                    allowNull: true
                 },
                 featureId: {
                     type: Sequelize.INTEGER,
@@ -34,7 +34,7 @@ module.exports = {
                         key: 'featureId'
                     },
                     onUpdate: 'CASCADE',
-                    onDelete: 'SET NULL'
+                    onDelete: 'CASCADE'
                 },
                 categoryId: {
                     type: Sequelize.INTEGER,
@@ -43,7 +43,7 @@ module.exports = {
                         key: 'categoryId'
                     },
                     onUpdate: 'CASCADE',
-                    onDelete: 'SET NULL'
+                    onDelete: 'CASCADE'
                 },
                 locationId: {
                     type: Sequelize.INTEGER,
@@ -52,7 +52,7 @@ module.exports = {
                         key: 'locationId'
                     },
                     onUpdate: 'CASCADE',
-                    onDelete: 'SET NULL'
+                    onDelete: 'CASCADE'
                 },
                 price: {
                     type: Sequelize.DECIMAL(10, 2),
@@ -64,7 +64,8 @@ module.exports = {
                 },
                 status: {
                     type: Sequelize.BOOLEAN,
-                    allowNull: false
+                    allowNull: false,
+                    defaultValue: true
                 },
                 landArea: {
                     type: Sequelize.DECIMAL(10, 2),
@@ -72,7 +73,7 @@ module.exports = {
                 },
                 areaOfUse: {
                     type: Sequelize.DECIMAL(10, 2),
-                    allowNull: false
+                    allowNull: true
                 },
                 numberOfBedRoom: {
                     type: Sequelize.INTEGER,

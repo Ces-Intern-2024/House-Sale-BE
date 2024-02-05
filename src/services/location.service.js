@@ -1,5 +1,30 @@
 const { BadRequestError } = require('../core/error.response')
 const db = require('../models')
+const { locationRepo } = require('../models/repo')
+
+/**
+ * Create new location for property
+ * @param {Object} params - location parameters of property
+ * @returns {Promise<Locations>}
+ */
+const createNewLocation = async ({ provinceCode, districtCode, wardCode, address, street }) => {
+    const isValidLocation = await locationRepo.isValidLocation({ provinceCode, districtCode, wardCode })
+    if (!isValidLocation) {
+        throw new BadRequestError('Error occurred when checking location information!')
+    }
+    const newLocation = await db.Locations.create({
+        provinceCode,
+        districtCode,
+        wardCode,
+        address,
+        street
+    })
+    if (!newLocation) {
+        throw new BadRequestError('Creating new location failed!')
+    }
+
+    return newLocation
+}
 
 /**
  * Get all wards by district code
@@ -43,6 +68,7 @@ const getAllProvinces = async () => {
 }
 
 module.exports = {
+    createNewLocation,
     getAllWardsByDistrictCode,
     getAllDistrictsByProvinceCode,
     getAllProvinces

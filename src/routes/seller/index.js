@@ -13,4 +13,9 @@ router.get(
     validate(propertyValidation.getAllProperties),
     asyncHandler(sellerController.getAllProperties)
 )
+router.post(
+    '/properties',
+    validate(propertyValidation.createNewProperty),
+    asyncHandler(sellerController.createNewProperty)
+)
 module.exports = router

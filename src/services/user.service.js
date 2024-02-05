@@ -177,6 +177,7 @@ const login = async (userBody) => {
 
     const userInfo = {
         userId: user.userId,
+        roleId: user.roleId,
         email: user.email,
         fullName: user.fullName
     }

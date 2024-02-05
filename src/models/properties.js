@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
                         key: 'userId'
                     },
                     onUpdate: 'CASCADE',
-                    onDelete: 'SET NULL'
+                    onDelete: 'CASCADE'
                 }
             },
             name: {
@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             code: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
             },
             featureId: {
                 type: DataTypes.INTEGER,
@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
                     key: 'featureId'
                 },
                 onUpdate: 'CASCADE',
-                onDelete: 'SET NULL'
+                onDelete: 'CASCADE'
             },
             categoryId: {
                 type: DataTypes.INTEGER,
@@ -55,7 +55,7 @@ module.exports = (sequelize, DataTypes) => {
                     key: 'categoryId'
                 },
                 onUpdate: 'CASCADE',
-                onDelete: 'SET NULL'
+                onDelete: 'CASCADE'
             },
             locationId: {
                 type: DataTypes.INTEGER,
@@ -64,7 +64,7 @@ module.exports = (sequelize, DataTypes) => {
                     key: 'locationId'
                 },
                 onUpdate: 'CASCADE',
-                onDelete: 'SET NULL'
+                onDelete: 'CASCADE'
             },
             price: {
                 type: DataTypes.DECIMAL(10, 2),
@@ -76,7 +76,8 @@ module.exports = (sequelize, DataTypes) => {
             },
             status: {
                 type: DataTypes.BOOLEAN,
-                allowNull: false
+                allowNull: false,
+                defaultValue: true
             },
             landArea: {
                 type: DataTypes.DECIMAL(10, 2),
@@ -84,7 +85,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             areaOfUse: {
                 type: DataTypes.DECIMAL(10, 2),
-                allowNull: false
+                allowNull: true
             },
             numberOfBedRoom: {
                 type: DataTypes.INTEGER,
@@ -118,15 +119,7 @@ module.exports = (sequelize, DataTypes) => {
                 {
                     fields: ['locationId']
                 }
-            ],
-            defaultScope: {},
-            scopes: {
-                activeProperty: {
-                    where: {
-                        status: true
-                    }
-                }
-            }
+            ]
         }
     )
     return Properties

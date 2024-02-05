@@ -19,9 +19,14 @@ module.exports = (sequelize, DataTypes) => {
                 references: {
                     model: 'Properties',
                     key: 'propertyId'
-                }
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE'
             },
-            imageUrl: DataTypes.STRING
+            imageUrl: {
+                type: DataTypes.STRING,
+                allowNull: false
+            }
         },
         {
             sequelize,
