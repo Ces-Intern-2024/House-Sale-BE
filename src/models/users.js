@@ -28,7 +28,8 @@ module.exports = (sequelize, DataTypes) => {
                     key: 'roleId'
                 },
                 onUpdate: 'CASCADE',
-                onDelete: 'SET NULL'
+                onDelete: 'CASCADE',
+                allowNull: false
             },
             fullName: {
                 type: DataTypes.STRING,

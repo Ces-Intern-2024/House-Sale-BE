@@ -8,14 +8,21 @@ const { propertyValidation } = require('../../validations')
 const router = express.Router()
 
 router.use(authentication('Seller'))
-router.get(
-    '/properties',
-    validate(propertyValidation.getAllProperties),
-    asyncHandler(sellerController.getAllProperties)
-)
+
 router.post(
     '/properties',
     validate(propertyValidation.createNewProperty),
     asyncHandler(sellerController.createNewProperty)
 )
+router.get(
+    '/properties',
+    validate(propertyValidation.getAllProperties),
+    asyncHandler(sellerController.getAllProperties)
+)
+router.get(
+    '/properties/:propertyId',
+    validate(propertyValidation.getProperty),
+    asyncHandler(sellerController.getProperty)
+)
+
 module.exports = router

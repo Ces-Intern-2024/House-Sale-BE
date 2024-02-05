@@ -19,24 +19,30 @@ module.exports = (sequelize, DataTypes) => {
             },
             wardCode: {
                 type: DataTypes.STRING,
+                allowNull: false,
                 references: {
                     model: 'Wards',
                     key: 'wardCode'
-                }
+                },
+                allowNull: false
             },
             districtCode: {
                 type: DataTypes.STRING,
+                allowNull: false,
                 references: {
                     model: 'Districts',
                     key: 'districtCode'
-                }
+                },
+                allowNull: false
             },
             provinceCode: {
                 type: DataTypes.STRING,
+                allowNull: false,
                 references: {
                     model: 'Provinces',
                     key: 'provinceCode'
-                }
+                },
+                allowNull: false
             },
             street: {
                 type: DataTypes.STRING,

@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
                     model: 'Properties',
                     key: 'propertyId'
                 },
+                allowNull: false,
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE'
             },

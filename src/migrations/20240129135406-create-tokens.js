@@ -15,19 +15,24 @@ module.exports = {
                     key: 'userId'
                 },
                 onUpdate: 'CASCADE',
-                onDelete: 'CASCADE'
+                onDelete: 'CASCADE',
+                allowNull: false
             },
             accessToken: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING,
+                allowNull: false
             },
             refreshToken: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING,
+                allowNull: false
             },
             accessTokenExpires: {
-                type: Sequelize.DATE
+                type: Sequelize.DATE,
+                allowNull: false
             },
             refreshTokenExpires: {
-                type: Sequelize.DATE
+                type: Sequelize.DATE,
+                allowNull: false
             },
             createdAt: {
                 allowNull: false,

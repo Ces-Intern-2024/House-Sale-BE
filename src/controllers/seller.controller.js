@@ -30,6 +30,16 @@ const createNewProperty = async (req, res) => {
     }).send(res)
 }
 
+const getProperty = async (req, res) => {
+    const sellerId = req.user?.userId
+    const { propertyId } = req.params
+    const property = await sellerService.getProperty({ propertyId, sellerId })
+    new OK({
+        message: 'Get property success!',
+        metaData: property
+    }).send(res)
+}
+
 const getAllProperties = async (req, res) => {
     const sellerId = req.user?.userId
     const options = req.query
@@ -42,5 +52,6 @@ const getAllProperties = async (req, res) => {
 
 module.exports = {
     createNewProperty,
+    getProperty,
     getAllProperties
 }

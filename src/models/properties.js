@@ -27,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
                         model: 'Users',
                         key: 'userId'
                     },
+                    allowNull: false,
                     onUpdate: 'CASCADE',
                     onDelete: 'CASCADE'
                 }
@@ -46,7 +47,8 @@ module.exports = (sequelize, DataTypes) => {
                     key: 'featureId'
                 },
                 onUpdate: 'CASCADE',
-                onDelete: 'CASCADE'
+                onDelete: 'CASCADE',
+                allowNull: false
             },
             categoryId: {
                 type: DataTypes.INTEGER,
@@ -55,7 +57,8 @@ module.exports = (sequelize, DataTypes) => {
                     key: 'categoryId'
                 },
                 onUpdate: 'CASCADE',
-                onDelete: 'CASCADE'
+                onDelete: 'CASCADE',
+                allowNull: false
             },
             locationId: {
                 type: DataTypes.INTEGER,
@@ -64,7 +67,8 @@ module.exports = (sequelize, DataTypes) => {
                     key: 'locationId'
                 },
                 onUpdate: 'CASCADE',
-                onDelete: 'CASCADE'
+                onDelete: 'CASCADE',
+                allowNull: false
             },
             price: {
                 type: DataTypes.DECIMAL(10, 2),

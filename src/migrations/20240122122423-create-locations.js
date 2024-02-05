@@ -10,6 +10,7 @@ module.exports = {
             },
             wardCode: {
                 type: Sequelize.STRING,
+                allowNull: false,
                 references: {
                     model: 'Wards',
                     key: 'wardCode'
@@ -17,6 +18,7 @@ module.exports = {
             },
             districtCode: {
                 type: Sequelize.STRING,
+                allowNull: false,
                 references: {
                     model: 'Districts',
                     key: 'districtCode'
@@ -24,6 +26,7 @@ module.exports = {
             },
             provinceCode: {
                 type: Sequelize.STRING,
+                allowNull: false,
                 references: {
                     model: 'Provinces',
                     key: 'provinceCode'
