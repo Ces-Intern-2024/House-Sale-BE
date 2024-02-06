@@ -163,10 +163,10 @@ const getAllPropertiesBySellerOptions = async ({ validOptions, queries, sellerId
     return mapAndTransformProperties({ propertiesData, page, limit })
 }
 
-const getPropertyByOptions = async (options) => {
+const getProperty = async (propertyId) => {
     const property = await db.Properties.findOne({
         include: getScopesArray(userScopes),
-        where: options
+        where: { propertyId }
     })
 
     if (!property) {
@@ -176,14 +176,14 @@ const getPropertyByOptions = async (options) => {
     return transformPropertyData(property)
 }
 
-const getPropertyBySellerOptions = async (options) => {
+const getPropertyBySeller = async ({ userId, propertyId }) => {
     const property = await db.Properties.findOne({
         include: getScopesArray(sellerScopes),
-        where: options
+        where: { userId, propertyId }
     })
 
     if (!property) {
-        throw new BadRequestError('This property of seller is not available now. Please try another property!')
+        throw new BadRequestError('This property is not available now. Please try another property!')
     }
 
     return transformPropertyData(property)
@@ -203,11 +203,28 @@ const createNewProperty = async ({ propertyOptions, userId, locationId }) => {
     return newProperty
 }
 
+const updateProperty = async ({ propertyId, userId, updatedData }) => {
+    const property = await db.Properties.findOne({
+        where: { propertyId, userId }
+    })
+    if (!property) {
+        throw new BadRequestError('This property is not available now. Please try another property!')
+    }
+
+    const updatedProperty = await db.Properties.update(updatedData, { where: { propertyId, userId } })
+    if (!updatedProperty[0]) {
+        throw new BadRequestError('Failed to update property')
+    }
+
+    return updatedProperty[0]
+}
+
 module.exports = {
-    getPropertyBySellerOptions,
+    updateProperty,
     createNewProperty,
+    getPropertyBySeller,
     validatePropertyOptions,
     getAllPropertiesByOptions,
-    getPropertyByOptions,
+    getProperty,
     getAllPropertiesBySellerOptions
 }

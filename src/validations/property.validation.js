@@ -28,7 +28,7 @@ const getAllProperties = {
 }
 
 const getProperty = {
-    params: Joi.object().keys({
+    params: Joi.object().required().keys({
         propertyId: Joi.number().required()
     })
 }
@@ -59,7 +59,24 @@ const createNewProperty = {
         })
 }
 
+const updateProperty = {
+    params: Joi.object().required().keys({
+        propertyId: Joi.number().required()
+    }),
+    body: Joi.object().keys({
+        name: Joi.string(),
+        code: Joi.string(),
+        status: Joi.boolean(),
+        landArea: Joi.number(),
+        areaOfUse: Joi.number(),
+        price: Joi.number(),
+        direction: Joi.string(),
+        description: Joi.string()
+    })
+}
+
 module.exports = {
+    updateProperty,
     createNewProperty,
     getProperty,
     getAllProperties
