@@ -1,6 +1,23 @@
 const { sellerService, locationService, propertyService, imageService } = require('../services')
 const { OK, Created } = require('../core/success.response')
 
+const updateProperty = async (req, res) => {
+    const sellerId = req.user?.userId
+    const { propertyId } = req.params
+    const updatedData = req.body
+    if (Object.keys(updatedData).length === 0) {
+        new OK({
+            message: 'No change were made!'
+        }).send(res)
+    }
+
+    const property = await sellerService.updateProperty({ propertyId, updatedData, userId: sellerId })
+    new OK({
+        message: 'Your property had been updated successfully!',
+        metaData: property
+    }).send(res)
+}
+
 const createNewProperty = async (req, res) => {
     const sellerId = req.user?.userId
     const { provinceCode, districtCode, wardCode, street, address, images, ...propertyOptions } = req.body
@@ -51,6 +68,7 @@ const getAllProperties = async (req, res) => {
 }
 
 module.exports = {
+    updateProperty,
     createNewProperty,
     getProperty,
     getAllProperties

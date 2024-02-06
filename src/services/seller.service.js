@@ -1,13 +1,25 @@
 const { propertyRepo } = require('../models/repo')
 
 /**
- * Get property by seller
- * @param {id} propertyId
+ * Update property of seller by sellerId, propertyId
+ * @param {Object} params
+ * @param {id} params.propertyId
+ * @param {id} params.userId - sellerId
+ * @param {id} params.updatedData - updated information of property
+ * @returns {Promise<boolean>}
+ */
+const updateProperty = async ({ propertyId, userId, updatedData }) => {
+    return propertyRepo.updateProperty({ propertyId, userId, updatedData })
+}
+
+/** Get property of seller by propertyId
+ * @param {Object} params
+ * @param {id} params.propertyId - propertyId
+ * @param {id} params.sellerId -sellerId
  * @returns {Promise<Property>}
  */
 const getProperty = async ({ propertyId, sellerId }) => {
-    const options = { propertyId, userId: sellerId }
-    return propertyRepo.getPropertyBySellerOptions(options)
+    return propertyRepo.getPropertyBySeller({ propertyId, userId: sellerId })
 }
 
 /**
@@ -23,6 +35,7 @@ const getAllProperties = async ({ options, sellerId }) => {
 }
 
 module.exports = {
+    updateProperty,
     getProperty,
     getAllProperties
 }

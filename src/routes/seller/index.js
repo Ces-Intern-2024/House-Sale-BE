@@ -24,5 +24,10 @@ router.get(
     validate(propertyValidation.getProperty),
     asyncHandler(sellerController.getProperty)
 )
+router.patch(
+    '/properties/:propertyId',
+    validate(propertyValidation.updateProperty),
+    asyncHandler(sellerController.updateProperty)
+)
 
 module.exports = router
