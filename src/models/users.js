@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
             Users.belongsTo(models.Districts, { foreignKey: 'districtCode', as: 'district' })
             Users.belongsTo(models.Provinces, { foreignKey: 'provinceCode', as: 'province' })
             Users.hasMany(models.Tokens, { foreignKey: 'userId' })
+            Users.hasMany(models.Contacts, { foreignKey: 'sellerId' })
         }
     }
     Users.init(

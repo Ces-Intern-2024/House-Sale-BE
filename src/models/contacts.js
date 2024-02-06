@@ -3,7 +3,8 @@ const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
     class Contacts extends Model {
         static associate(models) {
-            Contacts.belongsTo(models.Properties, { foreignKey: 'propertyId' })
+            Contacts.belongsTo(models.Properties, { foreignKey: 'propertyId', as: 'property' })
+            Contacts.belongsTo(models.Users, { foreignKey: 'sellerId', as: 'seller' })
         }
     }
     Contacts.init(
@@ -21,7 +22,17 @@ module.exports = (sequelize, DataTypes) => {
                     key: 'propertyId'
                 },
                 onUpdate: 'CASCADE',
-                onDelete: 'SET NULL',
+                onDelete: 'CASCADE',
+                allowNull: false
+            },
+            sellerId: {
+                type: DataTypes.INTEGER,
+                references: {
+                    model: 'Users',
+                    key: 'userId'
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE',
                 allowNull: false
             },
             name: {
