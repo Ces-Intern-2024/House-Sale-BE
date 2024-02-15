@@ -24,7 +24,7 @@ const changePhoneNumber = async (req, res) => {
     const { newPhoneNumber } = req.body
     await userService.changePhoneNumber({ userId, newPhoneNumber })
     new OK({
-        message: 'Your phone number has been changed successfully.'
+        message: 'Your phone number has been changed successfully!'
     }).send(res)
 }
 
@@ -33,7 +33,7 @@ const changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body
     await userService.changePassword({ userId, currentPassword, newPassword })
     new OK({
-        message: 'Your password has been changed successfully.'
+        message: 'Your password has been changed successfully!'
     }).send(res)
 }
 
@@ -66,7 +66,7 @@ const login = async (req, res) => {
 const registerSeller = async (req, res) => {
     const result = await userService.registerSeller(req.body)
     new Created({
-        message: 'Registration success for new user!',
+        message: 'Registration success for new seller!',
         metaData: result
     }).send(res)
 }
@@ -74,7 +74,7 @@ const registerSeller = async (req, res) => {
 const registerUser = async (req, res) => {
     const result = await userService.registerUser(req.body)
     new Created({
-        message: 'Registration success for new seller!',
+        message: 'Registration success for new user!',
         metaData: result
     }).send(res)
 }
