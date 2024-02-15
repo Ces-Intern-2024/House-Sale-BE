@@ -6,22 +6,26 @@ const commonUserProfileScope = [
     {
         model: db.Roles,
         as: 'role',
-        attributes: ['roleId', 'roleName']
+        attributes: ['roleId', 'roleName'],
+        required: true
     },
     {
         model: db.Wards,
         as: 'ward',
-        attributes: ['wardCode', 'fullNameEn']
+        attributes: ['wardCode', 'fullNameEn'],
+        required: true
     },
     {
         model: db.Provinces,
         as: 'province',
-        attributes: ['provinceCode', 'fullNameEn']
+        attributes: ['provinceCode', 'fullNameEn'],
+        required: true
     },
     {
         model: db.Districts,
         as: 'district',
-        attributes: ['districtCode', 'fullNameEn']
+        attributes: ['districtCode', 'fullNameEn'],
+        required: true
     }
 ]
 

@@ -7,27 +7,32 @@ const propertyScopes = {
     feature: {
         model: db.Features,
         attributes: ['featureId', 'name'],
-        as: 'feature'
+        as: 'feature',
+        required: true
     },
     category: {
         model: db.Categories,
         attributes: ['categoryId', 'name'],
-        as: 'category'
+        as: 'category',
+        required: true
     },
     location: {
         model: db.Locations,
         as: 'location',
-        attributes: { exclude: ['createdAt', 'updatedAt'] }
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        required: true
     },
     images: {
         model: db.Images,
         as: 'images',
-        attributes: ['imageId', 'imageUrl']
+        attributes: ['imageId', 'imageUrl'],
+        required: true
     },
     seller: {
         model: db.Users,
         as: 'seller',
-        attributes: ['userId', 'fullName', 'email', 'phone', 'avatar']
+        attributes: ['userId', 'fullName', 'email', 'phone', 'avatar'],
+        required: true
     }
 }
 const userScopes = ['feature', 'category', 'location', 'images', 'seller']
@@ -131,8 +136,8 @@ const getAllPropertiesByOptions = async ({ validOptions, queries }) => {
     const { page, limit, orderBy, sortBy } = queries
     const propertiesData = await db.Properties.findAndCountAll({
         include: getScopesArray(userScopes),
-        distinct: true,
         where: validOptions,
+        distinct: true,
         offset: (page - 1) * limit,
         limit,
         order: [[orderBy, sortBy]]
@@ -148,8 +153,8 @@ const getAllPropertiesByOptions = async ({ validOptions, queries }) => {
 const getAllPropertiesBySellerOptions = async ({ validOptions, queries, sellerId }) => {
     const { page, limit, orderBy, sortBy } = queries
     const propertiesData = await db.Properties.findAndCountAll({
-        include: getScopesArray(sellerScopes),
         where: { ...validOptions, userId: sellerId },
+        include: getScopesArray(sellerScopes),
         distinct: true,
         offset: (page - 1) * limit,
         limit,

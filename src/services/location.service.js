@@ -48,7 +48,7 @@ const getAllWardsByDistrictCode = async (districtCode) => {
 const getAllDistrictsByProvinceCode = async (provinceCode) => {
     const districtsList = await db.Districts.findAll({ where: { provinceCode } })
     if (!districtsList || !districtsList.length) {
-        throw new BadRequestError('Get all provinces failed!')
+        throw new BadRequestError('Get all districts failed!')
     }
 
     return districtsList
@@ -61,7 +61,7 @@ const getAllDistrictsByProvinceCode = async (provinceCode) => {
 const getAllProvinces = async () => {
     const provincesList = await db.Provinces.findAll()
     if (!provincesList || !provincesList.length) {
-        throw new BadRequestError('Get all districts failed!')
+        throw new BadRequestError('Get all provinces failed!')
     }
 
     return provincesList

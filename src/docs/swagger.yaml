@@ -1,0 +1,2077 @@
+openapi: 3.0.0
+info:
+    title: House Sale API Documentation
+    version: 1.0.0
+servers:
+    -   url: http://localhost:3000/v1/api
+    -   url: https://housesale.tldev.id.vn/v1/api
+tags:
+    -   name: Property
+    -   name: User
+    -   name: Location
+    -   name: Seller
+    -   name: Contact
+paths:
+    /properties:
+        get:
+            tags:
+                - Property
+            summary: Get all properties
+            description: Get all properties by queries
+            operationId: getAllProperties
+            parameters:
+                -   name: keyword
+                    in: query
+                    description: A keyword to search for properties
+                    required: false
+                    schema:
+                        type: string
+                        example: apart
+                -   name: featureId
+                    in: query
+                    description: The ID of feature
+                    required: false
+                    schema:
+                        type: number
+                        enum:
+                            - 1
+                            - 2
+                -   name: categoryId
+                    in: query
+                    description: The ID of category
+                    required: false
+                    schema:
+                        type: number
+                        enum:
+                            - 1
+                            - 2
+                            - 3
+                            - 4
+                            - 5
+                -   name: provinceCode
+                    in: query
+                    description: The code of province
+                    required: false
+                    schema:
+                        type: string
+                        example: 48
+                -   name: districtCode
+                    in: query
+                    description: The code of district
+                    required: false
+                    schema:
+                        type: string
+                        example: 493
+                -   name: wardCode
+                    in: query
+                    description: The code of ward
+                    required: false
+                    schema:
+                        type: string
+                        example: 20275
+                -   name: priceFrom
+                    in: query
+                    description: The minimum price of a property
+                    required: false
+                    schema:
+                        type: number
+                -   name: priceTo
+                    in: query
+                    description: The maximum price of a property
+                    required: false
+                    schema:
+                        type: number
+                -   name: landAreaFrom
+                    in: query
+                    description: The minimum land area of a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: landAreaTo
+                    in: query
+                    description: The maximum land area of a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: areaOfUseFrom
+                    in: query
+                    description: The minimum area of use of a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: areaOfUseTo
+                    in: query
+                    description: The maximum area of use of a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfFloorFrom
+                    in: query
+                    description: The minimum number of floors in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfFloorTo
+                    in: query
+                    description: The maximum number of floors in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfBedRoomFrom
+                    in: query
+                    description: The minimum number of bedrooms in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfBedRoomTo
+                    in: query
+                    description: The maximum number of bedrooms in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfToiletFrom
+                    in: query
+                    description: The minimum number of toilets in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfToiletTo
+                    in: query
+                    description: The maximum number of toilets in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: page
+                    in: query
+                    description: The page number for pagination.
+                    required: false
+                    schema:
+                        type: number
+                -   name: limit
+                    in: query
+                    description: The maximum number of items per page.
+                    required: false
+                    schema:
+                        type: number
+                -   name: orderBy
+                    in: query
+                    description: The field to order results by.
+                    required: false
+                    schema:
+                        type: string
+                        enum: ['Price', 'price']
+                -   name: sortBy
+                    in: query
+                    description: The sort order ('ASC' for ascending, 'DESC' for descending).
+                    required: false
+                    schema:
+                        type: string
+                        enum: ['ASC', 'asc', 'DESC', 'desc']
+            responses:
+                '200':
+                    description: Get list properties success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:   Get list properties success!
+                                    metaData:
+                                        type: array
+                                        items:
+                                        $ref: '#/components/schemas/Property'
+                '400':
+                    description: Invalid featureId, categoryId, provinceCode, districtCode, wardCode
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: This feature is not available yet. Please try again.
+    /properties/{propertyId}:
+        get:
+            tags:
+            -   Property
+            summary: Get property by ID
+            description: Returns a single property
+            operationId: getProperty
+            parameters:
+            -   name: propertyId
+                in: path
+                description: ID of propertyId to return
+                required: true
+                schema:
+                    type: number
+                    example: 1
+            responses:
+                '200':
+                    description: Get property success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Get all properties success!
+                                    metaData:
+                                        $ref: '#/components/schemas/Property'
+                '400':
+                    description: Invalid propertyId
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: This property is not available now. Please try another property!.
+    /location/provinces:
+        get:
+            tags:
+                - Location
+            summary: Get all provinces
+            description: Get all provinces
+            operationId: getAllProvinces
+            responses:
+                '200':
+                    description: Get list provinces success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Get list provinces success!
+                                    metaData:
+                                        type: array
+                                        items:
+                                        $ref: '#/components/schemas/Province'
+                '400':
+                    description: Get all provinces failed!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Get all provinces failed!
+    /location/districts:
+        get:
+            tags:
+            - Location
+            summary: Get all district by provinceCode
+            description: get all district by provinceCode
+            operationId: getAllDistrictsByProvinceCode
+            parameters:
+            -   name: provinceCode
+                in: query
+                description: provinceCode of province to get all district
+                required: true
+                schema:
+                    type: string
+                    example: 48
+            responses:
+                '200':
+                    description: Get list districts success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Get list districts success!
+                                    metaData:
+                                        type: array
+                                        items:
+                                        $ref: '#/components/schemas/District'
+                '400':
+                    description: Get all districts failed!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Get all districts failed!
+    /location/wards:
+        get:
+            tags:
+            - Location
+            summary: Get all wards by districtCode
+            description: get all wards by districtCode
+            operationId: getAllWardsByDistrictCode
+            parameters:
+            -   name: districtCode
+                in: query
+                description: districtCode of ward to get all wards
+                required: true
+                schema:
+                    type: string
+                    example: 490
+            responses:
+                '200':
+                    description: Get list wards success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Get list wards success!
+                                    metaData:
+                                        type: array
+                                        items:
+                                        $ref: '#/components/schemas/Ward'
+                '400':
+                    description: Get all wards failed!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Get all ward failed!
+    /user/register-user:
+        post:
+            tags:
+                - User
+            summary: Create new user
+            description: Create new user
+            operationId: registerUser
+            requestBody:
+                description: User email and password
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UserBody'
+                required: true
+            responses:
+                '201':
+                    description: Registration success for new user!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Registration success for new seller!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            newUser:
+                                                $ref: '#/components/schemas/User'
+                                            tokens:
+                                                $ref: '#/components/schemas/Tokens'
+                '400':
+                    description: DuplicateEmail
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: User already exists! Please register with another email.
+    /user/register-seller:
+        post:
+            tags:
+                - User
+            summary: Create new seller
+            description: Create new seller
+            operationId: registerSeller
+            requestBody:
+                description: Seller information
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/NewSeller'
+                required: true
+            responses:
+                '201':
+                    description: Registration success for new seller!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Registration success for new seller!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            newSeller:
+                                                $ref: '#/components/schemas/Seller'
+                                            tokens:
+                                                $ref: '#/components/schemas/Tokens'
+                '400':
+                    description: DuplicateEmail
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: User already exists! Please register with another email.
+    /user/login:
+        post:
+            tags:
+                - User
+            summary: Login to access system
+            description: Login to access system
+            operationId: login
+            requestBody:
+                description: Login success
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UserBody'
+                required: true
+            responses:
+                '200':
+                    description: Login success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Login success!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            user:
+                                                $ref: '#/components/schemas/User'
+                                            tokens:
+                                                $ref: '#/components/schemas/Tokens'
+                '400':
+                    description: Email not registered!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Email not registered!
+                '401':
+                    description: Incorrect email or password!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example: Incorrect email or password!
+    /user/refreshTokens:
+        post:
+            tags:
+                - User
+            summary: Refresh Tokens
+            description: Refresh Tokens
+            operationId: refreshTokens
+            requestBody:
+                description: refreshToken
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                              refreshToken:
+                                type: string
+                                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImlhdCI6MTcwNzQ0Mzc0MywiZXhwIjoxNzA4MDQ4NTQzLCJ0eXBlIjoicmVmcmVzaCJ9.xbR_ZLbKphz3161exK3HpoWPmh8GH6w3Gu0USDv8nko
+                            required:
+                              - "refreshToken"
+                required: true
+            responses:
+                '201':
+                    description: Create new accessToken success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 201
+                                    message:
+                                        type: string
+                                        example: Create new accessToken success!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            tokens:
+                                                $ref: '#/components/schemas/Tokens'
+                '400':
+                    description: Failed creating new tokens
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed creating new tokens
+                '404':
+                    description: Tokens or user not found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example: Tokens not found
+    /user/logout:
+        post:
+            tags:
+                - User
+            summary: Logout
+            description: Logout
+            operationId: logout
+            requestBody:
+                description: Refresh Token
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                              refreshToken:
+                                type: string
+                                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImlhdCI6MTcwNzQ0Mzc0MywiZXhwIjoxNzA4MDQ4NTQzLCJ0eXBlIjoicmVmcmVzaCJ9.xbR_ZLbKphz3161exK3HpoWPmh8GH6w3Gu0USDv8nko
+                            required:
+                              - "refreshToken"
+                required: true
+            responses:
+                '200':
+                    description: 'Logout success!'
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: 'Logout success!'
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Error ocurred when logout!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Error ocurred when logout!
+                '401':
+                    description: Unauthorized or Invalid accessToken
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Unauthorized
+                '404':
+                    description: RefreshToken not valid.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: RefreshToken not valid.
+            security:
+                - bearerAuth: []
+    /user/change-password:
+        post:
+            tags:
+                - User
+            summary: Change user password
+            description: Change user password
+            operationId: changePassword
+            requestBody:
+                description: current password and new password
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                currentPassword:
+                                    type: string
+                                    example: T12345678
+                                newPassword:
+                                    type: string
+                                    example: T123456789
+                            required:
+                              - "currentPassword"
+                              - "newPassword"
+                required: true
+            responses:
+                '200':
+                    description: 'Your password has been changed successfully!'
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: 'Your password has been changed successfully!'
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Failed update password
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed update password
+                '401':
+                    description: Unauthorized or Incorrect current password
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Incorrect current password
+                '404':
+                    description: Not found user
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: Not found user
+            security:
+                - bearerAuth: []
+    /user/change-phone-number:
+        post:
+            tags:
+                - User
+            summary: Change user phone number
+            description: Change user phone number
+            operationId: changePhoneNumber
+            requestBody:
+                description: new phone number
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                newPhoneNumber:
+                                    type: string
+                                    example: 0899619252
+                            required:
+                              - "newPhoneNumber"
+                required: true
+            responses:
+                '200':
+                    description: Your phone number has been changed successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Your phone number has been changed successfully!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Failed update phone number or new phone number cannot be same as your current phone number
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: New phone number cannot be same as your current phone number!
+                '401':
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Please Authenticate!
+                '404':
+                    description: Not found user
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: Not found user
+            security:
+                - bearerAuth: []
+    /user/profile:
+        get:
+            tags:
+            -   User
+            summary: Get user profile  by ID
+            description: Returns a user profile
+            operationId: getProfile
+            responses:
+                '200':
+                    description: Get your profile successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Get your profile successfully!
+                                    metaData:
+                                        $ref: '#/components/schemas/UserProfile'
+                '401':
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Please Authenticate!
+                '404':
+                    description: User profile not found or User not found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: User profile not found!
+            security:
+              - bearerAuth: []
+    /user/update-avatar:
+        post:
+            tags:
+                - User
+            summary: Update user avatar
+            description: Update user avatar
+            operationId: updateAvatar
+            requestBody:
+                description: new avatar url
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                imageUrl:
+                                    type: string
+                                    example: https://res.cloudinary.com/housesale/image/upload/v1706774835/avatar/32/avatar.png
+                            required:
+                              - "imageUrl"
+                required: true
+            responses:
+                '200':
+                    description: 'Your avatar had been changed successfully!'
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Your avatar had been changed successfully!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Update your avatar failed
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Update your avatar failed
+                '401':
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Please Authenticate!
+                '404':
+                    description: User not found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found
+            security:
+                - bearerAuth: []
+    /seller/properties:
+        get:
+            tags:
+                - Seller
+            summary: Get all properties
+            description: Get all properties by queries
+            operationId: getAllPropertiesBySeller
+            parameters:
+                -   name: keyword
+                    in: query
+                    description: A keyword to search for properties
+                    required: false
+                    schema:
+                        type: string
+                        example: apart
+                -   name: featureId
+                    in: query
+                    description: The ID of feature
+                    required: false
+                    schema:
+                        type: number
+                        enum:
+                            - 1
+                            - 2
+                -   name: categoryId
+                    in: query
+                    description: The ID of category
+                    required: false
+                    schema:
+                        type: number
+                        enum:
+                            - 1
+                            - 2
+                            - 3
+                            - 4
+                            - 5
+                -   name: priceFrom
+                    in: query
+                    description: The minimum price of a property
+                    required: false
+                    schema:
+                        type: number
+                -   name: priceTo
+                    in: query
+                    description: The maximum price of a property
+                    required: false
+                    schema:
+                        type: number
+                -   name: landAreaFrom
+                    in: query
+                    description: The minimum land area of a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: landAreaTo
+                    in: query
+                    description: The maximum land area of a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: areaOfUseFrom
+                    in: query
+                    description: The minimum area of use of a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: areaOfUseTo
+                    in: query
+                    description: The maximum area of use of a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfFloorFrom
+                    in: query
+                    description: The minimum number of floors in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfFloorTo
+                    in: query
+                    description: The maximum number of floors in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfBedRoomFrom
+                    in: query
+                    description: The minimum number of bedrooms in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfBedRoomTo
+                    in: query
+                    description: The maximum number of bedrooms in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfToiletFrom
+                    in: query
+                    description: The minimum number of toilets in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfToiletTo
+                    in: query
+                    description: The maximum number of toilets in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: page
+                    in: query
+                    description: The page number for pagination.
+                    required: false
+                    schema:
+                        type: number
+                -   name: limit
+                    in: query
+                    description: The maximum number of items per page.
+                    required: false
+                    schema:
+                        type: number
+                -   name: orderBy
+                    in: query
+                    description: The field to order results by.
+                    required: false
+                    schema:
+                        type: string
+                        enum: ['Price', 'price']
+                -   name: sortBy
+                    in: query
+                    description: The sort order ('ASC' for ascending, 'DESC' for descending).
+                    required: false
+                    schema:
+                        type: string
+                        enum: ['ASC', 'asc', 'DESC', 'desc']
+            responses:
+                '200':
+                    description: Get list properties success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:   Get list properties success!
+                                    metaData:
+                                        type: array
+                                        items:
+                                        $ref: '#/components/schemas/PropertyOfSeller'
+                '400':
+                    description: Invalid featureId, categoryId, provinceCode, districtCode, wardCode
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: This feature is not available yet. Please try again.
+                '401':
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Please Authenticate!
+            security:
+              - bearerAuth: []
+        post:
+            tags:
+                - Seller
+            summary: Create new property by seller
+            description: Create new property by seller
+            operationId: createNewProperty
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/NewPropertyBody'
+            responses:
+                '201':
+                    description: New property had been created successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 201
+                                    message:
+                                        type: string
+                                        example: New property had been created successfully!
+                                    metaData:
+                                        $ref: '#/components/schemas/NewPropertyResponse'
+
+
+                '400':
+                    description: Invalid featureId, categoryId, provinceCode, districtCode, wardCode
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: This feature is not available yet. Please try again.
+                '401':
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Please Authenticate!
+            security:
+              - bearerAuth: []
+    /seller/properties/{propertyId}:
+        get:
+            tags:
+            -   Seller
+            summary: Get property of seller by ID
+            description: Returns a single property
+            operationId: getProperty
+            parameters:
+            -   name: propertyId
+                in: path
+                description: ID of propertyId to return
+                required: true
+                schema:
+                    type: number
+                    example: 1
+            responses:
+                '200':
+                    description: Get property success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Get all properties success!
+                                    metaData:
+                                        $ref: '#/components/schemas/PropertyOfSeller'
+                '400':
+                    description: Invalid propertyId
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: This property of seller is not available now. Please try another property!
+            security:
+              - bearerAuth: []
+
+    /contact:
+        post:
+            tags:
+              - Contact
+            summary: Create new contact
+            description: Create new contact and send to seller
+            operationId: createNewContact
+            requestBody:
+                content:
+                  application/json:
+                    schema:
+                        $ref: '#/components/schemas/NewContactBody'
+                        required: true
+            responses:
+                '201':
+                    description: New contact had been created successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 201
+                                    message:
+                                        type: string
+                                        example: New contact had been created successfully!
+                                    metaData:
+                                        $ref: '#/components/schemas/NewContactResponse'
+                '400':
+                    description: Invalid property
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: This property is not available now. Please try another property!
+
+components:
+    schemas:
+        Property:
+            type: object
+            properties:
+                propertyId:
+                    type: number
+                    example: 1
+                name:
+                    type: string
+                    example: Apartment for sale at Alphanam Luxury Apartment Danang
+                code:
+                    type: string
+                    example: A1293
+                price:
+                    type: number
+                    format: decimal(10,2)
+                    example: 230000.0
+                currencyCode:
+                    type: string
+                    example: USD
+                status:
+                    type: boolean
+                    example: true
+                landArea:
+                    type: number
+                    format: decimal(10,2)
+                    example: 100.0
+                areaOfUse:
+                    type: number
+                    format: decimal(10,2)
+                    example: 100.0
+                numberOfBedRoom:
+                    type: number
+                    example: 2
+                numberOfToilet:
+                    type: number
+                    example: 2
+                numberOfFloor:
+                    type: number
+                    example: 25
+                direction:
+                    type: string
+                    example: West
+                description:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                    example: 2024-01-23T05:52:44.000Z
+                updatedAt:
+                    type: string
+                    format: date-time
+                    example: 2024-01-23T05:52:44.000Z
+                feature:
+                    type: object
+                    properties:
+                        featureId:
+                            type: number
+                            example: 1
+                        name:
+                            type: string
+                            example: Sale
+                category:
+                    type: object
+                    properties:
+                        categoryId:
+                            type: number
+                            example: 2
+                        name:
+                            type: string
+                            example: House
+                location:
+                    type: object
+                    properties:
+                        locationId:
+                            type: number
+                            example: 2
+                        wardCode:
+                            type: string
+                            example: 20275
+                        districtCode:
+                            type: string
+                            example: 494
+                        provinceCode:
+                            type: string
+                            example: 48
+                        street:
+                            type: string
+                            example: Vo Nguyen Giap
+                        address:
+                            type: string
+                            example: 100 Vo Nguyen Giap
+                images:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            imageId:
+                                type: number
+                                example: 10
+                            imageUrl:
+                                type: string
+                                example: https://toanhuyhoang.com/wp-content/uploads/2023/09/z4961049532378_ad7a21ff4f9720289b0e09ce80cb0e2b.jpg
+                seller:
+                    type: object
+                    properties:
+                        userId:
+                            type: number
+                            example: 5
+                        fullName:
+                            type: string
+                            example: Le Nhat Trinh
+                        email:
+                            type: string
+                            example: lenhattrinh@gmail.com
+                        phone:
+                            type: string
+                            example: 0899619250
+                        avatar:
+                            type: string
+                            example: null
+        Province:
+            type: object
+            properties:
+                provinceCode:
+                    type: string
+                    example: 01
+                nameEn:
+                    type: string
+                    example: Ha Noi
+                fullNameEn:
+                    type: string
+                    example: Ha Noi City
+                codeName:
+                    type: string
+                    example: ha_noi
+        District:
+            type: object
+            properties:
+                districtCode:
+                    type: string
+                    example: 490
+                nameEn:
+                    type: string
+                    example: Lien Chieu
+                fullNameEn:
+                    type: string
+                    example: Lien Chieu District
+                codeName:
+                    type: string
+                    example: lien_chieu
+                provinceCode:
+                    type: string
+                    example: 48
+        Ward:
+            type: object
+            properties:
+                wardCode:
+                    type: string
+                    example: 20194
+                nameEn:
+                    type: string
+                    example: Hoa Hiep Bac
+                fullNameEn:
+                    type: string
+                    example: Hoa Hiep Bac Ward
+                codeName:
+                    type: string
+                    example: hoa_hiep_bac
+                districtCode:
+                    type: string
+            example: 490
+        User:
+            type: object
+            properties:
+                userId:
+                    type: number
+                    example: 15
+                roleId:
+                    type: number
+                    example: 1
+                email:
+                    type: string
+                    example: tldevuser@gmail.com
+                status:
+                    type: boolean
+                    example: true
+        Tokens:
+            type: object
+            properties:
+                accessToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE1LCJpYXQiOjE3MDcyOTE4MzYsImV4cCI6MTcwNzI5NTQzNiwidHlwZSI6ImFjY2VzcyJ9.T8u9lbLeeBXD4peVgar6YX6ZTWvMOeIjOAF_nXcIu9s
+                refreshToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE1LCJpYXQiOjE3MDcyOTE4MzYsImV4cCI6MTcwNzg5NjYzNiwidHlwZSI6InJlZnJlc2gifQ.iHT53WUnZjRbjfhc9Qrb-BUYpWCabsKmZMeRiA7wpQQ
+        Seller:
+            type: object
+            properties:
+                status:
+                    type: boolean
+                    example: true
+                userId:
+                    type: number
+                    example: 21
+                email:
+                    type: string
+                    example: tldevseller@gmail.com
+                fullName:
+                    type: string
+                    example: Test Seller
+                phone:
+                    type: string
+                    example: "0888888776"
+                provinceCode:
+                    type: string
+                    example: 48
+                districtCode:
+                    type: string
+                    example: 492
+                wardCode:
+                    type: string
+                    example: 20236
+                street:
+                    type: string
+                    example: Bach Dang
+                address:
+                    type: string
+                    example: 107
+                roleId:
+                    type: number
+                    example: 2
+                updatedAt:
+                    type: string
+                    format: date-time
+                    example: "2024-02-07T08:08:44.032Z"
+                createdAt:
+                    type: string
+                    format: date-time
+                    example: "2024-02-07T08:08:44.032Z"
+        NewSeller:
+            type: object
+            properties:
+                email:
+                    type: string
+                    example: tldevseller@gmail.com
+                password:
+                    type: string
+                    example: T12345678
+                fullName:
+                    type: string
+                    example: Test Seller
+                phone:
+                    type: string
+                    example: "0888888776"
+                provinceCode:
+                    type: string
+                    example: "48"
+                districtCode:
+                    type: string
+                    example: "492"
+                wardCode:
+                    type: string
+                    example: "20236"
+                street:
+                    type: string
+                    example: Bach Dang
+                address:
+                    type: string
+                    example: "107"
+            required:
+              - "email"
+              - "password"
+              - "fullName"
+              - "phone"
+              - "provinceCode"
+              - "districtCode"
+              - "wardCode"
+              - "street"
+        UserBody:
+            type: object
+            properties:
+                email:
+                    type: string
+                    example: tldevuser@gmail.com
+                password:
+                    type: string
+                    example: T12345678
+            required:
+              - "email"
+              - "password"
+        UserProfile:
+            type: object
+            properties:
+                userId:
+                    type: number
+                    example: 2
+                fullName:
+                    type: string
+                    example: "Le Nhat Trinh"
+                email:
+                    type: string
+                    example: "mail.tldev@gmail.com"
+                phone:
+                    type: string
+                    example: "0899619252"
+                avatar:
+                    type: string
+                    example: null
+                street:
+                    type: string
+                    example: "Bach Dang"
+                address:
+                    type: string
+                    example: "107"
+                status:
+                    type: boolean
+                    example: true
+                createdAt:
+                    type: string
+                    format: date-time
+                    example: "2024-01-31T08:00:12.000Z"
+                updatedAt:
+                    type: string
+                    format: date-time
+                    example: "2024-02-09T05:10:01.000Z"
+                role:
+                    type: object
+                    properties:
+                        roleId:
+                            type: number
+                            example: 2
+                        roleName:
+                            type: string
+                            example: "Seller"
+                ward:
+                    type: object
+                    properties:
+                        wardCode:
+                            type: string
+                            example: "20236"
+                        fullNameEn:
+                            type: string
+                            example: "Hai Chau I Ward"
+                province:
+                    type: object
+                    properties:
+                        provinceCode:
+                            type: string
+                            example: "48"
+                        fullNameEn:
+                            type: string
+                            example: "Da Nang City"
+                district:
+                    type: object
+                    properties:
+                        districtCode:
+                            type: string
+                            example: "492"
+                        fullNameEn:
+                            type: string
+                            example: "Hai Chau District"
+        PropertyOfSeller:
+            type: object
+            properties:
+                propertyId:
+                    type: number
+                    example: 1
+                name:
+                    type: string
+                    example: Apartment for sale at Alphanam Luxury Apartment Danang
+                code:
+                    type: string
+                    example: A1293
+                price:
+                    type: number
+                    format: decimal(10,2)
+                    example: 230000.0
+                currencyCode:
+                    type: string
+                    example: USD
+                status:
+                    type: boolean
+                    example: true
+                landArea:
+                    type: number
+                    format: decimal(10,2)
+                    example: 100.0
+                areaOfUse:
+                    type: number
+                    format: decimal(10,2)
+                    example: 100.0
+                numberOfBedRoom:
+                    type: number
+                    example: 2
+                numberOfToilet:
+                    type: number
+                    example: 2
+                numberOfFloor:
+                    type: number
+                    example: 25
+                direction:
+                    type: string
+                    example: West
+                description:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                    example: 2024-01-23T05:52:44.000Z
+                updatedAt:
+                    type: string
+                    format: date-time
+                    example: 2024-01-23T05:52:44.000Z
+                feature:
+                    type: object
+                    properties:
+                        featureId:
+                            type: number
+                            example: 1
+                        name:
+                            type: string
+                            example: Sale
+                category:
+                    type: object
+                    properties:
+                        categoryId:
+                            type: number
+                            example: 2
+                        name:
+                            type: string
+                            example: House
+                location:
+                    type: object
+                    properties:
+                        locationId:
+                            type: number
+                            example: 2
+                        wardCode:
+                            type: string
+                            example: 20275
+                        districtCode:
+                            type: string
+                            example: 494
+                        provinceCode:
+                            type: string
+                            example: 48
+                        street:
+                            type: string
+                            example: Vo Nguyen Giap
+                        address:
+                            type: string
+                            example: 100 Vo Nguyen Giap
+                images:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            imageId:
+                                type: number
+                                example: 10
+                            imageUrl:
+                                type: string
+                                example: https://toanhuyhoang.com/wp-content/uploads/2023/09/z4961049532378_ad7a21ff4f9720289b0e09ce80cb0e2b.jpg
+        NewPropertyBody:
+            properties:
+                name:
+                    type: string
+                    example: "Boutique Hotel For Sale - 7 Suite Room in Son Tra District, Beach Area"
+                code:
+                    type: string
+                    example: KS04
+                featureId:
+                    type: number
+                    example: 1
+                categoryId:
+                    type: number
+                    example: 5
+                provinceCode:
+                    type: string
+                    example: 48
+                districtCode:
+                    type: string
+                    example: 493
+                wardCode:
+                    type: string
+                    example: 20272
+                street:
+                    type: string
+                    example: Ho Nghinh
+                address:
+                    type: string
+                    example: Ho Nghinh
+                price:
+                    type: number
+                    example: 430000
+                currencyCode:
+                    type: string
+                    example: USD
+                landArea:
+                    type: string
+                    example: 92.5
+                areaOfUse:
+                    type: string
+                    example: 92.5
+                numberOfBedRoom:
+                    type: number
+                    example: 7
+                    description: Number of bedrooms in the Boutique Hotel
+                numberOfToilet:
+                    type: number
+                    example: 8
+                numberOfFloor:
+                    type: number
+                    example: 5
+                direction:
+                    type: string
+                    example: West
+                description:
+                    type: string
+                    example: Boutique Hotel For Sale Bedroom House for sale in An Hai Bac, Da Nang
+                images:
+                    type: array
+                    example: ["link1", "link2"]
+                    items:
+                        type: string
+                        description: Link to images of the Boutique Hotel
+            required:
+                - "name"
+                - "code"
+                - "featureId"
+                - "categoryId"
+                - "provinceCode"
+                - "districtCode"
+                - "wardCode"
+                - "street"
+                - "price"
+                - "currencyCode"
+                - "numberOfBedRoom"
+                - "numberOfToilet"
+                - "numberOfFloor"
+                - "images"
+        NewPropertyResponse:
+            type: object
+            properties:
+                status:
+                    type: boolean
+                    example: true
+                propertyId:
+                    type: number
+                    example: 24
+                name:
+                    type: string
+                    example: Boutique Hotel For Sale - 7 Suite Room in Son Tra District, Beach Area
+                code:
+                    type: string
+                    example: KS04
+                featureId:
+                    type: number
+                    example: 1
+                categoryId:
+                    type: number
+                    example: 5
+                price:
+                    type: number
+                    format: decimal(10,2)
+                    example: 430000.0
+                currencyCode:
+                    type: string
+                    example: USD
+                landArea:
+                    type: number
+                    format: decimal(10,2)
+                    example: 92.5
+                areaOfUse:
+                    type: number
+                    format: decimal(10,2)
+                    example: 92.5
+                numberOfBedRoom:
+                    type: number
+                    example: 7
+                numberOfToilet:
+                    type: number
+                    example: 8
+                numberOfFloor:
+                    type: number
+                    example: 5
+                direction:
+                    type: string
+                    example: West
+                description:
+                    type: string
+                    example: Boutique Hotel For Sale Bedroom House for sale in An Hai Bac, Da Nang
+                locationId:
+                    type: number
+                    example: 24
+                    description: ID of the location of the property
+                userId:
+                    type: number
+                    example: 2
+                updatedAt:
+                    type: string
+                    format: date-time
+                    example: 2024-02-10T03:20:55.544Z
+                createdAt:
+                    type: string
+                    format: date-time
+                    example: 2024-02-10T03:20:55.544Z
+                images:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            imageId:
+                                type: number
+                                example: 211
+                            propertyId:
+                                type: number
+                                example: 24
+                            imageUrl:
+                                type: string
+                                example: link1
+                            updatedAt:
+                                type: string
+                                example: 2024-02-10T03:20:55.557Z
+                            createdAt:
+                                type: string
+                                example: 2024-02-10T03:20:55.557Z
+        NewContactBody:
+            type: object
+            properties:
+                propertyId:
+                    type: number
+                    example: 4
+                sellerId:
+                    type: number
+                    example: 2
+                name:
+                    type: string
+                    example: Le Khach Hang
+                email:
+                    type: string
+                    example: avs73ltqb@gmail.com
+                phone:
+                    type: string
+                    example: 0899619250
+                message:
+                    type: string
+                    example: I want to rent your property!
+            required:
+                -   "propertyId"
+                -   "sellerId"
+                -   "name"
+                -   "email"
+                -   "phone"
+                -   "message"
+        NewContactResponse:
+            type: object
+            properties:
+                contactId:
+                    type: number
+                    example: 1
+                propertyId:
+                    type: number
+                    example: 4
+                sellerId:
+                    type: number
+                    example: 2
+                name:
+                    type: string
+                    example: Le Khach Hang
+                email:
+                    type: string
+                    example: avs73ltqb@gmail.com
+                phone:
+                    type: string
+                    example: 0899619250
+                message:
+                    type: string
+                    example: I want to rent your property!
+                updatedAt:
+                    type: string
+                    format: date-time
+                    example: 2024-02-10T03:20:55.544Z
+                createdAt:
+                    type: string
+                    format: date-time
+                    example: 2024-02-10T03:20:55.544Z
+    securitySchemes:
+        bearerAuth:
+            type: http
+            scheme: bearer
+            bearerFormat: JWT

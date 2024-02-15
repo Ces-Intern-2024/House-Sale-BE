@@ -122,7 +122,7 @@ const refreshTokens = async (refreshToken) => {
 
     const removedTokens = await tokenRepo.removeTokensByTokenId(tokenId)
     if (!removedTokens) {
-        throw new BadRequestError('Error ocurred when logout!')
+        throw new BadRequestError('Error ocurred when remove tokens!')
     }
 
     const newTokens = await generateAuthTokens(userId)
@@ -212,12 +212,7 @@ const registerSeller = async (userBody) => {
         await db.Users.destroy({ where: { userId } })
         throw new BadRequestError('Failed creating tokens')
     }
-
-    const userInfo = {
-        userId: newUser.userId,
-        email: newUser.email,
-        fullName: newUser.fullName
-    }
+    const { password: privateInfo, ...userInfo } = newUser.dataValues
 
     return { newSeller: userInfo, tokens }
 }
@@ -245,14 +240,9 @@ const registerUser = async (userBody) => {
         await db.Users.destroy({ where: { userId } })
         throw new BadRequestError('Failed creating tokens')
     }
+    const { password: privateInfo, ...userInfo } = newUser.dataValues
 
-    const userInfo = {
-        userId: newUser.userId,
-        email: newUser.email,
-        fullName: newUser.fullName
-    }
-
-    return { newUser: userInfo, tokens }
+    return { newSeller: userInfo, tokens }
 }
 
 module.exports = {
