@@ -17,12 +17,8 @@ router.get('/checkAuth', (req, res) => {
 })
 router.post('/logout', validate(userValidation.logout), asyncHandler(userController.logout))
 router.post('/change-password', validate(userValidation.changePassword), asyncHandler(userController.changePassword))
-router.post(
-    '/change-phone-number',
-    validate(userValidation.changePhoneNumber),
-    asyncHandler(userController.changePhoneNumber)
-)
 router.get('/profile', asyncHandler(userController.getProfile))
+router.patch('/profile', validate(userValidation.updateProfile), asyncHandler(userController.updateProfile))
 router.post('/update-avatar', validate(userValidation.updateAvatar), asyncHandler(userController.updateAvatar))
 
 module.exports = router
