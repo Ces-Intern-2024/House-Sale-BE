@@ -11,7 +11,7 @@ const commonUserProfileScope = [
     }
 ]
 
-const commonExcludeAttributes = ['roleId', 'password', 'wardCode', 'districtCode', 'provinceCode']
+const commonExcludeAttributes = ['roleId', 'password']
 
 /**
  * Get user profile

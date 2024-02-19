@@ -1,6 +1,6 @@
 const { Op } = require('sequelize')
 const db = require('..')
-const { BadRequestError } = require('../../core/error.response')
+const { BadRequestError, NotFoundError } = require('../../core/error.response')
 const { mapAndTransformProperties, transformPropertyData, isValidKeyOfModel } = require('../../utils')
 
 const propertyScopes = {
@@ -213,7 +213,7 @@ const updateProperty = async ({ propertyId, userId, updatedData }) => {
         where: { propertyId, userId }
     })
     if (!property) {
-        throw new BadRequestError('This property is not available now. Please try another property!')
+        throw new NotFoundError('This property is not available now. Please try another property!')
     }
 
     const updatedProperty = await db.Properties.update(updatedData, { where: { propertyId, userId } })
@@ -224,7 +224,18 @@ const updateProperty = async ({ propertyId, userId, updatedData }) => {
     return updatedProperty[0]
 }
 
+const deleteProperty = async ({ propertyId, userId }) => {
+    const property = await db.Properties.findOne({
+        where: { propertyId, userId }
+    })
+    if (!property) throw new NotFoundError('This property is not available now. Please try another property!')
+
+    const deleted = await db.Locations.destroy({ where: { locationId: property.locationId } })
+    if (!deleted) throw new BadRequestError('Failed to delete property')
+}
+
 module.exports = {
+    deleteProperty,
     updateProperty,
     createNewProperty,
     getPropertyBySeller,
