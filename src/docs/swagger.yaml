@@ -6,12 +6,110 @@ servers:
     -   url: http://localhost:3000/v1/api
     -   url: https://housesale.tldev.id.vn/v1/api
 tags:
+    -   name: Feature
+    -   name: Category
     -   name: Property
     -   name: User
     -   name: Location
     -   name: Seller
     -   name: Contact
 paths:
+    /features:
+        get:
+            tags:
+                - Feature
+            summary: Get all features
+            description: Get all features
+            operationId: getAllFeatures
+            responses:
+                '200':
+                    description: Get list features success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Get list features success!
+                                    metaData:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                featureId:
+                                                    type: number
+                                                    example: 1
+                                                name:
+                                                    type: string
+                                                    example: Sale
+                '400':
+                    description: Error occurred when get all features
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Error occurred when get all features
+    /categories:
+        get:
+            tags:
+                - Category
+            summary: Get all categories
+            description: Get all categories
+            operationId: getAllCategories
+            responses:
+                '200':
+                    description: Get list categories success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Get list categories success!
+                                    metaData:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                categoryId:
+                                                    type: number
+                                                    example: 1
+                                                name:
+                                                    type: string
+                                                    example: Apartment
+                '400':
+                    description: Error occurred when get all categories
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Error occurred when get all categories
     /properties:
         get:
             tags:
