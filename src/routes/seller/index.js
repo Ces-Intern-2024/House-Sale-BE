@@ -29,5 +29,10 @@ router.patch(
     validate(propertyValidation.updateProperty),
     asyncHandler(sellerController.updateProperty)
 )
+router.delete(
+    '/properties/:propertyId',
+    validate(propertyValidation.deleteProperty),
+    asyncHandler(sellerController.deleteProperty)
+)
 
 module.exports = router

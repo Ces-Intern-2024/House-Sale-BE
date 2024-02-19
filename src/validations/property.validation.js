@@ -75,7 +75,14 @@ const updateProperty = {
     })
 }
 
+const deleteProperty = {
+    params: Joi.object().required().keys({
+        propertyId: Joi.number().required()
+    })
+}
+
 module.exports = {
+    deleteProperty,
     updateProperty,
     createNewProperty,
     getProperty,

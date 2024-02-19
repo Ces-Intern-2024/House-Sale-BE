@@ -1,6 +1,17 @@
 const { propertyRepo } = require('../models/repo')
 
 /**
+ * Delete property of seller by propertyId, sellerId
+ * @param {*} param0
+ * @param {id} propertyId - id of property
+ * @param {id} userId - id of seller
+ * @returns {Promise<boolean>}
+ */
+const deleteProperty = async ({ propertyId, userId }) => {
+    return propertyRepo.deleteProperty({ propertyId, userId })
+}
+
+/**
  * Update property of seller by sellerId, propertyId
  * @param {Object} params
  * @param {id} params.propertyId
@@ -35,6 +46,7 @@ const getAllProperties = async ({ options, sellerId }) => {
 }
 
 module.exports = {
+    deleteProperty,
     updateProperty,
     getProperty,
     getAllProperties

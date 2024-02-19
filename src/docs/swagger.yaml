@@ -1423,6 +1423,141 @@ paths:
                                                 example: This property of seller is not available now. Please try another property!
             security:
               - bearerAuth: []
+        patch:
+            tags:
+            -   Seller
+            summary: Update property by ID
+            description: Update a property
+            operationId: updateProperty
+            parameters:
+            -   name: propertyId
+                in: path
+                description: ID of property to update
+                required: true
+                schema:
+                    type: number
+                    example: 31
+            requestBody:
+                content:
+                  application/json:
+                    schema:
+                        $ref: '#/components/schemas/UpdatePropertyBody'
+            responses:
+                '200':
+                    description: Update property success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Your property had been updated successfully!
+                                    metaData:
+                                        type: string
+                                        example: 1
+                '400':
+                    description: Failed to update property
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to update property
+                '404':
+                    description: Invalid propertyId.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: This property is not available now. Please try another property!
+            security:
+              - bearerAuth: []
+        delete:
+            tags:
+            -   Seller
+            summary: Delete property by ID
+            description: Delete a property
+            operationId: deleteProperty
+            parameters:
+            -   name: propertyId
+                in: path
+                description: ID of property to delete
+                required: true
+                schema:
+                    type: number
+                    example: 31
+            responses:
+                '200':
+                    description: Delete property success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Your property had been deleted successfully!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Failed to delete property
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to delete property
+                '404':
+                    description: Invalid propertyId.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: This property is not available now. Please try another property!
+            security:
+              - bearerAuth: []
     /contact:
         post:
             tags:
@@ -2107,6 +2242,36 @@ components:
                             createdAt:
                                 type: string
                                 example: 2024-02-10T03:20:55.557Z
+        UpdatePropertyBody:
+            type: object
+            properties:
+                name:
+                    type: string
+                    example: "Boutique Hotel For Sale - 7 Suite Room in Son Tra District, Beach Area"
+                code:
+                    type: string
+                    example: CODE99
+                status:
+                    type: boolean
+                    example: false
+                landArea:
+                    type: number
+                    format: decimal(10,2)
+                    example: 92.5
+                areaOfUse:
+                    type: number
+                    format: decimal(10,2)
+                    example: 92.5
+                price:
+                    type: number
+                    format: decimal(10,2)
+                    example: 460000.0
+                direction:
+                    type: string
+                    example: West
+                description:
+                    type: string
+                    example: New description
         NewContactBody:
             type: object
             properties:
