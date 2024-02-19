@@ -805,93 +805,6 @@ paths:
                                                 example: Not found user
             security:
                 - bearerAuth: []
-    /user/change-phone-number:
-        post:
-            tags:
-                - User
-            summary: Change user phone number
-            description: Change user phone number
-            operationId: changePhoneNumber
-            requestBody:
-                description: new phone number
-                content:
-                    application/json:
-                        schema:
-                            type: object
-                            properties:
-                                newPhoneNumber:
-                                    type: string
-                                    example: 0899619252
-                            required:
-                              - "newPhoneNumber"
-                required: true
-            responses:
-                '200':
-                    description: Your phone number has been changed successfully!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    status:
-                                        type: number
-                                        example: 200
-                                    message:
-                                        type: string
-                                        example: Your phone number has been changed successfully!
-                                    metaData:
-                                        type: object
-                                        example: {}
-                '400':
-                    description: Failed update phone number or new phone number cannot be same as your current phone number
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 400
-                                            message:
-                                                type: string
-                                                example: New phone number cannot be same as your current phone number!
-                '401':
-                    description: Unauthorized
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 401
-                                            message:
-                                                type: string
-                                                example:  Please Authenticate!
-                '404':
-                    description: Not found user
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 404
-                                            message:
-                                                type: string
-                                                example: Not found user
-            security:
-                - bearerAuth: []
     /user/profile:
         get:
             tags:
@@ -915,6 +828,84 @@ paths:
                                         example:  Get your profile successfully!
                                     metaData:
                                         $ref: '#/components/schemas/UserProfile'
+                '401':
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Please Authenticate!
+                '404':
+                    description: User profile not found or User not found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: User profile not found!
+            security:
+              - bearerAuth: []
+        patch:
+            tags:
+            -   User
+            summary: Update user profile  by ID
+            description: Update a user profile
+            operationId: updateProfile
+            requestBody:
+                content:
+                  application/json:
+                    schema:
+                        $ref: '#/components/schemas/UpdateUserProfile'
+            responses:
+                '200':
+                    description: Your profile had been changed successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Your profile had been changed successfully!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Failed update phone number or new phone number cannot be same as your current phone number or Invalid location provided.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: New phone number cannot be same as your current phone number!
                 '401':
                     description: Unauthorized
                     content:
@@ -1334,7 +1325,6 @@ paths:
                                                 example: This property of seller is not available now. Please try another property!
             security:
               - bearerAuth: []
-
     /contact:
         post:
             tags:
@@ -1856,10 +1846,19 @@ components:
                     example: KS04
                 featureId:
                     type: number
+                    enum:
+                      - 1
+                      - 2
                     example: 1
                 categoryId:
                     type: number
-                    example: 5
+                    enum:
+                      - 1
+                      - 2
+                      - 3
+                      - 4
+                      - 5
+                    example: 2
                 provinceCode:
                     type: string
                     example: 48
@@ -2070,6 +2069,30 @@ components:
                     type: string
                     format: date-time
                     example: 2024-02-10T03:20:55.544Z
+        UpdateUserProfile:
+            type: object
+            properties:
+                fullName:
+                    type: string
+                    example: "Le Nhat Trinh"
+                phone:
+                    type: string
+                    example: "0899619252"
+                provinceCode:
+                    type: string
+                    example: "48"
+                districtCode:
+                    type: string
+                    example: "492"
+                wardCode:
+                    type: string
+                    example: "20236"
+                street:
+                    type: string
+                    example: "Bach Dang"
+                address:
+                    type: string
+                    example: "107"
     securitySchemes:
         bearerAuth:
             type: http

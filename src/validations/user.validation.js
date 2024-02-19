@@ -54,15 +54,18 @@ const changePassword = {
     })
 }
 
-const changePhoneNumber = {
-    body: Joi.object()
-        .required()
-        .keys({
-            newPhoneNumber: Joi.string()
-                .regex(/^[0-9]{10}$/)
-                .messages({ 'string.pattern.base': `Phone number must have 10 digits.` })
-                .required()
-        })
+const updateProfile = {
+    body: Joi.object().keys({
+        fullName: Joi.string(),
+        phone: Joi.string()
+            .regex(/^[0-9]{10}$/)
+            .messages({ 'string.pattern.base': `Phone number must have 10 digits.` }),
+        provinceCode: Joi.string(),
+        districtCode: Joi.string(),
+        wardCode: Joi.string(),
+        street: Joi.string(),
+        address: Joi.string()
+    })
 }
 
 const updateAvatar = {
@@ -78,6 +81,6 @@ module.exports = {
     logout,
     refreshToken,
     changePassword,
-    changePhoneNumber,
+    updateProfile,
     updateAvatar
 }

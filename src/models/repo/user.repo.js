@@ -8,24 +8,6 @@ const commonUserProfileScope = [
         as: 'role',
         attributes: ['roleId', 'roleName'],
         required: true
-    },
-    {
-        model: db.Wards,
-        as: 'ward',
-        attributes: ['wardCode', 'fullNameEn'],
-        required: true
-    },
-    {
-        model: db.Provinces,
-        as: 'province',
-        attributes: ['provinceCode', 'fullNameEn'],
-        required: true
-    },
-    {
-        model: db.Districts,
-        as: 'district',
-        attributes: ['districtCode', 'fullNameEn'],
-        required: true
     }
 ]
 
@@ -104,11 +86,11 @@ const isEmailTaken = async (email) => {
 }
 
 /**
- * Check if user input information is valid
+ * Check if location is valid
  * @param {Object} userBody
  * @returns {Promise<boolean>}
  */
-const isValidUserInformation = async (userBody) => {
+const isValidLocation = async (userBody) => {
     try {
         const { provinceCode, districtCode, wardCode } = userBody
         const validKeys = await Promise.all([
@@ -128,5 +110,5 @@ module.exports = {
     getUserById,
     getUserByEmail,
     isEmailTaken,
-    isValidUserInformation
+    isValidLocation
 }

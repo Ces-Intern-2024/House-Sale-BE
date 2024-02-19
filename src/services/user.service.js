@@ -27,6 +27,48 @@ const updateAvatar = async ({ userId, imageUrl }) => {
 }
 
 /**
+ * Update user's profile
+ * @param {Object} params
+ * @param {id} userId
+ * @param {string} information - user's profile information
+ * @returns {Promise<boolean>}
+ */
+const updateProfile = async ({ userId, information }) => {
+    const { phone: newPhoneNumber, provinceCode, districtCode, wardCode } = information
+    const user = await userRepo.getUserById(userId)
+    if (!user) {
+        throw new NotFoundError('User not found')
+    }
+
+    if (newPhoneNumber && newPhoneNumber === user.phone) {
+        throw new BadRequestError(
+            'New phone number cannot be same as your current phone number. Please choose a different phone number.'
+        )
+    }
+
+    if (provinceCode && districtCode && wardCode) {
+        const validLocation = await userRepo.isValidLocation({ provinceCode, districtCode, wardCode })
+        if (!validLocation) {
+            throw new BadRequestError(
+                'Invalid location provided. Valid location contains valid provinceCode, districtCode, wardCode.'
+            )
+        }
+    } else {
+        const locationProvided = [provinceCode, districtCode, wardCode].filter(Boolean).length
+        if (locationProvided > 0 && locationProvided < 3) {
+            throw new BadRequestError(
+                'Complete address information required. You must provide provinceCode, districtCode, and wardCode together.'
+            )
+        }
+    }
+
+    const [affectedRows] = await db.Users.update(information, { where: { userId } })
+    if (affectedRows === 0) {
+        throw new BadRequestError('Update your profile failed')
+    }
+}
+
+/**
  * Get user profile and throw error if not found user
  * @param {id} userId
  * @returns {Promise<User>}
@@ -43,31 +85,6 @@ const getProfile = async (userId) => {
     }
 
     return userProfile
-}
-
-/**
- * Change the user's phone number and throw an error if it's the same as the old phone number.
- * @param {Object} params
- * @param {string} params.userId
- * @param {string} params.newPhoneNumber - The new phone number to set.
- * @throws {BadRequestError} - Throws error if the user is not found, or if the new phone number is the same as the old one.
- */
-const changePhoneNumber = async ({ userId, newPhoneNumber }) => {
-    const user = await userRepo.getUserById(userId)
-    if (!user) {
-        throw new BadRequestError('Not found user')
-    }
-
-    if (newPhoneNumber === user.phone) {
-        throw new BadRequestError(
-            'New phone number cannot be same as your current phone number. Please choose a different phone number.'
-        )
-    }
-
-    const updatedUser = await user.update({ phone: newPhoneNumber })
-    if (!updatedUser) {
-        throw new BadRequestError('Failed update phone number')
-    }
 }
 
 /**
@@ -196,7 +213,7 @@ const registerSeller = async (userBody) => {
         throw new BadRequestError('Seller already exists! Please register with another email.')
     }
 
-    if (!(await userRepo.isValidUserInformation(userBody))) {
+    if (!(await userRepo.isValidLocation(userBody))) {
         throw new BadRequestError('Seller information not valid.')
     }
 
@@ -247,8 +264,8 @@ const registerUser = async (userBody) => {
 
 module.exports = {
     updateAvatar,
+    updateProfile,
     getProfile,
-    changePhoneNumber,
     refreshTokens,
     logout,
     login,

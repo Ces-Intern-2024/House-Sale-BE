@@ -10,21 +10,21 @@ const updateAvatar = async (req, res) => {
     }).send(res)
 }
 
+const updateProfile = async (req, res) => {
+    const userId = req.user?.userId
+    const information = req.body
+    await userService.updateProfile({ userId, information })
+    new OK({
+        message: 'Your profile had been changed successfully!'
+    }).send(res)
+}
+
 const getProfile = async (req, res) => {
     const userId = req.user?.userId
     const profile = await userService.getProfile(userId)
     new OK({
         message: 'Get your profile successfully!',
         metaData: profile
-    }).send(res)
-}
-
-const changePhoneNumber = async (req, res) => {
-    const userId = req.user?.userId
-    const { newPhoneNumber } = req.body
-    await userService.changePhoneNumber({ userId, newPhoneNumber })
-    new OK({
-        message: 'Your phone number has been changed successfully!'
     }).send(res)
 }
 
@@ -81,8 +81,8 @@ const registerUser = async (req, res) => {
 
 module.exports = {
     updateAvatar,
+    updateProfile,
     getProfile,
-    changePhoneNumber,
     changePassword,
     refreshTokens,
     logout,
