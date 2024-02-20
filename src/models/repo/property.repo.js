@@ -235,6 +235,10 @@ const deleteProperty = async ({ propertyId, userId }) => {
 }
 
 module.exports = {
+    propertyScopes,
+    userScopes,
+    sellerScopes,
+    getScopesArray,
     deleteProperty,
     updateProperty,
     createNewProperty,

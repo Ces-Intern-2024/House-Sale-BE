@@ -2,7 +2,7 @@ const express = require('express')
 
 const router = express.Router()
 
-router.use('/v1/api/favorites-list', require('./favoriteslist'))
+router.use('/v1/api/favorites-list', require('./favoriteProperty'))
 router.use('/v1/api/contact', require('./contact'))
 router.use('/v1/api/seller', require('./seller'))
 router.use('/v1/api/location', require('./location'))
