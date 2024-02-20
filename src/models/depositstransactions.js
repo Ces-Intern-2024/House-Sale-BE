@@ -1,14 +1,16 @@
 const { Model } = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
-    class Payments extends Model {
+    class DepositsTransactions extends Model {
         static associate(models) {
-            Payments.belongsTo(models.Users, { foreignKey: 'userId' })
+            DepositsTransactions.belongsTo(models.Users, {
+                foreignKey: 'userId'
+            })
         }
     }
-    Payments.init(
+    DepositsTransactions.init(
         {
-            paymentId: {
+            transactionId: {
                 type: DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true,
@@ -16,20 +18,23 @@ module.exports = (sequelize, DataTypes) => {
             },
             userId: {
                 type: DataTypes.INTEGER,
+                allowNull: false,
                 references: {
                     model: 'Users',
                     key: 'userId'
-                }
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE'
             },
             amount: {
-                type: DataTypes.DECIMAL,
-                allowNull: true
+                type: DataTypes.DECIMAL(10, 2),
+                allowNull: false
             }
         },
         {
             sequelize,
-            modelName: 'Payments'
+            modelName: 'DepositsTransactions'
         }
     )
-    return Payments
+    return DepositsTransactions
 }

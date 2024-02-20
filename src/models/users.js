@@ -5,13 +5,14 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             Users.belongsTo(models.Roles, { foreignKey: 'roleId', as: 'role' })
             Users.hasMany(models.Properties, { foreignKey: 'userId' })
-            Users.hasMany(models.Payments, { foreignKey: 'userId' })
             Users.hasMany(models.FavoriteProperties, { foreignKey: 'userId', as: 'favoritesList' })
             Users.belongsTo(models.Wards, { foreignKey: 'wardCode', as: 'ward' })
             Users.belongsTo(models.Districts, { foreignKey: 'districtCode', as: 'district' })
             Users.belongsTo(models.Provinces, { foreignKey: 'provinceCode', as: 'province' })
             Users.hasMany(models.Tokens, { foreignKey: 'userId' })
             Users.hasMany(models.Contacts, { foreignKey: 'sellerId' })
+            Users.hasMany(models.DepositsTransactions, { foreignKey: 'userId' })
+            Users.hasMany(models.ExpenseTransactions, { foreignKey: 'userId' })
         }
     }
     Users.init(
@@ -87,6 +88,10 @@ module.exports = (sequelize, DataTypes) => {
             status: {
                 type: DataTypes.BOOLEAN,
                 defaultValue: true
+            },
+            balance: {
+                type: DataTypes.DECIMAL(10, 2),
+                allowNull: true
             }
         },
         {
