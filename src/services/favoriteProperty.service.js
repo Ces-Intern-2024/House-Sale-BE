@@ -1,6 +1,20 @@
 const { BadRequestError, NotFoundError } = require('../core/error.response')
 const db = require('../models')
-const { userRepo } = require('../models/repo')
+const { userRepo, favoritePropertiesRepo } = require('../models/repo')
+
+/**
+ * Get the list of favorite properties of user
+ * @param {id} userId - The id of user
+ * @returns {Promise<[Properties]>}
+ */
+const getFavoritesList = async (userId) => {
+    const user = await userRepo.getUserById(userId)
+    if (!user) {
+        throw new NotFoundError('User not found')
+    }
+
+    return favoritePropertiesRepo.getFavoritesListByUser(userId)
+}
 
 /**
  * Add new property to favorites list
@@ -34,5 +48,6 @@ const updateFavoriteProperty = async ({ userId, propertyId }) => {
 }
 
 module.exports = {
+    getFavoritesList,
     updateFavoriteProperty
 }

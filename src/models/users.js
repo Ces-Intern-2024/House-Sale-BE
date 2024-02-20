@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             Users.belongsTo(models.Roles, { foreignKey: 'roleId', as: 'role' })
             Users.hasMany(models.Properties, { foreignKey: 'userId' })
             Users.hasMany(models.Payments, { foreignKey: 'userId' })
-            Users.hasMany(models.Properties, { foreignKey: 'userId' })
+            Users.hasMany(models.FavoriteProperties, { foreignKey: 'userId', as: 'favoritesList' })
             Users.belongsTo(models.Wards, { foreignKey: 'wardCode', as: 'ward' })
             Users.belongsTo(models.Districts, { foreignKey: 'districtCode', as: 'district' })
             Users.belongsTo(models.Provinces, { foreignKey: 'provinceCode', as: 'province' })
