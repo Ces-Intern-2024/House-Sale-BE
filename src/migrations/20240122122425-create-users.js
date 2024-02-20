@@ -75,6 +75,10 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: true
             },
+            balance: {
+                type: Sequelize.DECIMAL(10, 2),
+                allowNull: true
+            },
             createdAt: {
                 allowNull: false,
                 type: 'TIMESTAMP',
