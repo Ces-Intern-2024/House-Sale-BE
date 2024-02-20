@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
             Properties.belongsTo(models.Locations, { foreignKey: 'locationId', as: 'location' })
             Properties.belongsTo(models.Users, { foreignKey: 'userId', as: 'seller' })
             Properties.hasMany(models.Images, { foreignKey: 'propertyId', as: 'images' })
-            Properties.belongsToMany(models.Users, { through: 'FavoriteProperties' })
+            Properties.belongsTo(models.FavoriteProperties, { foreignKey: 'propertyId' })
             Properties.hasMany(models.Contacts, { foreignKey: 'propertyId' })
         }
     }
