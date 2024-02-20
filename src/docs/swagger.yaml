@@ -13,6 +13,7 @@ tags:
     -   name: Location
     -   name: Seller
     -   name: Contact
+    -   name: Favorites List
 paths:
     /features:
         get:
@@ -1603,7 +1604,91 @@ paths:
                                             message:
                                                 type: string
                                                 example: This property is not available now. Please try another property!
-
+    /favorites-list:
+        post:
+            tags:
+                - "Favorites List"
+            summary: Update user's favorites list
+            description: Update user's favorites list
+            operationId: updateFavoritesProperty
+            requestBody:
+                content:
+                  application/json:
+                    schema:
+                        type: object
+                        properties:
+                            propertyId:
+                                type: number
+                                example: 15
+                        required:
+                          - "propertyId"
+            responses:
+                '200':
+                    description: Your favorites list had been updated successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Your favorites list had been updated successfully!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Error occurred when add new property to your favorites list!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Error occurred when add new property to your favorites list!
+                '401':
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Please Authenticate!
+                '404':
+                    description: User not found or Property not found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: This property is not available now. Please try another property!
+            security:
+                - bearerAuth: []
 components:
     schemas:
         Property:
