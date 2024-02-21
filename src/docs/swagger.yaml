@@ -14,6 +14,7 @@ tags:
     -   name: Seller
     -   name: Contact
     -   name: Favorite Property
+    -   name: Transaction
 paths:
     /features:
         get:
@@ -1776,6 +1777,76 @@ paths:
                                             message:
                                                 type: string
                                                 example: User not found
+            security:
+                - bearerAuth: []
+    /transaction/deposit:
+        post:
+            tags:
+                - Transaction
+            summary: Deposit money to user's balance
+            description: Deposit money to user's balance
+            operationId: depositUserBalance
+            requestBody:
+                content:
+                  application/json:
+                    schema:
+                        type: object
+                        properties:
+                            amount:
+                                type: number
+                                format: decimal(10,2)
+                                example: 50.5
+                        required:
+                          - "amount"
+            responses:
+                '200':
+                    description: Deposit money to user's balance successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Your balance has been added 50.5$ successfully! Your current balance is 603.00$
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Invalid amount, Error occurred when deposit into your balance, Error occurred when updated your balance
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Invalid amount
+                '401':
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Please Authenticate!
             security:
                 - bearerAuth: []
 components:
