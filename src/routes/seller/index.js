@@ -4,6 +4,7 @@ const validate = require('../../middlewares/validate')
 const authentication = require('../../middlewares/authentication')
 const { sellerController } = require('../../controllers')
 const { propertyValidation } = require('../../validations')
+const canCreateNewProperty = require('../../middlewares/canCreateNewProperty')
 
 const router = express.Router()
 
@@ -11,6 +12,7 @@ router.use(authentication('Seller'))
 
 router.post(
     '/properties',
+    canCreateNewProperty,
     validate(propertyValidation.createNewProperty),
     asyncHandler(sellerController.createNewProperty)
 )
