@@ -1,4 +1,4 @@
-const { sellerService, locationService, propertyService, imageService } = require('../services')
+const { sellerService, locationService, propertyService, imageService, transactionService } = require('../services')
 const { OK, Created } = require('../core/success.response')
 
 const deleteProperty = async (req, res) => {
@@ -28,7 +28,7 @@ const updateProperty = async (req, res) => {
 }
 
 const createNewProperty = async (req, res) => {
-    const sellerId = req.user?.userId
+    const userId = req.user?.userId
     const { provinceCode, districtCode, wardCode, street, address, images, ...propertyOptions } = req.body
 
     const newLocation = await locationService.createNewLocation({
@@ -40,9 +40,15 @@ const createNewProperty = async (req, res) => {
     })
 
     const newProperty = await propertyService.createNewProperty({
-        userId: sellerId,
+        userId,
         locationId: newLocation.locationId,
         propertyOptions
+    })
+
+    await transactionService.expenseUserBalance({
+        userId,
+        amount: req.amount,
+        description: `Create new property!. ID: ${newProperty.propertyId}`
     })
 
     const newPropertyImages = await imageService.addImagesToProperty({

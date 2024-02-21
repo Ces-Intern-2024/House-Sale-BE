@@ -1341,7 +1341,7 @@ paths:
             tags:
                 - Seller
             summary: Create new property by seller
-            description: Create new property by seller
+            description: Create new property by seller (if your balance > 20$ to create new property)
             operationId: createNewProperty
             requestBody:
                 content:
@@ -1367,7 +1367,7 @@ paths:
 
 
                 '400':
-                    description: Invalid featureId, categoryId, provinceCode, districtCode, wardCode
+                    description: Not enough money, Invalid featureId, categoryId, provinceCode, districtCode, wardCode
                     content:
                         application/json:
                             schema:
@@ -1381,7 +1381,7 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: This feature is not available yet. Please try again.
+                                                example: Your balance is not enough to create new property. Please refill your balance!
                 '401':
                     description: Unauthorized
                     content:
