@@ -77,7 +77,7 @@ module.exports = {
             },
             balance: {
                 type: Sequelize.DECIMAL(10, 2),
-                allowNull: true
+                defaultValue: 0
             },
             createdAt: {
                 allowNull: false,
