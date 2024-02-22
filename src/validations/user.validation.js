@@ -74,6 +74,13 @@ const updateAvatar = {
     })
 }
 
+const verifyEmail = {
+    params: Joi.object().keys({
+        userId: Joi.string().required(),
+        code: Joi.string().required()
+    })
+}
+
 module.exports = {
     registerUser,
     registerSeller,
@@ -82,5 +89,6 @@ module.exports = {
     refreshToken,
     changePassword,
     updateProfile,
-    updateAvatar
+    updateAvatar,
+    verifyEmail
 }

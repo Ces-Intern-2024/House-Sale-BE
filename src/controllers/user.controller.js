@@ -1,5 +1,13 @@
 const { Created, OK } = require('../core/success.response')
-const { userService } = require('../services')
+const { userService, emailService } = require('../services')
+
+const verifyEmail = async (req, res) => {
+    const { userId, code } = req.params
+    await userService.verifyEmail({ userId, code })
+    new OK({
+        message: 'Your email had been verified successfully!'
+    }).send(res)
+}
 
 const updateAvatar = async (req, res) => {
     const userId = req.user?.userId
@@ -64,10 +72,15 @@ const login = async (req, res) => {
 }
 
 const registerSeller = async (req, res) => {
-    const result = await userService.registerSeller(req.body)
+    const { newSeller: userInfo, tokens } = await userService.registerSeller(req.body)
+    const { email, userId } = userInfo
+    await emailService.sendVerificationEmail({
+        userId,
+        email
+    })
     new Created({
-        message: 'Registration success for new seller!',
-        metaData: result
+        message: 'Registration success for new seller! Please check your email to verify your account!',
+        metaData: { newSeller: userInfo, tokens }
     }).send(res)
 }
 
@@ -80,6 +93,7 @@ const registerUser = async (req, res) => {
 }
 
 module.exports = {
+    verifyEmail,
     updateAvatar,
     updateProfile,
     getProfile,

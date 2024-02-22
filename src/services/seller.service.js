@@ -41,7 +41,7 @@ const getProperty = async ({ propertyId, sellerId }) => {
  * @returns {Promise<Properties>}
  */
 const getAllProperties = async ({ options, sellerId }) => {
-    const { validOptions, queries } = await propertyRepo.validatePropertyOptions(options)
+    const { validOptions, queries } = await propertyRepo.validatePropertyOptions({ propertyOptions: options })
     return propertyRepo.getAllPropertiesBySellerOptions({ validOptions, queries, sellerId })
 }
 

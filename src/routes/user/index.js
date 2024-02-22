@@ -11,6 +11,11 @@ router.post('/register-user', validate(userValidation.registerUser), asyncHandle
 router.post('/register-seller', validate(userValidation.registerSeller), asyncHandler(userController.registerSeller))
 router.post('/login', validate(userValidation.login), asyncHandler(userController.login))
 router.post('/refreshTokens', validate(userValidation.refreshToken), asyncHandler(userController.refreshTokens))
+router.get(
+    '/verify-email/:userId/:code',
+    validate(userValidation.verifyEmail),
+    asyncHandler(userController.verifyEmail)
+)
 router.use(authentication())
 router.get('/checkAuth', (req, res) => {
     res.send('Check Auth Success!')

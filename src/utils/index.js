@@ -1,9 +1,18 @@
 const bcrypt = require('bcrypt')
+const { v4: uuidv4 } = require('uuid')
 const { BadRequestError } = require('../core/error.response')
 
+const ROUNDS_SALT = 10
+
+const generateVerifyEmailCode = async (userId) => {
+    const uniqueCode = uuidv4() + userId
+    const hashVerificationCode = await bcrypt.hash(uniqueCode, ROUNDS_SALT)
+
+    return { uniqueCode, hashVerificationCode }
+}
+
 const hashPassword = async (password) => {
-    const roundsSalt = 10
-    return bcrypt.hash(password, roundsSalt)
+    return bcrypt.hash(password, ROUNDS_SALT)
 }
 
 const isValidKeyOfModel = async (model, key, errorMessage) => {
@@ -48,6 +57,7 @@ const getExistingKeysInObject = (object, keys) => {
 }
 
 module.exports = {
+    generateVerifyEmailCode,
     hashPassword,
     isValidKeyOfModel,
     transformPropertyData,

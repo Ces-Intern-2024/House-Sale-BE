@@ -87,11 +87,15 @@ module.exports = (sequelize, DataTypes) => {
             },
             status: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: true
+                defaultValue: false
             },
             balance: {
                 type: DataTypes.DECIMAL(10, 2),
                 defaultValue: 0
+            },
+            emailVerificationCode: {
+                type: DataTypes.STRING,
+                allowNull: true
             }
         },
         {

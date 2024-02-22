@@ -2,7 +2,7 @@ const { transporter, emailConfig } = require('../config/nodemailer.config')
 const { BadRequestError, FailedDependenciesError } = require('../core/error.response')
 const { userRepo } = require('../models/repo')
 
-const htmlTemplate = ({ propertyId, name, email, phone, message }) => {
+const contactHtmlTemplate = ({ propertyId, name, email, phone, message }) => {
     return `
     <!DOCTYPE html>
     <html lang="en">
@@ -76,6 +76,19 @@ const htmlTemplate = ({ propertyId, name, email, phone, message }) => {
     </html>`
 }
 
+const verifyEmailHtmlTemplate = (verificationEmailUrl) => {
+    return `
+    <html>
+        <body>
+            <h1>Welcome New Seller to HOUSE SALE!</h1>
+            <p>Please click the button below to verify your email address:</p>
+            <a href="${verificationEmailUrl}" style="background-color: #4CAF50; color: white; text-decoration: none; padding: 10px 20px; margin: 15px 0; cursor: pointer; display: inline-block;">Verify Email</a>
+            <p>If you did not sign up for this account, you can ignore this email.</p>
+        </body>
+    </html>
+`
+}
+
 const sendEmail = async ({ to, subject, text, html }) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!to || typeof to !== 'string' || !emailRegex.test(to)) {
@@ -96,7 +109,7 @@ const sendContactEmailToSeller = async (contact) => {
     const { propertyId, name, email, phone, message } = contact
     const subject = `NEW CONTACT FOR YOUR PROPERTY`
     const text = `Your property has been received new contact`
-    const html = htmlTemplate({ propertyId, name, email, phone, message })
+    const html = contactHtmlTemplate({ propertyId, name, email, phone, message })
 
     const info = await sendEmail({ to: sellerEmail, subject, text, html })
     if (!info) {
@@ -106,4 +119,26 @@ const sendContactEmailToSeller = async (contact) => {
     return info
 }
 
-module.exports = { sendContactEmailToSeller }
+const sendVerificationEmail = async ({ userId, email }) => {
+    const emailVerificationCode = await userRepo.generateEmailVerificationCode(userId)
+    if (!emailVerificationCode) {
+        throw new BadRequestError('Error occurred when generate email verification code')
+    }
+
+    const subject = `VERIFY YOUR EMAIL`
+    const text = `Please verify your email address`
+    const verificationEmailUrl = `${emailConfig.prefixVerifyEmailUrl}/${userId}/${emailVerificationCode}`
+    const html = verifyEmailHtmlTemplate(verificationEmailUrl)
+
+    const info = await sendEmail({ to: email, subject, text, html })
+    if (!info) {
+        throw new FailedDependenciesError('Error occurred while sending email')
+    }
+
+    return info
+}
+
+module.exports = {
+    sendVerificationEmail,
+    sendContactEmailToSeller
+}

@@ -1,6 +1,8 @@
 require('dotenv').config
 const nodemailer = require('nodemailer')
 
+const isDevelopment = process.env.NODE_ENV === 'development'
+
 const emailConfig = {
     smtp: {
         host: process.env.SMTP_HOST,
@@ -10,7 +12,10 @@ const emailConfig = {
             pass: process.env.EMAIL_PASSWORD
         }
     },
-    from: process.env.EMAIL_FROM
+    from: process.env.EMAIL_FROM,
+    prefixVerifyEmailUrl: isDevelopment
+        ? process.env.DEV_PREFIX_VERIFY_EMAIL_URL
+        : process.env.PRO_PREFIX_VERIFY_EMAIL_URL
 }
 
 const transporter = nodemailer.createTransport({

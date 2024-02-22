@@ -40,31 +40,33 @@ const sellerScopes = ['feature', 'category', 'location', 'images']
 
 const getScopesArray = (scopes) => scopes.map((scope) => propertyScopes[scope])
 
-const validatePropertyOptions = async ({
-    keyword,
-    featureId,
-    categoryId,
-    provinceCode,
-    districtCode,
-    wardCode,
-    priceFrom,
-    priceTo,
-    landAreaFrom,
-    landAreaTo,
-    areaOfUseFrom,
-    areaOfUseTo,
-    numberOfFloorFrom,
-    numberOfFloorTo,
-    numberOfBedRoomFrom,
-    numberOfBedRoomTo,
-    numberOfToiletFrom,
-    numberOfToiletTo,
-    direction,
-    limit = 10,
-    page = 1,
-    orderBy = 'name',
-    sortBy = 'asc'
-}) => {
+const validatePropertyOptions = async ({ propertyOptions }) => {
+    const {
+        keyword,
+        featureId,
+        categoryId,
+        provinceCode,
+        districtCode,
+        wardCode,
+        priceFrom,
+        priceTo,
+        landAreaFrom,
+        landAreaTo,
+        areaOfUseFrom,
+        areaOfUseTo,
+        numberOfFloorFrom,
+        numberOfFloorTo,
+        numberOfBedRoomFrom,
+        numberOfBedRoomTo,
+        numberOfToiletFrom,
+        numberOfToiletTo,
+        direction,
+        limit = 10,
+        page = 1,
+        orderBy = 'name',
+        sortBy = 'asc'
+    } = propertyOptions
+
     const options = {}
     const queries = { limit, page, sortBy, orderBy }
 
@@ -85,7 +87,7 @@ const validatePropertyOptions = async ({
     }
 
     const validateAndAssignRange = (key, from, to) => {
-        if (from && to) {
+        if (from !== undefined && to !== undefined) {
             options[key] = { [Op.between]: [from, to] }
         }
     }
