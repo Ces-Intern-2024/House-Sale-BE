@@ -1,6 +1,66 @@
+const { Op } = require('sequelize')
 const { BadRequestError, NotFoundError } = require('../core/error.response')
 const db = require('../models')
 const { userRepo } = require('../models/repo')
+
+const defaultDateRange = {
+    fromDateRange: new Date(new Date() - 7 * 24 * 60 * 60 * 1000),
+    toDateRange: new Date()
+}
+
+const getAllTransactions = async ({
+    userId,
+    fromDateRange = defaultDateRange.fromDateRange,
+    toDateRange = defaultDateRange.toDateRange
+}) => {
+    try {
+        const user = await userRepo.getUserById(userId)
+        if (!user) {
+            throw new NotFoundError('User not found')
+        }
+
+        const fromDate = new Date(fromDateRange)
+        const toDate = new Date(toDateRange)
+
+        if (fromDate > toDate) {
+            throw new BadRequestError('Invalid date range')
+        }
+
+        const [depositTransactions, expenseTransactions] = await Promise.all([
+            db.DepositsTransactions.findAndCountAll({
+                where: {
+                    userId,
+                    createdAt: {
+                        [Op.lt]: toDate,
+                        [Op.gt]: fromDate
+                    }
+                }
+            }),
+            db.ExpenseTransactions.findAndCountAll({
+                where: {
+                    userId,
+                    createdAt: {
+                        [Op.lt]: toDate,
+                        [Op.gt]: fromDate
+                    }
+                }
+            })
+        ])
+
+        return {
+            depositTransactions: {
+                count: depositTransactions.count,
+                transactions: depositTransactions.rows
+            },
+            expenseTransactions: {
+                count: expenseTransactions.count,
+                transactions: expenseTransactions.rows
+            }
+        }
+    } catch (error) {
+        throw new BadRequestError('Error occurred when get all transactions', error.message)
+    }
+}
 
 /**
  * Create Expense transaction from user balance
@@ -82,6 +142,7 @@ const depositUserBalance = async ({ userId, amount }) => {
 }
 
 module.exports = {
+    getAllTransactions,
     expenseUserBalance,
     depositUserBalance
 }
