@@ -1779,6 +1779,119 @@ paths:
                                                 example: User not found
             security:
                 - bearerAuth: []
+    /transaction:
+        get:
+            tags:
+                - Transaction
+            summary: Get all user transactions (deposit, expense)
+            description: Get all transactions by queries (fromDate - toDate)
+            operationId: getAllTransactions
+            parameters:
+                -   name: fromDateRange
+                    in: query
+                    description: The start date of the range to filter transactions.
+                    required: false
+                    schema:
+                        type: string
+                        format: date-time
+                        example: 2024-02-19
+                        default: 7 days before today
+                -   name: toDateRange
+                    in: query
+                    description: The end date of the range to filter transactions.
+                    required: false
+                    schema:
+                        type: string
+                        format: date-time
+                        example: 2024-02-22
+                        default: today
+            responses:
+                '200':
+                    description: Get all transactions successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:   Get list transactions success!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            depositTransactions:
+                                                type: object
+                                                properties:
+                                                    count:
+                                                        type: number
+                                                        example: 27
+                                                    transactions:
+                                                        type: array
+                                                        items:
+                                                            $ref: '#/components/schemas/DepositTransaction'
+                                            expenseTransactions:
+                                                type: object
+                                                properties:
+                                                    count:
+                                                        type: number
+                                                        example: 3
+                                                    transactions:
+                                                        type: array
+                                                        items:
+                                                            $ref: '#/components/schemas/ExpenseTransaction'
+                '400':
+                    description: Error occurred when get list transactions
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Error occurred when get all transactions
+                '401':
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Please Authenticate!
+                '404':
+                    description: User not found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found
+            security:
+                - bearerAuth: []
     /transaction/deposit:
         post:
             tags:
@@ -2665,6 +2778,51 @@ components:
                 address:
                     type: string
                     example: "107"
+        DepositTransaction:
+            type: object
+            properties:
+                transactionId:
+                    type: number
+                    example: 1
+                userId:
+                    type: number
+                    example: 2
+                amount:
+                    type: number
+                    format: decimal(10,2)
+                    example: 50.5
+                createdAt:
+                    type: string
+                    format: date-time
+                    example: 2024-02-21T04:32:26.000Z
+                updatedAt:
+                    type: string
+                    format: date-time
+                    example: 2024-02-21T04:32:26.000Z
+        ExpenseTransaction:
+            type: object
+            properties:
+                transactionId:
+                    type: number
+                    example: 1
+                userId:
+                    type: number
+                    example: 2
+                amount:
+                    type: number
+                    format: decimal(10,2)
+                    example: 20
+                description:
+                    type: string
+                    example: "Create new property!. ID: 27"
+                createdAt:
+                    type: string
+                    format: date-time
+                    example: 2024-02-21T04:32:26.000Z
+                updatedAt:
+                    type: string
+                    format: date-time
+                    example: 2024-02-21T04:32:26.000Z
     securitySchemes:
         bearerAuth:
             type: http
