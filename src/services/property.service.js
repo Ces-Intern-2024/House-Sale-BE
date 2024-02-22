@@ -1,7 +1,7 @@
 const { propertyRepo } = require('../models/repo')
 
-const getAllProperties = async (options) => {
-    const { validOptions, queries } = await propertyRepo.validatePropertyOptions(options)
+const getAllProperties = async ({ propertyOptions }) => {
+    const { validOptions, queries } = await propertyRepo.validatePropertyOptions({ propertyOptions })
     return propertyRepo.getAllPropertiesByOptions({ validOptions, queries })
 }
 

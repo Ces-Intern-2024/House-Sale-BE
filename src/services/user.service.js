@@ -1,11 +1,33 @@
 const bcrypt = require('bcrypt')
-const { BadRequestError, AuthFailureError, NotFoundError } = require('../core/error.response')
+const { BadRequestError, AuthFailureError, NotFoundError, ForbiddenError } = require('../core/error.response')
 const { userRepo, tokenRepo } = require('../models/repo')
 const db = require('../models')
 const { generateAuthTokens, verifyRefreshToken } = require('./token.service')
 const { tokenTypes } = require('../config/tokens.config')
 const { hashPassword } = require('../utils')
 const { rolesId } = require('../config/roles.config')
+
+const verifyEmail = async ({ userId, code }) => {
+    const user = await userRepo.getUserById(userId)
+    if (!user || user?.roleId !== rolesId.Seller) {
+        throw new NotFoundError('Seller not found')
+    }
+
+    const { status, emailVerificationCode } = user
+    if (status && !emailVerificationCode) {
+        throw new BadRequestError('Your email already verified!')
+    }
+
+    const isMatchEmailVerificationCode = await bcrypt.compare(code, user.emailVerificationCode)
+    if (!isMatchEmailVerificationCode) {
+        throw new AuthFailureError('Incorrect email verification code!')
+    }
+
+    const updatedUser = await db.Users.update({ status: true, emailVerificationCode: null }, { where: { userId } })
+    if (!updatedUser) {
+        throw new BadRequestError('Verify email failed')
+    }
+}
 
 /**
  * Update user's avatar
@@ -186,7 +208,11 @@ const login = async (userBody) => {
         throw new AuthFailureError('Incorrect email or password')
     }
 
-    const { userId } = user
+    const { userId, status } = user
+    if (!status) {
+        throw new ForbiddenError('Your email has not been verified. Please check your email and verify it!')
+    }
+
     const tokens = await generateAuthTokens(userId)
     if (!tokens) {
         throw new BadRequestError('Failed creating tokens')
@@ -246,7 +272,7 @@ const registerUser = async (userBody) => {
     }
 
     const hashedPassword = await hashPassword(password)
-    const newUser = await db.Users.create({ email, password: hashedPassword, roleId: rolesId.User })
+    const newUser = await db.Users.create({ email, password: hashedPassword, roleId: rolesId.User, status: true })
     if (!newUser) {
         throw new BadRequestError('Failed creating new user.')
     }
@@ -263,6 +289,7 @@ const registerUser = async (userBody) => {
 }
 
 module.exports = {
+    verifyEmail,
     updateAvatar,
     updateProfile,
     getProfile,

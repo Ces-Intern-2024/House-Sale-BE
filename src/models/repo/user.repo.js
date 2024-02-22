@@ -1,6 +1,6 @@
 const db = require('..')
 const { BadRequestError, NotFoundError } = require('../../core/error.response')
-const { isValidKeyOfModel } = require('../../utils')
+const { isValidKeyOfModel, generateVerifyEmailCode } = require('../../utils')
 
 const commonUserProfileScope = [
     {
@@ -105,7 +105,24 @@ const isValidLocation = async (userBody) => {
     }
 }
 
+/**
+ * generate email verification code and save hash code to database
+ * @param {id} userId  - the id of user
+ * @returns {Promise<string>} - the unique code
+ */
+const generateEmailVerificationCode = async (userId) => {
+    try {
+        const { uniqueCode, hashVerificationCode } = await generateVerifyEmailCode(userId)
+        await db.Users.update({ emailVerificationCode: hashVerificationCode }, { where: { userId } })
+
+        return uniqueCode
+    } catch (error) {
+        throw new BadRequestError('Error occurred when generate email verification code')
+    }
+}
+
 module.exports = {
+    generateEmailVerificationCode,
     getUserProfile,
     getUserById,
     getUserByEmail,

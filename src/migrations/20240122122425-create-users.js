@@ -36,7 +36,7 @@ module.exports = {
             },
             status: {
                 type: Sequelize.BOOLEAN,
-                defaultValue: true,
+                defaultValue: false,
                 allowNull: false
             },
             avatar: {
@@ -78,6 +78,10 @@ module.exports = {
             balance: {
                 type: Sequelize.DECIMAL(10, 2),
                 defaultValue: 0
+            },
+            emailVerificationCode: {
+                type: Sequelize.STRING,
+                allowNull: true
             },
             createdAt: {
                 allowNull: false,
