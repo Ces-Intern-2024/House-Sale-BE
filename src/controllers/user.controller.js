@@ -1,6 +1,14 @@
 const { Created, OK } = require('../core/success.response')
 const { userService, emailService } = require('../services')
 
+const loginWithGoogle = async (req, res) => {
+    const user = await userService.loginWithGoogle(req.body)
+    new OK({
+        message: 'Login with google success!',
+        metaData: user
+    }).send(res)
+}
+
 const verifyEmail = async (req, res) => {
     const { userId, code } = req.params
     await userService.verifyEmail({ userId, code })
@@ -93,6 +101,7 @@ const registerUser = async (req, res) => {
 }
 
 module.exports = {
+    loginWithGoogle,
     verifyEmail,
     updateAvatar,
     updateProfile,

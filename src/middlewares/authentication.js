@@ -1,7 +1,7 @@
 const passport = require('passport')
-const { AuthFailureError } = require('../core/error.response')
+const { AuthFailureError, ForbiddenError } = require('../core/error.response')
 const { tokenRepo } = require('../models/repo')
-const { rolesConfig } = require('../config/roles.config')
+const { rolesConfig, rolesId } = require('../config/roles.config')
 
 const verifyCallback = (req, resolve, reject, role) => async (err, user) => {
     try {
@@ -10,10 +10,18 @@ const verifyCallback = (req, resolve, reject, role) => async (err, user) => {
             throw new AuthFailureError('Please Authenticate')
         }
 
+        if (!user.isActive) {
+            throw new ForbiddenError('Your account is not active')
+        }
+
         if (role) {
             const hadPermission = rolesConfig[role].includes(user.roleId)
             if (!hadPermission) {
                 throw new AuthFailureError('Permission denied!')
+            }
+
+            if (user.roleId !== rolesId.User && !user.isEmailVerified) {
+                throw new AuthFailureError('Please verify your email')
             }
         }
 

@@ -81,6 +81,14 @@ const verifyEmail = {
     })
 }
 
+const loginWithGoogle = {
+    body: Joi.object().required().keys({
+        email: Joi.string().required().email(),
+        fullName: Joi.string().required(),
+        accessToken: Joi.string().required()
+    })
+}
+
 module.exports = {
     registerUser,
     registerSeller,
@@ -90,5 +98,6 @@ module.exports = {
     changePassword,
     updateProfile,
     updateAvatar,
-    verifyEmail
+    verifyEmail,
+    loginWithGoogle
 }

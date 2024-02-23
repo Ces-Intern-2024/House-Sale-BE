@@ -1,8 +1,23 @@
+const axios = require('axios')
 const bcrypt = require('bcrypt')
 const { v4: uuidv4 } = require('uuid')
 const { BadRequestError } = require('../core/error.response')
 
 const ROUNDS_SALT = 10
+const GOOGLE_API_URL = 'https://www.googleapis.com/oauth2'
+
+const verifyGoogleToken = async (accessToken) => {
+    try {
+        const response = await axios.get(`${GOOGLE_API_URL}/v3/tokeninfo?access_token=${accessToken}`)
+        const { aud: clientId } = response.data
+
+        if (clientId !== process.env.FE_GOOGLE_CLIENT_ID) {
+            throw new Error('Invalid client ID')
+        }
+    } catch (error) {
+        throw new BadRequestError('Invalid google access token' || error.message)
+    }
+}
 
 const generateVerifyEmailCode = async (userId) => {
     const uniqueCode = uuidv4() + userId
@@ -57,6 +72,7 @@ const getExistingKeysInObject = (object, keys) => {
 }
 
 module.exports = {
+    verifyGoogleToken,
     generateVerifyEmailCode,
     hashPassword,
     isValidKeyOfModel,
