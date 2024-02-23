@@ -7,6 +7,11 @@ const { userValidation } = require('../../validations')
 
 const router = express.Router()
 
+router.post(
+    '/login-with-google',
+    validate(userValidation.loginWithGoogle),
+    asyncHandler(userController.loginWithGoogle)
+)
 router.post('/register-user', validate(userValidation.registerUser), asyncHandler(userController.registerUser))
 router.post('/register-seller', validate(userValidation.registerSeller), asyncHandler(userController.registerSeller))
 router.post('/login', validate(userValidation.login), asyncHandler(userController.login))

@@ -16,7 +16,8 @@ module.exports = {
                 },
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE',
-                allowNull: false
+                allowNull: false,
+                defaultValue: 1
             },
             fullName: {
                 type: Sequelize.STRING,
@@ -32,9 +33,14 @@ module.exports = {
             },
             password: {
                 type: Sequelize.STRING,
+                allowNull: true
+            },
+            isActive: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: true,
                 allowNull: false
             },
-            status: {
+            isEmailVerified: {
                 type: Sequelize.BOOLEAN,
                 defaultValue: false,
                 allowNull: false

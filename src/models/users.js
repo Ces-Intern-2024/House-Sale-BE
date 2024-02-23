@@ -31,7 +31,8 @@ module.exports = (sequelize, DataTypes) => {
                 },
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE',
-                allowNull: false
+                allowNull: false,
+                defaultValue: 1
             },
             fullName: {
                 type: DataTypes.STRING,
@@ -47,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             password: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: true
             },
             avatar: {
                 type: DataTypes.STRING,
@@ -85,9 +86,15 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: true
             },
-            status: {
+            isActive: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: false
+                defaultValue: true,
+                allowNull: false
+            },
+            isEmailVerified: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false,
+                allowNull: false
             },
             balance: {
                 type: DataTypes.DECIMAL(10, 2),

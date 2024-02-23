@@ -499,6 +499,65 @@ paths:
                                             message:
                                                 type: string
                                                 example: Get all ward failed!
+    /user/login-with-google:
+        post:
+            tags:
+                - User
+            summary: Login with Google
+            description: Login with Google account and create new user if not exists
+            operationId: loginWithGoogle
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                email:
+                                    type: string
+                                    example: nhattrinh.le.it@gmail.com
+                                fullName:
+                                    type: string
+                                    example: Le Nhat Trinh
+                            required:
+                                - "email"
+                                - "fullName"
+            responses:
+                '200':
+                    description: Login with Google success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Login with Google success!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            user:
+                                                $ref: '#/components/schemas/User'
+                                            tokens:
+                                                $ref: '#/components/schemas/Tokens'
+                '400':
+                    description: Login with Google failed!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Error occurred when login with your google account!
     /user/register-user:
         post:
             tags:
@@ -2297,12 +2356,51 @@ components:
                 roleId:
                     type: number
                     example: 1
+                fullName:
+                    type: string
+                    example: Le Nhat Trinh
                 email:
                     type: string
                     example: tldevuser@gmail.com
-                status:
+                phone:
+                    type: string
+                    example: 0899619252
+                avatar:
+                    type: string
+                    example: null
+                wardCode:
+                    type: string
+                    example: 20236
+                districtCode:
+                    type: string
+                    example: 492
+                provinceCode:
+                    type: string
+                    example: 48
+                street:
+                    type: string
+                    example: Bach Dang
+                address:
+                    type: string
+                    example: 107
+                balance:
+                    type: number
+                    format: decimal(10,2)
+                    example: 500.00
+                isActive:
                     type: boolean
                     example: true
+                isEmailVerified:
+                    type: boolean
+                    example: false
+                updatedAt:
+                    type: string
+                    format: date-time
+                    example: 2024-02-07T08:08:44.032Z
+                createdAt:
+                    type: string
+                    format: date-time
+                    example: 2024-02-07T08:08:44.032Z
         Tokens:
             type: object
             properties:
@@ -2315,9 +2413,6 @@ components:
         Seller:
             type: object
             properties:
-                status:
-                    type: boolean
-                    example: true
                 userId:
                     type: number
                     example: 21
@@ -2347,15 +2442,25 @@ components:
                     example: 107
                 roleId:
                     type: number
-                    example: 2
+                    example: 2,
+                isActive:
+                    type: boolean
+                    example: true
+                isEmailVerified:
+                    type: boolean
+                    example: false,
+                balance:
+                    type: number
+                    format: decimal(10,2)
+                    example: 500.00
                 updatedAt:
                     type: string
                     format: date-time
-                    example: "2024-02-07T08:08:44.032Z"
+                    example: 2024-02-07T08:08:44.032Z
                 createdAt:
                     type: string
                     format: date-time
-                    example: "2024-02-07T08:08:44.032Z"
+                    example: 2024-02-07T08:08:44.032Z
         NewSeller:
             type: object
             properties:
@@ -2431,9 +2536,16 @@ components:
                 address:
                     type: string
                     example: "107"
-                status:
+                balance:
+                    type: number
+                    format: decimal(10,2)
+                    example: 500.00
+                isActive:
                     type: boolean
                     example: true
+                isEmailVerified:
+                    type: boolean
+                    example: false
                 createdAt:
                     type: string
                     format: date-time
