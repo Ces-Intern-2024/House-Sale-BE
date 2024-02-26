@@ -17,7 +17,10 @@ const registerSeller = {
             email: Joi.string().required().email(),
             password: Joi.string().required().custom(password),
             fullName: Joi.string().required(),
-            phone: Joi.string().required(),
+            phone: Joi.string()
+                .regex(/^[0-9]{10}$/)
+                .messages({ 'string.pattern.base': `Phone number must have 10 digits.` })
+                .required(),
             provinceCode: Joi.string().required(),
             districtCode: Joi.string().required(),
             wardCode: Joi.string().required(),
@@ -89,6 +92,23 @@ const loginWithGoogle = {
     })
 }
 
+const upgradeToSeller = {
+    body: Joi.object()
+        .required()
+        .keys({
+            fullName: Joi.string().required(),
+            phone: Joi.string()
+                .regex(/^[0-9]{10}$/)
+                .messages({ 'string.pattern.base': `Phone number must have 10 digits.` })
+                .required(),
+            provinceCode: Joi.string().required(),
+            districtCode: Joi.string().required(),
+            wardCode: Joi.string().required(),
+            street: Joi.string().required(),
+            address: Joi.string()
+        })
+}
+
 module.exports = {
     registerUser,
     registerSeller,
@@ -99,5 +119,6 @@ module.exports = {
     updateProfile,
     updateAvatar,
     verifyEmail,
-    loginWithGoogle
+    loginWithGoogle,
+    upgradeToSeller
 }

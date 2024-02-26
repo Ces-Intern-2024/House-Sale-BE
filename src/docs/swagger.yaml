@@ -818,7 +818,7 @@ paths:
         get:
             tags:
                 - User
-            summary: Verify seller email when register seller account
+            summary: Verify seller email when register seller account or user upgrade to seller
             description: System send a verify link to seller's email, seller must verify email to access system
             operationId: verifyEmail
             parameters:
@@ -838,55 +838,8 @@ paths:
                         format: uuid
                         example: e916faf0-3123-4fcc-8ec3-9a2c2bb4b38c44
             responses:
-                '200':
-                    description: Your email had been verified successfully!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    status:
-                                        type: number
-                                        example: 200
-                                    message:
-                                        type: string
-                                        example: Your email had been verified successfully!
-                                    metaData:
-                                        type: object
-                                        example: {}
-
-                '400':
-                    description: Your email already verified! or Verify email failed!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 400
-                                            message:
-                                                type: string
-                                                example: Your email already verified!
-                '401':
-                    description: Incorrect email verification code!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 401
-                                            message:
-                                                type: string
-                                                example: Incorrect email verification code!
+                '302':
+                    description: Alert notification about result of verify email and redirect to home page (https://house-sale-three.vercel.app/home)
     /user/logout:
         post:
             tags:
@@ -1253,6 +1206,116 @@ paths:
                                             message:
                                                 type: string
                                                 example: Update your avatar failed
+                '401':
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Please Authenticate!
+                '404':
+                    description: User not found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found
+            security:
+                - bearerAuth: []
+    /user/upgrade-seller:
+        post:
+            tags:
+                - User
+            summary: Upgrade user to seller
+            description: Upgrade user to seller, fulfill seller information and send verification email to seller's email
+            operationId: upgradeSeller
+            requestBody:
+                description: Seller information
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                fullName:
+                                    type: string
+                                    example: John Doe
+                                phone:
+                                    type: string
+                                    example: 0888888776
+                                provinceCode:
+                                    type: string
+                                    example: 48
+                                districtCode:
+                                    type: string
+                                    example: 493
+                                wardCode:
+                                    type: string
+                                    example: 20275
+                                street:
+                                    type: string
+                                    example: Bach Dang
+                                address:
+                                    type: string
+                                    example: 107
+                            required:
+                                - "fullName"
+                                - "phone"
+                                - "provinceCode"
+                                - "districtCode"
+                                - "wardCode"
+                                - "street"
+                required: true
+            responses:
+                '200':
+                    description: Your upgrade request has been sent! Please check your email to confirm.
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Your upgrade request has been sent! Please check your email to confirm.
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Invalid location provided, valid location contains valid provinceCode, districtCode, wardCode. Or Error occurred when update your information!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Upgrade to seller failed!
                 '401':
                     description: Unauthorized
                     content:

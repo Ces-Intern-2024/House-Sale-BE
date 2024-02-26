@@ -30,5 +30,6 @@ router.post('/change-password', validate(userValidation.changePassword), asyncHa
 router.get('/profile', asyncHandler(userController.getProfile))
 router.patch('/profile', validate(userValidation.updateProfile), asyncHandler(userController.updateProfile))
 router.post('/update-avatar', validate(userValidation.updateAvatar), asyncHandler(userController.updateAvatar))
+router.post('/upgrade-seller', validate(userValidation.upgradeToSeller), asyncHandler(userController.upgradeToSeller))
 
 module.exports = router

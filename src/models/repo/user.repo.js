@@ -44,9 +44,10 @@ const getUserProfile = async (userId) => {
  */
 const getUserById = async (userId) => {
     try {
-        return db.Users.findByPk(userId)
+        const user = await db.Users.findByPk(userId)
+        return user ? user.get({ plain: true }) : null
     } catch (error) {
-        throw new BadRequestError('An error occurred while checking user exist.')
+        throw new BadRequestError('An error occurred while get user.')
     }
 }
 
@@ -63,7 +64,7 @@ const getUserByEmail = async (email) => {
             }
         })
     } catch (error) {
-        throw new BadRequestError('An error occurred while checking user exist.')
+        throw new BadRequestError('An error occurred get user.')
     }
 }
 

@@ -1,20 +1,40 @@
 const { Created, OK } = require('../core/success.response')
 const { userService, emailService } = require('../services')
 
+const upgradeToSeller = async (req, res) => {
+    const userId = req.user?.userId
+    const { email } = await userService.fulFillSellerInformation({ userId, information: req.body })
+    await emailService.sendConfirmUpgradeSellerEmail({ userId, email })
+    new OK({
+        message: 'Your upgrade request has been sent! Please check your email to confirm'
+    }).send(res)
+}
+
 const loginWithGoogle = async (req, res) => {
-    const user = await userService.loginWithGoogle(req.body)
+    const result = await userService.loginWithGoogle(req.body)
     new OK({
         message: 'Login with google success!',
-        metaData: user
+        metaData: result
     }).send(res)
 }
 
 const verifyEmail = async (req, res) => {
     const { userId, code } = req.params
-    await userService.verifyEmail({ userId, code })
-    new OK({
-        message: 'Your email had been verified successfully!'
-    }).send(res)
+    const redirectWithMessage = (message) => {
+        return `
+            <script>
+                alert('${message} Click OK to redirect to home page!');
+                window.location.href = 'https://house-sale-three.vercel.app/home';
+            </script>
+        `
+    }
+
+    try {
+        await userService.verifyEmail({ userId, code })
+        res.send(redirectWithMessage('Your email had been verified successfully!'))
+    } catch (error) {
+        res.send(redirectWithMessage(error.message || 'There was an error verifying your email!'))
+    }
 }
 
 const updateAvatar = async (req, res) => {
@@ -101,6 +121,7 @@ const registerUser = async (req, res) => {
 }
 
 module.exports = {
+    upgradeToSeller,
     loginWithGoogle,
     verifyEmail,
     updateAvatar,
