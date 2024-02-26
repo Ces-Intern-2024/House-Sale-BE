@@ -22,7 +22,7 @@ const getAllProperties = {
         numberOfToiletTo: Joi.number(),
         page: Joi.number(),
         limit: Joi.number(),
-        orderBy: Joi.string().valid('Price', 'price'),
+        orderBy: Joi.string().valid('price', 'createdAt', 'updatedAt'),
         sortBy: Joi.string().valid('ASC', 'asc', 'DESC', 'desc')
     })
 }

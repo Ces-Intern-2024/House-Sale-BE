@@ -1,6 +1,6 @@
 const db = require('..')
 const { BadRequestError, NotFoundError } = require('../../core/error.response')
-const { isValidKeyOfModel, generateVerifyEmailCode } = require('../../utils')
+const { isValidKeyOfModel, generateVerifyEmailCode, paginatedData } = require('../../utils')
 
 const commonUserProfileScope = [
     {
@@ -11,7 +11,33 @@ const commonUserProfileScope = [
     }
 ]
 
-const commonExcludeAttributes = ['roleId', 'password']
+const commonExcludeAttributes = ['password', 'emailVerificationCode']
+
+/**
+ * Get all users by admin
+ * @param {object} queries - the queries from request contains limit, page, orderBy, sortBy, email, roleId, email-keyword
+ * @returns {Promise<Users>}
+ */
+const getAllUsers = async ({ queries }) => {
+    try {
+        const { roleId, email, limit = 10, page = 1, orderBy = 'createdAt', sortBy = 'desc' } = queries
+        const conditions = {
+            ...(roleId && { roleId }),
+            email: { [db.Sequelize.Op.like]: `%${email || ''}%` }
+        }
+        const listUsers = await db.Users.findAndCountAll({
+            where: conditions,
+            offset: (page - 1) * limit,
+            limit,
+            order: [[orderBy, sortBy]],
+            attributes: { exclude: commonExcludeAttributes }
+        })
+
+        return paginatedData({ data: listUsers, page, limit })
+    } catch (error) {
+        throw new BadRequestError('Error occurred when getting all users')
+    }
+}
 
 /**
  * Get user profile
@@ -123,6 +149,7 @@ const generateEmailVerificationCode = async (userId) => {
 }
 
 module.exports = {
+    getAllUsers,
     generateEmailVerificationCode,
     getUserProfile,
     getUserById,

@@ -43,22 +43,11 @@ const isValidKeyOfModel = async (model, key, errorMessage) => {
     return key
 }
 
-const transformPropertyData = (property) => {
-    const propertyJson = property.toJSON()
-    delete propertyJson.userId
-    delete propertyJson.featureId
-    delete propertyJson.categoryId
-    delete propertyJson.locationId
-
-    return propertyJson
-}
-
-const mapAndTransformProperties = ({ propertiesData, page, limit }) => {
-    const { count: totalItems, rows: properties } = propertiesData
-    const updatedProperties = properties.map((property) => transformPropertyData(property))
+const paginatedData = ({ data, page, limit }) => {
+    const { count: totalItems, rows } = data
     const totalPages = Math.ceil(totalItems / limit)
 
-    return { totalPages, currentPage: page, totalItems, properties: updatedProperties }
+    return { totalPages, currentPage: page, totalItems, data: rows }
 }
 
 const getExistingKeysInObject = (object, keys) => {
@@ -76,7 +65,6 @@ module.exports = {
     generateVerifyEmailCode,
     hashPassword,
     isValidKeyOfModel,
-    transformPropertyData,
-    mapAndTransformProperties,
+    paginatedData,
     getExistingKeysInObject
 }

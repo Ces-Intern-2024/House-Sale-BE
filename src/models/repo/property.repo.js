@@ -1,7 +1,7 @@
 const { Op } = require('sequelize')
 const db = require('..')
 const { BadRequestError, NotFoundError } = require('../../core/error.response')
-const { mapAndTransformProperties, transformPropertyData, isValidKeyOfModel } = require('../../utils')
+const { paginatedData, transformPropertyData, isValidKeyOfModel } = require('../../utils')
 
 const propertyScopes = {
     feature: {
@@ -37,6 +37,7 @@ const propertyScopes = {
 }
 const userScopes = ['feature', 'category', 'location', 'images', 'seller']
 const sellerScopes = ['feature', 'category', 'location', 'images']
+const commonExcludeAttributes = ['userId', 'featureId', 'categoryId', 'locationId']
 
 const getScopesArray = (scopes) => scopes.map((scope) => propertyScopes[scope])
 
@@ -63,8 +64,8 @@ const validatePropertyOptions = async ({ propertyOptions }) => {
         direction,
         limit = 10,
         page = 1,
-        orderBy = 'name',
-        sortBy = 'asc'
+        orderBy = 'createdAt',
+        sortBy = 'desc'
     } = propertyOptions
 
     const options = {}
@@ -140,6 +141,7 @@ const getAllPropertiesByOptions = async ({ validOptions, queries }) => {
         include: getScopesArray(userScopes),
         where: validOptions,
         distinct: true,
+        attributes: { exclude: commonExcludeAttributes },
         offset: (page - 1) * limit,
         limit,
         order: [[orderBy, sortBy]]
@@ -149,7 +151,7 @@ const getAllPropertiesByOptions = async ({ validOptions, queries }) => {
         throw new BadRequestError('Error ocurred when find properties')
     }
 
-    return mapAndTransformProperties({ propertiesData, page, limit })
+    return paginatedData({ data: propertiesData, page, limit })
 }
 
 const getAllPropertiesBySellerOptions = async ({ validOptions, queries, sellerId }) => {
@@ -157,6 +159,7 @@ const getAllPropertiesBySellerOptions = async ({ validOptions, queries, sellerId
     const propertiesData = await db.Properties.findAndCountAll({
         where: { ...validOptions, userId: sellerId },
         include: getScopesArray(sellerScopes),
+        attributes: { exclude: commonExcludeAttributes },
         distinct: true,
         offset: (page - 1) * limit,
         limit,
@@ -167,7 +170,7 @@ const getAllPropertiesBySellerOptions = async ({ validOptions, queries, sellerId
         throw new BadRequestError('Error ocurred when find properties')
     }
 
-    return mapAndTransformProperties({ propertiesData, page, limit })
+    return paginatedData({ data: propertiesData, page, limit })
 }
 
 const getProperty = async (propertyId) => {
