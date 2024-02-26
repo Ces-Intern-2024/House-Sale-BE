@@ -15,6 +15,7 @@ tags:
     -   name: Contact
     -   name: Favorite Property
     -   name: Transaction
+    -   name: Admin
 paths:
     /features:
         get:
@@ -259,7 +260,8 @@ paths:
                     required: false
                     schema:
                         type: string
-                        enum: ['Price', 'price']
+                        enum: ['createdAt','updatedAt','price']
+                        default: 'createdAt'
                 -   name: sortBy
                     in: query
                     description: The sort order ('ASC' for ascending, 'DESC' for descending).
@@ -267,6 +269,7 @@ paths:
                     schema:
                         type: string
                         enum: ['ASC', 'asc', 'DESC', 'desc']
+                        default: 'desc'
             responses:
                 '200':
                     description: Get list properties success!
@@ -293,10 +296,10 @@ paths:
                                             totalItems:
                                                 type: number
                                                 example: 12
-                                            properties:
+                                            data:
                                                 type: array
                                                 items:
-                                                $ref: '#/components/schemas/PropertyJoinedAllTable'
+                                                    $ref: '#/components/schemas/PropertyJoinedAllTable'
                 '400':
                     description: Invalid featureId, categoryId, provinceCode, districtCode, wardCode
                     content:
@@ -384,7 +387,7 @@ paths:
                                     metaData:
                                         type: array
                                         items:
-                                        $ref: '#/components/schemas/Province'
+                                            $ref: '#/components/schemas/Province'
                 '400':
                     description: Get all provinces failed!
                     content:
@@ -433,7 +436,7 @@ paths:
                                     metaData:
                                         type: array
                                         items:
-                                        $ref: '#/components/schemas/District'
+                                            $ref: '#/components/schemas/District'
                 '400':
                     description: Get all districts failed!
                     content:
@@ -482,7 +485,7 @@ paths:
                                     metaData:
                                         type: array
                                         items:
-                                        $ref: '#/components/schemas/Ward'
+                                            $ref: '#/components/schemas/Ward'
                 '400':
                     description: Get all wards failed!
                     content:
@@ -818,7 +821,7 @@ paths:
         get:
             tags:
                 - User
-            summary: Verify seller email when register seller account or user upgrade to seller
+            summary: Verify seller email when register seller account or user upgrade to seller or user upgrade to seller
             description: System send a verify link to seller's email, seller must verify email to access system
             operationId: verifyEmail
             parameters:
@@ -1510,10 +1513,10 @@ paths:
                                             totalItems:
                                                 type: number
                                                 example: 7
-                                            properties:
+                                            data:
                                                 type: array
                                                 items:
-                                                $ref: '#/components/schemas/PropertyOfSeller'
+                                                    $ref: '#/components/schemas/PropertyOfSeller'
                 '400':
                     description: Invalid featureId, categoryId, provinceCode, districtCode, wardCode
                     content:
@@ -1954,7 +1957,7 @@ paths:
                                             favoritesList:
                                                 type: array
                                                 items:
-                                                $ref: '#/components/schemas/PropertyJoinedAllTable'
+                                                    $ref: '#/components/schemas/PropertyJoinedAllTable'
 
                 '401':
                     description: Unauthorized
@@ -2157,6 +2160,125 @@ paths:
                                                 example: Invalid amount
                 '401':
                     description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Please Authenticate!
+            security:
+                - bearerAuth: []
+    /admin/manage-user:
+        get:
+            tags:
+                - Admin
+            summary: Get all users
+            description: Get all users by queries
+            operationId: getAllUsers
+            parameters:
+                -   name: roleId
+                    in: query
+                    description: The ID of role
+                    required: false
+                    schema:
+                        type: number
+                        enum:
+                            - 1
+                            - 2
+                            - 3
+                -   name: email
+                    in: query
+                    description: A email-keyword to search for users
+                    required: false
+                    schema:
+                        type: string
+                        example: nhattrinh
+                -   name: page
+                    in: query
+                    description: The page number for pagination.
+                    required: false
+                    schema:
+                        type: number
+                        default: 1
+                -   name: limit
+                    in: query
+                    description: The maximum number of items per page.
+                    required: false
+                    schema:
+                        type: number
+                        default: 10
+                -   name: orderBy
+                    in: query
+                    description: The field to order results by.
+                    required: false
+                    schema:
+                        type: string
+                        enum: ['createdAt', 'updatedAt','email', 'fullName']
+                        default: 'createdAt'
+                -   name: sortBy
+                    in: query
+                    description: The sort order ('ASC' for ascending, 'DESC' for descending).
+                    required: false
+                    schema:
+                        type: string
+                        enum: ['asc', 'desc']
+                        default: 'desc'
+            responses:
+                '200':
+                    description: Get list users success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:   Get list users success!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            totalPages:
+                                                type: number
+                                                example: 1
+                                            currentPage:
+                                                type: number
+                                                example: 1
+                                            totalItems:
+                                                type: number
+                                                example: 7
+                                            data:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/User'
+                '400':
+                    description: Error occurred when get list users
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Error occurred when get list users
+                '401':
+                    description: Unauthorized or Permission denied
                     content:
                         application/json:
                             schema:
