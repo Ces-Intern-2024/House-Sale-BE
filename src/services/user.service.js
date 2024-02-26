@@ -8,6 +8,35 @@ const { hashPassword, verifyGoogleToken } = require('../utils')
 const { rolesId } = require('../config/roles.config')
 
 /**
+ * Update user information to send request to become a seller
+ * @param {object} params
+ * @param {id} params.userId - user id
+ * @param {object} params.information - seller information to fulfill
+ * @returns {Promise<User>}
+ */
+const fulFillSellerInformation = async ({ userId, information }) => {
+    const user = await userRepo.getUserById(userId)
+    if (!user) {
+        throw new NotFoundError('User not found')
+    }
+
+    const { provinceCode, districtCode, wardCode } = information
+    const validLocation = await userRepo.isValidLocation({ provinceCode, districtCode, wardCode })
+    if (!validLocation) {
+        throw new BadRequestError(
+            'Invalid location provided, valid location contains valid provinceCode, districtCode, wardCode!'
+        )
+    }
+
+    const updatedUser = await db.Users.update({ ...information, roleId: rolesId.Seller }, { where: { userId } })
+    if (!updatedUser[0]) {
+        throw new BadRequestError('Error occurred when update your information!')
+    }
+
+    return userRepo.getUserById(userId)
+}
+
+/**
  * Login with google account and create new user if not exist
  * @param {Object} profile
  * @returns {Promise<User, Tokens>} - return user and tokens
@@ -49,8 +78,7 @@ const verifyEmail = async ({ userId, code }) => {
         throw new NotFoundError('Seller not found')
     }
 
-    const { isEmailVerified } = user
-    if (!isEmailVerified) {
+    if (user.isEmailVerified) {
         throw new BadRequestError('Your email already verified!')
     }
 
@@ -253,7 +281,7 @@ const login = async (userBody) => {
         throw new BadRequestError('Failed creating tokens')
     }
 
-    const { password: privateInfo, emailVerificationCode, ...userInfo } = user.get({ plain: true })
+    const { password: privateInfo, emailVerificationCode, ...userInfo } = await userRepo.getUserById(userId)
 
     return { user: userInfo, tokens }
 }
@@ -285,7 +313,7 @@ const registerSeller = async (userBody) => {
         await db.Users.destroy({ where: { userId } })
         throw new BadRequestError('Failed creating tokens')
     }
-    const { password: privateInfo, emailVerificationCode, ...userInfo } = newUser.get({ plain: true })
+    const { password: privateInfo, emailVerificationCode, ...userInfo } = await userRepo.getUserById(userId)
 
     return { newSeller: userInfo, tokens }
 }
@@ -313,12 +341,14 @@ const registerUser = async (userBody) => {
         await db.Users.destroy({ where: { userId } })
         throw new BadRequestError('Failed creating tokens')
     }
-    const { password: privateInfo, emailVerificationCode, ...userInfo } = newUser.get({ plain: true })
 
-    return { newSeller: userInfo, tokens }
+    const { password: privateInfo, emailVerificationCode, ...userInfo } = await userRepo.getUserById(userId)
+
+    return { newUser: userInfo, tokens }
 }
 
 module.exports = {
+    fulFillSellerInformation,
     loginWithGoogle,
     verifyEmail,
     updateAvatar,

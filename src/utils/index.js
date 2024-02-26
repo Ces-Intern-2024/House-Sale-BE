@@ -15,7 +15,7 @@ const verifyGoogleToken = async (accessToken) => {
             throw new Error('Invalid client ID')
         }
     } catch (error) {
-        throw new BadRequestError('Invalid google access token' || error.message)
+        throw new BadRequestError(error.message || 'Invalid google access token')
     }
 }
 

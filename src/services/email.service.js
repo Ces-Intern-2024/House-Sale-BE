@@ -89,6 +89,19 @@ const verifyEmailHtmlTemplate = (verificationEmailUrl) => {
 `
 }
 
+const confirmUpgradeSellerHtmlTemplate = (verificationEmailUrl) => {
+    return `
+    <html>
+        <body>
+            <h1>Welcome New Seller to HOUSE SALE!</h1>
+            <p>Please click the button below to confirm your upgrade to seller:</p>
+            <a href="${verificationEmailUrl}" style="background-color: #4CAF50; color: white; text-decoration: none; padding: 10px 20px; margin: 15px 0; cursor: pointer; display: inline-block;">Confirm Upgrade</a>
+            <p> If you did not request to upgrade to seller, you can ignore this email.</p>
+            </body>
+    </html>
+`
+}
+
 const sendEmail = async ({ to, subject, text, html }) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!to || typeof to !== 'string' || !emailRegex.test(to)) {
@@ -111,12 +124,7 @@ const sendContactEmailToSeller = async (contact) => {
     const text = `Your property has been received new contact`
     const html = contactHtmlTemplate({ propertyId, name, email, phone, message })
 
-    const info = await sendEmail({ to: sellerEmail, subject, text, html })
-    if (!info) {
-        throw new FailedDependenciesError('Error occurred while sending email')
-    }
-
-    return info
+    return sendEmail({ to: sellerEmail, subject, text, html })
 }
 
 const sendVerificationEmail = async ({ userId, email }) => {
@@ -130,15 +138,26 @@ const sendVerificationEmail = async ({ userId, email }) => {
     const verificationEmailUrl = `${emailConfig.prefixVerifyEmailUrl}/${userId}/${emailVerificationCode}`
     const html = verifyEmailHtmlTemplate(verificationEmailUrl)
 
-    const info = await sendEmail({ to: email, subject, text, html })
-    if (!info) {
-        throw new FailedDependenciesError('Error occurred while sending email')
+    return sendEmail({ to: email, subject, text, html })
+}
+
+const sendConfirmUpgradeSellerEmail = async ({ userId, email }) => {
+    const emailVerificationCode = await userRepo.generateEmailVerificationCode(userId)
+    if (!emailVerificationCode) {
+        throw new BadRequestError('Error occurred when generate email verification code')
     }
 
-    return info
+    const subject = `CONFIRM YOUR UPGRADE TO SELLER`
+    const text = `Please confirm your upgrade to seller by verifying your email address`
+    const verificationEmailUrl = `${emailConfig.prefixVerifyEmailUrl}/${userId}/${emailVerificationCode}`
+    const html = confirmUpgradeSellerHtmlTemplate(verificationEmailUrl)
+
+    return sendEmail({ to: email, subject, text, html })
 }
 
 module.exports = {
+    confirmUpgradeSellerHtmlTemplate,
+    sendConfirmUpgradeSellerEmail,
     sendVerificationEmail,
     sendContactEmailToSeller
 }

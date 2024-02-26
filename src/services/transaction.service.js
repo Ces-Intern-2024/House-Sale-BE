@@ -58,7 +58,7 @@ const getAllTransactions = async ({
             }
         }
     } catch (error) {
-        throw new BadRequestError('Error occurred when get all transactions', error.message)
+        throw new BadRequestError(error.message || 'Error occurred when get all transactions')
     }
 }
 
