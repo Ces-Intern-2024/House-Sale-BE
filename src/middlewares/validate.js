@@ -16,7 +16,7 @@ const validate = (schema) => (req, res, next) => {
             .prefs({ errors: { label: 'key' }, abortEarly: false })
             .validate(object)
         if (error) {
-            const errorMessage = error.details.map((details) => details.message).join(', ')
+            const errorMessage = error.details.map((details) => details.message.replace(/"/g, '')).join(', ')
             return next(new BadRequestError(errorMessage))
         }
         Object.assign(req, value)

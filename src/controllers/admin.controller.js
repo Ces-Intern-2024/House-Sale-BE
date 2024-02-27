@@ -2,6 +2,14 @@ const { adminService } = require('../services')
 const { OK } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const deleteUserById = async (req, res) => {
+    const { userId } = req.params
+    await adminService.deleteUserById(userId)
+    new OK({
+        message: SUCCESS_MESSAGES.ADMIN.DELETE_USER
+    }).send(res)
+}
+
 const getUserById = async (req, res) => {
     const { userId } = req.params
     const user = await adminService.getUserById(userId)
@@ -20,6 +28,7 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    deleteUserById,
     getUserById,
     getAllUsers
 }
