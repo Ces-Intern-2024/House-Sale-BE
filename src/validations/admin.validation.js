@@ -1,5 +1,11 @@
 const Joi = require('joi')
 
+const getUserById = {
+    params: Joi.object().keys({
+        userId: Joi.number().required()
+    })
+}
+
 const getAllUsers = {
     query: Joi.object().keys({
         roleId: Joi.number().valid(1, 2, 3).messages({
@@ -14,4 +20,7 @@ const getAllUsers = {
     })
 }
 
-module.exports = { getAllUsers }
+module.exports = {
+    getUserById,
+    getAllUsers
+}

@@ -7,5 +7,6 @@ const { adminValidation } = require('../../../validations')
 const router = express.Router()
 
 router.get('', validate(adminValidation.getAllUsers), asyncHandler(adminController.getAllUsers))
+router.get('/:userId', validate(adminValidation.getUserById), asyncHandler(adminController.getUserById))
 
 module.exports = router

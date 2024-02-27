@@ -1,11 +1,12 @@
 const bcrypt = require('bcrypt')
-const { BadRequestError, AuthFailureError, NotFoundError } = require('../core/error.response')
-const { userRepo, tokenRepo } = require('../models/repo')
+const { BadRequestError, AuthFailureError, NotFoundError, ForbiddenError } = require('../core/error.response')
+const { userRepo, tokenRepo, locationRepo } = require('../models/repo')
 const db = require('../models')
 const { generateAuthTokens, verifyRefreshToken } = require('./token.service')
 const { tokenTypes } = require('../config/tokens.config')
 const { hashPassword, verifyGoogleToken } = require('../utils')
 const { rolesId } = require('../config/roles.config')
+const { ERROR_MESSAGES } = require('../core/message.constant')
 
 /**
  * Update user information to send request to become a seller
@@ -20,13 +21,7 @@ const fulFillSellerInformation = async ({ userId, information }) => {
         throw new NotFoundError('User not found')
     }
 
-    const { provinceCode, districtCode, wardCode } = information
-    const validLocation = await userRepo.isValidLocation({ provinceCode, districtCode, wardCode })
-    if (!validLocation) {
-        throw new BadRequestError(
-            'Invalid location provided, valid location contains valid provinceCode, districtCode, wardCode!'
-        )
-    }
+    await locationRepo.checkLocation(information)
 
     const updatedUser = await db.Users.update({ ...information, roleId: rolesId.Seller }, { where: { userId } })
     if (!updatedUser[0]) {
@@ -136,12 +131,7 @@ const updateProfile = async ({ userId, information }) => {
     }
 
     if (provinceCode && districtCode && wardCode) {
-        const validLocation = await userRepo.isValidLocation({ provinceCode, districtCode, wardCode })
-        if (!validLocation) {
-            throw new BadRequestError(
-                'Invalid location provided. Valid location contains valid provinceCode, districtCode, wardCode.'
-            )
-        }
+        await locationRepo.checkLocation({ provinceCode, districtCode, wardCode })
     } else {
         const locationProvided = [provinceCode, districtCode, wardCode].filter(Boolean).length
         if (locationProvided > 0 && locationProvided < 3) {
@@ -163,17 +153,7 @@ const updateProfile = async ({ userId, information }) => {
  * @returns {Promise<User>}
  */
 const getProfile = async (userId) => {
-    const user = await userRepo.getUserById(userId)
-    if (!user) {
-        throw new NotFoundError('User not found')
-    }
-
-    const userProfile = await userRepo.getUserProfile(userId)
-    if (!userProfile) {
-        throw new NotFoundError('User profile not found')
-    }
-
-    return userProfile
+    return userRepo.getUserProfileById(userId)
 }
 
 /**
@@ -217,23 +197,23 @@ const changePassword = async ({ userId, currentPassword, newPassword }) => {
 const refreshTokens = async (refreshToken) => {
     const tokens = await verifyRefreshToken({ refreshToken, type: tokenTypes.REFRESH })
     if (!tokens) {
-        throw new NotFoundError('Tokens not found')
+        throw new NotFoundError(ERROR_MESSAGES.REFRESH_TOKEN.TOKENS_NOT_FOUND)
     }
 
     const { tokenId, userId } = tokens
     const user = await userRepo.getUserById(userId)
     if (!user) {
-        throw new NotFoundError('User not found')
+        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
     }
 
     const removedTokens = await tokenRepo.removeTokensByTokenId(tokenId)
     if (!removedTokens) {
-        throw new BadRequestError('Error ocurred when remove tokens!')
+        throw new BadRequestError(ERROR_MESSAGES.REFRESH_TOKEN.FAILED_TO_REMOVE_TOKENS)
     }
 
     const newTokens = await generateAuthTokens(userId)
     if (!newTokens) {
-        throw new BadRequestError('Failed creating new tokens')
+        throw new BadRequestError(ERROR_MESSAGES.REFRESH_TOKEN.FAILED_TO_CREATE_TOKENS)
     }
 
     return newTokens
@@ -247,15 +227,13 @@ const refreshTokens = async (refreshToken) => {
 const logout = async ({ userId, refreshToken }) => {
     const tokens = await tokenRepo.getTokensByRefreshToken(refreshToken)
     if (!tokens || tokens.userId !== userId) {
-        throw new NotFoundError('RefreshToken not valid.')
+        throw new NotFoundError(ERROR_MESSAGES.LOGOUT.INVALID_REFRESH_TOKEN)
     }
 
     const removedTokens = await tokenRepo.removeTokensByTokenId(tokens.tokenId)
     if (!removedTokens) {
-        throw new BadRequestError('Error ocurred when logout!')
+        throw new BadRequestError(ERROR_MESSAGES.LOGOUT.FAILED_TO_LOGOUT)
     }
-
-    return removedTokens
 }
 
 /**
@@ -267,84 +245,63 @@ const login = async (userBody) => {
     const { email, password } = userBody
     const user = await userRepo.getUserByEmail(email)
     if (!user) {
-        throw new BadRequestError('Email not registered!')
+        throw new NotFoundError(ERROR_MESSAGES.LOGIN.EMAIL_NOT_FOUND)
     }
 
-    const isMatchPassword = await bcrypt.compare(password, user.password)
+    const { userId, password: hashedPassword, emailVerificationCode, ...userInfo } = user
+    const isMatchPassword = await bcrypt.compare(password, hashedPassword)
     if (!isMatchPassword) {
-        throw new AuthFailureError('Incorrect email or password')
+        throw new AuthFailureError(ERROR_MESSAGES.LOGIN.INCORRECT_EMAIL_PASSWORD)
     }
 
-    const { userId } = user
-    const tokens = await generateAuthTokens(userId)
-    if (!tokens) {
-        throw new BadRequestError('Failed creating tokens')
+    let tokens
+    try {
+        tokens = await generateAuthTokens(userId)
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.LOGIN.FAILED_CREATE_TOKENS)
     }
 
-    const { password: privateInfo, emailVerificationCode, ...userInfo } = await userRepo.getUserById(userId)
-
-    return { user: userInfo, tokens }
+    return { user: { userId, ...userInfo }, tokens }
 }
 
 /**
  * Create new seller
  * @param {Object} userBody - seller information
- * @returns {Promise<User, Tokens>} - return new seller and tokens
+ * @returns {Promise<User>} - return new seller
  */
 const registerSeller = async (userBody) => {
     const { email, password } = userBody
     if (await userRepo.isEmailTaken(email)) {
-        throw new BadRequestError('Seller already exists! Please register with another email.')
+        throw new ForbiddenError(ERROR_MESSAGES.REGISTER.EMAIL_ALREADY_TAKEN)
     }
 
-    if (!(await userRepo.isValidLocation(userBody))) {
-        throw new BadRequestError('Seller information not valid.')
-    }
+    await locationRepo.checkLocation(userBody)
 
     const hashedPassword = await hashPassword(password)
-    const newUser = await db.Users.create({ ...userBody, password: hashedPassword, roleId: rolesId.Seller })
-    if (!newUser) {
-        throw new BadRequestError('Failed creating new seller.')
+    const newSeller = await db.Users.create({ ...userBody, password: hashedPassword, roleId: rolesId.Seller })
+    if (!newSeller) {
+        throw new BadRequestError(ERROR_MESSAGES.REGISTER_SELLER.FAILED_TO_CREATE_SELLER)
     }
 
-    const { userId } = newUser
-    const tokens = await generateAuthTokens(userId)
-    if (!tokens) {
-        await db.Users.destroy({ where: { userId } })
-        throw new BadRequestError('Failed creating tokens')
-    }
-    const { password: privateInfo, emailVerificationCode, ...userInfo } = await userRepo.getUserById(userId)
-
-    return { newSeller: userInfo, tokens }
+    return newSeller.get({ plain: true })
 }
 
 /**
  * Create new user
  * @param {Object} userBody - user information
- * @returns {Promise<User, Tokens>} - return new user and tokens
+ * @returns {Promise<Boolean>}
  */
 const registerUser = async (userBody) => {
     const { email, password } = userBody
     if (await userRepo.isEmailTaken(email)) {
-        throw new BadRequestError('User already exists! Please register with another email.')
+        throw new ForbiddenError(ERROR_MESSAGES.REGISTER.EMAIL_ALREADY_TAKEN)
     }
 
     const hashedPassword = await hashPassword(password)
     const newUser = await db.Users.create({ email, password: hashedPassword, roleId: rolesId.User })
     if (!newUser) {
-        throw new BadRequestError('Failed creating new user.')
+        throw new BadRequestError(ERROR_MESSAGES.REGISTER_USER.FAILED_TO_CREATE_USER)
     }
-
-    const { userId } = newUser
-    const tokens = await generateAuthTokens(userId)
-    if (!tokens) {
-        await db.Users.destroy({ where: { userId } })
-        throw new BadRequestError('Failed creating tokens')
-    }
-
-    const { password: privateInfo, emailVerificationCode, ...userInfo } = await userRepo.getUserById(userId)
-
-    return { newUser: userInfo, tokens }
 }
 
 module.exports = {

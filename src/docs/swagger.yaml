@@ -588,16 +588,12 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example: Registration success for new seller!
+                                        example: Registration success for new user!
                                     metaData:
                                         type: object
-                                        properties:
-                                            newUser:
-                                                $ref: '#/components/schemas/User'
-                                            tokens:
-                                                $ref: '#/components/schemas/Tokens'
+                                        example: {}
                 '400':
-                    description: DuplicateEmail
+                    description: Failed to create new user
                     content:
                         application/json:
                             schema:
@@ -611,7 +607,23 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: User already exists! Please register with another email.
+                                                example: Failed to create new user!
+                '403':
+                    description: DuplicateEmail
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your email already exists! Please register with another email!
     /user/register-seller:
         post:
             tags:
@@ -628,7 +640,7 @@ paths:
                 required: true
             responses:
                 '201':
-                    description: Registration success for new seller! Please check your email to verify your account!
+                    description: Registration success for new user!
                     content:
                         application/json:
                             schema:
@@ -639,16 +651,12 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example: Registration success for new seller!
+                                        example: Registration success for new seller! Please check your email to verify your account!
                                     metaData:
                                         type: object
-                                        properties:
-                                            newSeller:
-                                                $ref: '#/components/schemas/Seller'
-                                            tokens:
-                                                $ref: '#/components/schemas/Tokens'
+                                        example: {}
                 '400':
-                    description: DuplicateEmail
+                    description: Invalid Province. Invalid District. Invalid Ward. Failed to create new seller!
                     content:
                         application/json:
                             schema:
@@ -662,7 +670,23 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: User already exists! Please register with another email.
+                                                example: This ward is not available yet. Please try again.
+                '403':
+                    description: DuplicateEmail
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your email already exists! Please register with another email!
     /user/login:
         post:
             tags:
@@ -699,7 +723,7 @@ paths:
                                             tokens:
                                                 $ref: '#/components/schemas/Tokens'
                 '400':
-                    description: Email not registered!
+                    description: Failed to create tokens!
                     content:
                         application/json:
                             schema:
@@ -713,7 +737,7 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Email not registered!
+                                                example: Failed to create tokens!
                 '401':
                     description: Incorrect email or password!
                     content:
@@ -746,6 +770,22 @@ paths:
                                             message:
                                                 type: string
                                                 example: Your email has not been verified. Please check your email and verify it!
+                '404':
+                    description: Email not registered!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: Email not registered!
     /user/refreshTokens:
         post:
             tags:
@@ -768,7 +808,7 @@ paths:
                 required: true
             responses:
                 '201':
-                    description: Create new accessToken success!
+                    description: Refresh tokens successfully!
                     content:
                         application/json:
                             schema:
@@ -779,14 +819,14 @@ paths:
                                         example: 201
                                     message:
                                         type: string
-                                        example: Create new accessToken success!
+                                        example: Refresh tokens successfully!
                                     metaData:
                                         type: object
                                         properties:
                                             tokens:
                                                 $ref: '#/components/schemas/Tokens'
                 '400':
-                    description: Failed creating new tokens
+                    description: Failed to create tokens!
                     content:
                         application/json:
                             schema:
@@ -800,9 +840,9 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Failed creating new tokens
+                                                example: Failed to create tokens!
                 '404':
-                    description: Tokens or user not found
+                    description: Tokens or user not found!
                     content:
                         application/json:
                             schema:
@@ -813,10 +853,10 @@ paths:
                                         properties:
                                             status:
                                                 type: number
-                                                example: 401
+                                                example: 404
                                             message:
                                                 type: string
-                                                example: Tokens not found
+                                                example: Tokens not found!
     /user/verify-email/{userId}/{code}:
         get:
             tags:
@@ -865,7 +905,7 @@ paths:
                 required: true
             responses:
                 '200':
-                    description: 'Logout success!'
+                    description: Logout success!
                     content:
                         application/json:
                             schema:
@@ -876,12 +916,12 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example: 'Logout success!'
+                                        example: Logout success!
                                     metaData:
                                         type: object
                                         example: {}
                 '400':
-                    description: Error ocurred when logout!
+                    description: Failed to logout!
                     content:
                         application/json:
                             schema:
@@ -895,7 +935,7 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Error ocurred when logout!
+                                                example: Failed to logout!
                 '401':
                     description: Unauthorized or Invalid accessToken
                     content:
@@ -913,7 +953,7 @@ paths:
                                                 type: string
                                                 example:  Unauthorized
                 '404':
-                    description: RefreshToken not valid.
+                    description: RefreshToken not valid!
                     content:
                         application/json:
                             schema:
@@ -2262,7 +2302,7 @@ paths:
                                                 items:
                                                     $ref: '#/components/schemas/User'
                 '400':
-                    description: Error occurred when get list users
+                    description: Failed to get all users!
                     content:
                         application/json:
                             schema:
@@ -2276,7 +2316,7 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Error occurred when get list users
+                                                example: Failed to get all users!
                 '401':
                     description: Unauthorized or Permission denied
                     content:
@@ -2293,6 +2333,87 @@ paths:
                                             message:
                                                 type: string
                                                 example:  Please Authenticate!
+            security:
+                - bearerAuth: []
+    /admin/manage-user/{userId}:
+        get:
+            tags:
+            -   Admin
+            summary: Get user by Id
+            description: Returns a user by Id
+            operationId: getUserById
+            parameters:
+            -   name: userId
+                in: path
+                description: Id of user to return
+                required: true
+                schema:
+                    type: number
+                    example: 5
+            responses:
+                '200':
+                    description: Get user success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Get user success!
+                                    metaData:
+                                        $ref: '#/components/schemas/User'
+                '400':
+                    description: Failed to get user!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to get user!
+                '401':
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Please Authenticate!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
             security:
                 - bearerAuth: []
 components:

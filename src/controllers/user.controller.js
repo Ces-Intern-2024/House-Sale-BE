@@ -1,5 +1,6 @@
 const { Created, OK } = require('../core/success.response')
 const { userService, emailService } = require('../services')
+const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
 const upgradeToSeller = async (req, res) => {
     const userId = req.user?.userId
@@ -77,7 +78,7 @@ const refreshTokens = async (req, res) => {
     const { refreshToken } = req.body
     const newTokens = await userService.refreshTokens(refreshToken)
     new Created({
-        message: 'Create new accessToken success!',
+        message: SUCCESS_MESSAGES.REFRESH_TOKENS,
         metaData: newTokens
     }).send(res)
 }
@@ -87,36 +88,34 @@ const logout = async (req, res) => {
     const { refreshToken } = req.body
     await userService.logout({ userId, refreshToken })
     new OK({
-        message: 'Logout success!'
+        message: SUCCESS_MESSAGES.LOGOUT
     }).send(res)
 }
 
 const login = async (req, res) => {
     const result = await userService.login(req.body)
     new OK({
-        message: 'Login success!',
+        message: SUCCESS_MESSAGES.LOGIN,
         metaData: result
     }).send(res)
 }
 
 const registerSeller = async (req, res) => {
-    const { newSeller: userInfo, tokens } = await userService.registerSeller(req.body)
-    const { email, userId } = userInfo
+    const newSeller = await userService.registerSeller(req.body)
+    const { email, userId } = newSeller
     await emailService.sendVerificationEmail({
         userId,
         email
     })
     new Created({
-        message: 'Registration success for new seller! Please check your email to verify your account!',
-        metaData: { newSeller: userInfo, tokens }
+        message: SUCCESS_MESSAGES.REGISTER.SELLER
     }).send(res)
 }
 
 const registerUser = async (req, res) => {
-    const result = await userService.registerUser(req.body)
+    await userService.registerUser(req.body)
     new Created({
-        message: 'Registration success for new user!',
-        metaData: result
+        message: SUCCESS_MESSAGES.REGISTER.USER
     }).send(res)
 }
 
