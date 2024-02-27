@@ -2416,6 +2416,87 @@ paths:
                                                 example: User not found!
             security:
                 - bearerAuth: []
+        delete:
+            tags:
+            -   Admin
+            summary: Delete user by Id
+            description: Delete a user by Id
+            operationId: deleteUserById
+            parameters:
+            -   name: userId
+                in: path
+                description: Id of user to delete
+                required: true
+                schema:
+                    type: number
+                    example: 5
+            responses:
+                '200':
+                    description: Delete user success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Delete user success!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Failed to delete user!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to delete user!
+                '401':
+                    description: Unauthorized or Permission denied
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Please Authenticate!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
+            security:
+                - bearerAuth: []
 components:
     schemas:
         Property:

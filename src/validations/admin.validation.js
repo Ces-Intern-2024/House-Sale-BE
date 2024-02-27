@@ -1,7 +1,13 @@
 const Joi = require('joi')
 
+const deleteUserById = {
+    params: Joi.object().required().keys({
+        userId: Joi.number().required()
+    })
+}
+
 const getUserById = {
-    params: Joi.object().keys({
+    params: Joi.object().required().keys({
         userId: Joi.number().required()
     })
 }
@@ -21,6 +27,7 @@ const getAllUsers = {
 }
 
 module.exports = {
+    deleteUserById,
     getUserById,
     getAllUsers
 }

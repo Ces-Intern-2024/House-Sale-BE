@@ -8,7 +8,8 @@ const SUCCESS_MESSAGES = {
     REFRESH_TOKENS: 'Refresh tokens successfully!',
     ADMIN: {
         GET_USER: 'Get user success!',
-        GET_ALL_USERS: 'Get list users success!'
+        GET_ALL_USERS: 'Get list users success!',
+        DELETE_USER: 'Delete user success!'
     }
 }
 
@@ -51,11 +52,11 @@ const ERROR_MESSAGES = {
         GET_USER: 'Failed to get user!',
         GET_USER_BY_ID: 'Failed to get user by userId!',
         GET_USER_BY_EMAIL: 'Failed to get user by email!',
-        GENERATE_EMAIL_VERIFICATION_CODE: 'Failed to generate email verification code!'
+        GENERATE_EMAIL_VERIFICATION_CODE: 'Failed to generate email verification code!',
+        GET_ALL_USERS: 'Failed to get all users!',
+        DELETE_USER: 'Failed to delete user!'
     },
-    ADMIN: {
-        GET_ALL_USERS: 'Failed to get all users!'
-    }
+    ADMIN: {}
 }
 
 module.exports = {

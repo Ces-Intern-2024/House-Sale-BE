@@ -4,6 +4,40 @@ const { generateVerifyEmailCode, paginatedData } = require('../../utils')
 const { ERROR_MESSAGES } = require('../../core/message.constant')
 const { PAGINATION_DEFAULT, COMMON_EXCLUDE_ATTRIBUTES } = require('../../core/data.constant')
 
+const validateUserId = (userId) => {
+    if (!userId) {
+        throw new BadRequestError(ERROR_MESSAGES.COMMON.REQUIRED_USER_ID)
+    }
+}
+
+const validateEmail = (email) => {
+    if (!email) {
+        throw new BadRequestError(ERROR_MESSAGES.COMMON.REQUIRED_EMAIL)
+    }
+}
+/**
+ * Delete user by id
+ * @param {id} userId - the id of user
+ * @returns {Promise<Boolean>}
+ */
+
+const deleteUserById = async (userId) => {
+    validateUserId(userId)
+
+    try {
+        const user = await db.Users.findByPk(userId)
+        if (!user) {
+            throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+        }
+        await user.destroy()
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.USER.DELETE_USER)
+    }
+}
+
 /**
  * Get all users by admin
  * @param {object} queries - the queries from request contains limit, page, orderBy, sortBy, email, roleId, email-keyword
@@ -33,7 +67,7 @@ const getAllUsers = async ({ queries }) => {
 
         return paginatedData({ data: listUsers, page, limit })
     } catch (error) {
-        throw new BadRequestError(ERROR_MESSAGES.ADMIN.GET_ALL_USERS)
+        throw new BadRequestError(ERROR_MESSAGES.USER.GET_ALL_USERS)
     }
 }
 
@@ -43,9 +77,7 @@ const getAllUsers = async ({ queries }) => {
  * @returns {Promise<User>}
  */
 const getUserProfileById = async (userId) => {
-    if (!userId) {
-        throw new BadRequestError(ERROR_MESSAGES.COMMON.REQUIRED_USER_ID)
-    }
+    validateUserId(userId)
 
     try {
         const userProfile = await db.Users.findOne({
@@ -71,9 +103,7 @@ const getUserProfileById = async (userId) => {
  * @returns {Promise<User>}
  */
 const getUserById = async (userId) => {
-    if (!userId) {
-        throw new BadRequestError(ERROR_MESSAGES.COMMON.REQUIRED_USER_ID)
-    }
+    validateUserId(userId)
 
     try {
         const user = await db.Users.findByPk(userId)
@@ -89,9 +119,7 @@ const getUserById = async (userId) => {
  * @returns {Promise<User>}
  */
 const getUserByEmail = async (email) => {
-    if (!email) {
-        throw new BadRequestError(ERROR_MESSAGES.COMMON.REQUIRED_EMAIL)
-    }
+    validateEmail(email)
 
     try {
         const user = await db.Users.findOne({ where: { email } })
@@ -107,9 +135,7 @@ const getUserByEmail = async (email) => {
  * @returns {Promise<boolean>}
  */
 const isEmailTaken = async (email) => {
-    if (!email) {
-        throw new BadRequestError(ERROR_MESSAGES.COMMON.REQUIRED_EMAIL)
-    }
+    validateEmail(email)
     return !!(await getUserByEmail(email))
 }
 
@@ -119,9 +145,7 @@ const isEmailTaken = async (email) => {
  * @returns {Promise<string>} - the unique code
  */
 const generateEmailVerificationCode = async (userId) => {
-    if (!userId) {
-        throw new BadRequestError(ERROR_MESSAGES.COMMON.REQUIRED_USER_ID)
-    }
+    validateUserId(userId)
 
     try {
         const { uniqueCode, hashVerificationCode } = await generateVerifyEmailCode(userId)
@@ -134,6 +158,7 @@ const generateEmailVerificationCode = async (userId) => {
 }
 
 module.exports = {
+    deleteUserById,
     getAllUsers,
     generateEmailVerificationCode,
     getUserProfileById,
