@@ -1,26 +1,30 @@
 const db = require('..')
 const { BadRequestError } = require('../../core/error.response')
-const { isValidKeyOfModel } = require('../../utils')
 
 /**
  * Check if location information is valid
  * @param {Object} userBody
  * @returns {Promise<boolean>}
  */
-const isValidLocation = async ({ provinceCode, districtCode, wardCode }) => {
-    try {
-        const validKeys = await Promise.all([
-            isValidKeyOfModel(db.Provinces, provinceCode, 'This province is not available yet. Please try again.'),
-            isValidKeyOfModel(db.Districts, districtCode, 'This district is not available yet. Please try again.'),
-            isValidKeyOfModel(db.Wards, wardCode, 'This ward is not available yet. Please try again.')
-        ])
+const checkLocation = async ({ provinceCode, districtCode, wardCode }) => {
+    const { provinceCode: validProvinceCode } = (await db.Provinces.findOne({ where: { provinceCode } })) || {}
+    if (!validProvinceCode) {
+        throw new BadRequestError('This province is not available yet. Please try again.')
+    }
 
-        return validKeys.every((key) => !!key)
-    } catch (error) {
-        throw new BadRequestError(error.message)
+    const { districtCode: validDistrictCode } =
+        (await db.Districts.findOne({ where: { districtCode, provinceCode: validProvinceCode } })) || {}
+    if (!validDistrictCode) {
+        throw new BadRequestError('This district is not available yet. Please try again.')
+    }
+
+    const { wardCode: validWardCode } =
+        (await db.Wards.findOne({ where: { wardCode, districtCode: validDistrictCode } })) || {}
+    if (!validWardCode) {
+        throw new BadRequestError('This ward is not available yet. Please try again.')
     }
 }
 
 module.exports = {
-    isValidLocation
+    checkLocation
 }

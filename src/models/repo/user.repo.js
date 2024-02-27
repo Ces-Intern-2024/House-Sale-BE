@@ -1,17 +1,8 @@
 const db = require('..')
 const { BadRequestError, NotFoundError } = require('../../core/error.response')
-const { isValidKeyOfModel, generateVerifyEmailCode, paginatedData } = require('../../utils')
-
-const commonUserProfileScope = [
-    {
-        model: db.Roles,
-        as: 'role',
-        attributes: ['roleId', 'roleName'],
-        required: true
-    }
-]
-
-const commonExcludeAttributes = ['password', 'emailVerificationCode']
+const { generateVerifyEmailCode, paginatedData } = require('../../utils')
+const { ERROR_MESSAGES } = require('../../core/message.constant')
+const { PAGINATION_DEFAULT, COMMON_EXCLUDE_ATTRIBUTES } = require('../../core/data.constant')
 
 /**
  * Get all users by admin
@@ -20,22 +11,29 @@ const commonExcludeAttributes = ['password', 'emailVerificationCode']
  */
 const getAllUsers = async ({ queries }) => {
     try {
-        const { roleId, email, limit = 10, page = 1, orderBy = 'createdAt', sortBy = 'desc' } = queries
+        const {
+            roleId,
+            email,
+            limit = PAGINATION_DEFAULT.USER.LIMIT,
+            page = PAGINATION_DEFAULT.USER.PAGE,
+            orderBy = PAGINATION_DEFAULT.USER.ORDER_BY,
+            sortBy = PAGINATION_DEFAULT.USER.SORT_BY
+        } = queries
         const conditions = {
             ...(roleId && { roleId }),
-            email: { [db.Sequelize.Op.like]: `%${email || ''}%` }
+            ...(email && { email: { [db.Sequelize.Op.like]: `%${email}%` } })
         }
         const listUsers = await db.Users.findAndCountAll({
             where: conditions,
             offset: (page - 1) * limit,
             limit,
             order: [[orderBy, sortBy]],
-            attributes: { exclude: commonExcludeAttributes }
+            attributes: { exclude: COMMON_EXCLUDE_ATTRIBUTES.USER }
         })
 
         return paginatedData({ data: listUsers, page, limit })
     } catch (error) {
-        throw new BadRequestError('Error occurred when getting all users')
+        throw new BadRequestError(ERROR_MESSAGES.ADMIN.GET_ALL_USERS)
     }
 }
 
@@ -44,22 +42,26 @@ const getAllUsers = async ({ queries }) => {
  * @param {id} userId
  * @returns {Promise<User>}
  */
-const getUserProfile = async (userId) => {
+const getUserProfileById = async (userId) => {
+    if (!userId) {
+        throw new BadRequestError(ERROR_MESSAGES.COMMON.REQUIRED_USER_ID)
+    }
+
     try {
         const userProfile = await db.Users.findOne({
-            where: {
-                userId
-            },
-            include: commonUserProfileScope,
-            attributes: { exclude: commonExcludeAttributes }
+            where: { userId },
+            attributes: { exclude: COMMON_EXCLUDE_ATTRIBUTES.USER }
         })
         if (!userProfile) {
-            throw new NotFoundError('User profile not found')
+            throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
         }
 
-        return userProfile
+        return userProfile.get({ plain: true })
     } catch (error) {
-        throw new BadRequestError('Error ocurred when get user profile')
+        if (error instanceof NotFoundError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.USER.GET_USER)
     }
 }
 
@@ -69,11 +71,15 @@ const getUserProfile = async (userId) => {
  * @returns {Promise<User>}
  */
 const getUserById = async (userId) => {
+    if (!userId) {
+        throw new BadRequestError(ERROR_MESSAGES.COMMON.REQUIRED_USER_ID)
+    }
+
     try {
         const user = await db.Users.findByPk(userId)
         return user ? user.get({ plain: true }) : null
     } catch (error) {
-        throw new BadRequestError('An error occurred while get user.')
+        throw new BadRequestError(ERROR_MESSAGES.USER.GET_USER_BY_ID)
     }
 }
 
@@ -83,14 +89,15 @@ const getUserById = async (userId) => {
  * @returns {Promise<User>}
  */
 const getUserByEmail = async (email) => {
+    if (!email) {
+        throw new BadRequestError(ERROR_MESSAGES.COMMON.REQUIRED_EMAIL)
+    }
+
     try {
-        return db.Users.findOne({
-            where: {
-                email
-            }
-        })
+        const user = await db.Users.findOne({ where: { email } })
+        return user ? user.get({ plain: true }) : null
     } catch (error) {
-        throw new BadRequestError('An error occurred get user.')
+        throw new BadRequestError(ERROR_MESSAGES.USER.GET_USER_BY_EMAIL)
     }
 }
 
@@ -100,36 +107,10 @@ const getUserByEmail = async (email) => {
  * @returns {Promise<boolean>}
  */
 const isEmailTaken = async (email) => {
-    try {
-        const user = await db.Users.findOne({
-            where: {
-                email
-            }
-        })
-        return !!user
-    } catch (error) {
-        throw new BadRequestError('An error occurred while checking email exist.')
+    if (!email) {
+        throw new BadRequestError(ERROR_MESSAGES.COMMON.REQUIRED_EMAIL)
     }
-}
-
-/**
- * Check if location is valid
- * @param {Object} userBody
- * @returns {Promise<boolean>}
- */
-const isValidLocation = async (userBody) => {
-    try {
-        const { provinceCode, districtCode, wardCode } = userBody
-        const validKeys = await Promise.all([
-            isValidKeyOfModel(db.Provinces, provinceCode, 'This province is not available yet. Please try again.'),
-            isValidKeyOfModel(db.Districts, districtCode, 'This district is not available yet. Please try again.'),
-            isValidKeyOfModel(db.Wards, wardCode, 'This ward is not available yet. Please try again.')
-        ])
-
-        return validKeys.every((key) => !!key)
-    } catch (error) {
-        throw new BadRequestError(error.message)
-    }
+    return !!(await getUserByEmail(email))
 }
 
 /**
@@ -138,22 +119,25 @@ const isValidLocation = async (userBody) => {
  * @returns {Promise<string>} - the unique code
  */
 const generateEmailVerificationCode = async (userId) => {
+    if (!userId) {
+        throw new BadRequestError(ERROR_MESSAGES.COMMON.REQUIRED_USER_ID)
+    }
+
     try {
         const { uniqueCode, hashVerificationCode } = await generateVerifyEmailCode(userId)
         await db.Users.update({ emailVerificationCode: hashVerificationCode }, { where: { userId } })
 
         return uniqueCode
     } catch (error) {
-        throw new BadRequestError('Error occurred when generate email verification code')
+        throw new BadRequestError(ERROR_MESSAGES.USER.GENERATE_EMAIL_VERIFICATION_CODE)
     }
 }
 
 module.exports = {
     getAllUsers,
     generateEmailVerificationCode,
-    getUserProfile,
+    getUserProfileById,
     getUserById,
     getUserByEmail,
-    isEmailTaken,
-    isValidLocation
+    isEmailTaken
 }

@@ -4,6 +4,7 @@ const { jwtConfig } = require('../config/jwt.config')
 const { tokenTypes } = require('../config/tokens.config')
 const db = require('../models')
 const { BadRequestError, NotFoundError } = require('../core/error.response')
+const { ERROR_MESSAGES } = require('../core/message.constant')
 
 /**
  * Verify refreshToken and return tokens (or throw an error if it is not valid)
@@ -14,8 +15,9 @@ const { BadRequestError, NotFoundError } = require('../core/error.response')
 const verifyRefreshToken = async ({ refreshToken, type }) => {
     const payload = jwt.verify(refreshToken, jwtConfig.secret)
     if (!payload || type !== payload.type) {
-        throw new BadRequestError('Error ocurred when verify refreshToken')
+        throw new BadRequestError(ERROR_MESSAGES.REFRESH_TOKEN.FAILED_TO_VERIFY_REFRESH_TOKEN)
     }
+
     const tokens = await db.Tokens.findOne({
         where: {
             userId: payload.sub,
@@ -23,7 +25,7 @@ const verifyRefreshToken = async ({ refreshToken, type }) => {
         }
     })
     if (!tokens) {
-        throw new NotFoundError('Tokens not found')
+        throw new NotFoundError(ERROR_MESSAGES.REFRESH_TOKEN.TOKENS_NOT_FOUND)
     }
 
     return tokens
@@ -61,7 +63,7 @@ const saveTokens = async (tokens) => {
         ...tokens
     })
     if (!savedTokens) {
-        throw new BadRequestError('Failed creating tokens')
+        throw new BadRequestError(ERROR_MESSAGES.REFRESH_TOKEN.FAILED_TO_CREATE_TOKENS)
     }
 
     return savedTokens
@@ -87,7 +89,7 @@ const generateAuthTokens = async (userId) => {
         refreshTokenExpires
     })
     if (!savedToken) {
-        throw new BadRequestError('Save tokens failed')
+        throw new BadRequestError(ERROR_MESSAGES.REFRESH_TOKEN.FAILED_TO_SAVE_TOKENS)
     }
 
     return { accessToken, refreshToken }

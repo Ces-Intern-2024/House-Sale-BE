@@ -1,6 +1,7 @@
 const { Op } = require('sequelize')
 const db = require('..')
 const { BadRequestError, AuthFailureError } = require('../../core/error.response')
+const { ERROR_MESSAGES } = require('../../core/message.constant')
 
 /**
  * check if accessToken exists in database and not expired
@@ -20,12 +21,12 @@ const isValidAccessToken = async (accessToken, userId) => {
             }
         })
         if (!validAccessToken) {
-            throw new AuthFailureError('Invalid accessToken')
+            throw new AuthFailureError(ERROR_MESSAGES.ACCESS_TOKEN.INVALID_ACCESS_TOKEN)
         }
 
         return !!validAccessToken
     } catch (error) {
-        throw new AuthFailureError('Invalid accessToken')
+        throw new AuthFailureError(ERROR_MESSAGES.ACCESS_TOKEN.INVALID_ACCESS_TOKEN)
     }
 }
 
@@ -38,7 +39,7 @@ const removeTokensByTokenId = async (tokenId) => {
     try {
         return db.Tokens.destroy({ where: { tokenId } })
     } catch (error) {
-        throw new BadRequestError('An error occurred while checking user exist.')
+        throw new BadRequestError(ERROR_MESSAGES.REFRESH_TOKEN.FAILED_TO_REMOVE_TOKENS)
     }
 }
 
@@ -53,7 +54,7 @@ const getTokensByRefreshToken = async (refreshToken) => {
             where: { refreshToken }
         })
     } catch (error) {
-        throw new BadRequestError('An error occurred while checking user exist.')
+        throw new BadRequestError(ERROR_MESSAGES.REFRESH_TOKEN.FAILED_TO_GET_TOKENS)
     }
 }
 
