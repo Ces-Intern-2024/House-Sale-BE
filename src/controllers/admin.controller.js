@@ -1,6 +1,15 @@
-const { adminService } = require('../services')
+const { adminService, emailService } = require('../services')
 const { OK } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
+
+const resetUserPassword = async (req, res) => {
+    const { userId } = req.params
+    const { email, newPassword } = await adminService.resetUserPassword(userId)
+    await emailService.sendResetPasswordEmail({ email, newPassword })
+    new OK({
+        message: SUCCESS_MESSAGES.ADMIN.RESET_USER_PASSWORD
+    }).send(res)
+}
 
 const updateUserById = async (req, res) => {
     const { userId } = req.params
@@ -47,6 +56,7 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    resetUserPassword,
     updateUserById,
     updateUserActiveStatus,
     deleteUserById,

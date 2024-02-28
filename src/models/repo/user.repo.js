@@ -302,7 +302,25 @@ const verifyEmail = async ({ userId, code }) => {
     }
 }
 
+const resetUserPassword = async (userId) => {
+    validateUserId(userId)
+    const user = await getUserById(userId)
+    if (!user) {
+        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+    }
+
+    const newPassword = Math.random().toString(36).slice(-8)
+    const hashedPassword = await hashPassword(newPassword)
+    try {
+        await db.Users.update({ password: hashedPassword }, { where: { userId } })
+        return { email: user.email, newPassword }
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.ADMIN.RESET_USER_PASSWORD_FAILED)
+    }
+}
+
 module.exports = {
+    resetUserPassword,
     verifyEmail,
     changePassword,
     updateAvatar,

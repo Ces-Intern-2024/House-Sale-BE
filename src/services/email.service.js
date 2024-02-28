@@ -57,7 +57,20 @@ const sendConfirmUpgradeSellerEmail = async ({ userId, email }) => {
     return sendEmail({ to: email, subject, text, html })
 }
 
+const sendResetPasswordEmail = async ({ email, newPassword }) => {
+    if (!email || !newPassword) {
+        throw new BadRequestError(ERROR_MESSAGES.SEND_EMAIL.INVALID_EMAIL_ID_OR_PASSWORD)
+    }
+
+    const subject = EMAIL_TEMPLATE.RESET_PASSWORD_EMAIL.SUBJECT
+    const text = EMAIL_TEMPLATE.RESET_PASSWORD_EMAIL.TEXT
+    const html = EMAIL_TEMPLATE.RESET_PASSWORD_EMAIL.HTML(newPassword)
+
+    return sendEmail({ to: email, subject, text, html })
+}
+
 module.exports = {
+    sendResetPasswordEmail,
     sendConfirmUpgradeSellerEmail,
     sendVerificationEmail,
     sendContactEmailToSeller

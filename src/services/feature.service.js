@@ -1,13 +1,11 @@
-const { BadRequestError } = require('../core/error.response')
 const { featureRepo } = require('../models/repo')
 
+/**
+ * Get all features
+ * @returns {Promise<Feature>}
+ */
 const getAllFeatures = async () => {
-    const listFeatures = await featureRepo.getAllFeatures()
-    if (!listFeatures) {
-        throw new BadRequestError('Error occurred when getting all features')
-    }
-
-    return listFeatures
+    return featureRepo.getAllFeatures()
 }
 
 module.exports = {

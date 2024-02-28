@@ -1,7 +1,16 @@
 const { userRepo } = require('../models/repo')
 
 /**
- *
+ * Generate new user password
+ * @param {id} userId - the id of user
+ * @returns {Promise<string>} - new password
+ */
+const resetUserPassword = async (userId) => {
+    return userRepo.resetUserPassword(userId)
+}
+
+/**
+ * Update user by id
  * @param {Object} params
  * @param {id} userId
  * @param {Object} userBody
@@ -48,6 +57,7 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    resetUserPassword,
     updateUserById,
     updateUserActiveStatus,
     deleteUserById,

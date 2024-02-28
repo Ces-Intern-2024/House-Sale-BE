@@ -1,5 +1,7 @@
 const COMMON_EXCLUDE_ATTRIBUTES = {
-    USER: ['password', 'emailVerificationCode']
+    USER: ['password', 'emailVerificationCode'],
+    FEATURE: ['createdAt', 'updatedAt'],
+    CATEGORY: ['createdAt', 'updatedAt']
 }
 
 const PAGINATION_DEFAULT = {
@@ -127,6 +129,21 @@ const EMAIL_TEMPLATE = {
                     <a href="${verificationEmailUrl}" style="background-color: #4CAF50; color: white; text-decoration: none; padding: 10px 20px; margin: 15px 0; cursor: pointer; display: inline-block;">Confirm Upgrade</a>
                     <p> If you did not request to upgrade to seller, you can ignore this email.</p>
                     </body>
+            </html>
+        `
+        }
+    },
+    RESET_PASSWORD_EMAIL: {
+        SUBJECT: 'RESET YOUR PASSWORD',
+        TEXT: 'Your password has been reset',
+        HTML: (newPassword) => {
+            return `
+            <html>
+                <body>
+                    <h1>Your password has been reset</h1>
+                    <p>Your new password is: <i style="color: red; font-size: 20px; font-weight: bold;"> ${newPassword}</i></p>
+                    <p>If you did not request to reset your password, please contact us immediately.</p>
+                </body>
             </html>
         `
         }

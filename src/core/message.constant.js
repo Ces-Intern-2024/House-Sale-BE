@@ -23,7 +23,22 @@ const SUCCESS_MESSAGES = {
             ACTIVE: 'User has been successfully activated!',
             INACTIVE: 'User has been successfully deactivated!'
         },
-        UPDATE_USER: 'Update user successfully!'
+        UPDATE_USER: 'Update user successfully!',
+        RESET_USER_PASSWORD: `Reset user password successfully! New password has been sent to user's email!`
+    },
+
+    FEATURE: {
+        GET_FEATURES: 'Get list features successfully!'
+    },
+
+    CATEGORY: {
+        GET_CATEGORIES: 'Get list categories successfully!'
+    },
+
+    LOCATION: {
+        GET_PROVINCES: 'Get list provinces successfully!',
+        GET_DISTRICTS: 'Get list districts successfully!',
+        GET_WARDS: 'Get list wards successfully!'
     }
 }
 
@@ -36,9 +51,11 @@ const ERROR_MESSAGES = {
         ACCOUNT_NOT_ACTIVE: 'Your account is not active!',
         EMAIL_NOT_VERIFIED: 'Please verify your email!'
     },
+
     ACCESS_TOKEN: {
         INVALID_ACCESS_TOKEN: 'Invalid accessToken!'
     },
+
     TOKENS: {
         TOKENS_NOT_FOUND: 'Tokens not found!',
         FAILED_TO_CREATE_TOKENS: 'Failed to create tokens!',
@@ -47,6 +64,7 @@ const ERROR_MESSAGES = {
         FAILED_TO_SAVE_TOKENS: 'Failed to save tokens!',
         FAILED_TO_GET_TOKENS: 'Failed to get tokens!'
     },
+
     USER: {
         GET_USER: 'Failed to get user!',
         GET_USER_BY_ID: 'Failed to get user by userId!',
@@ -90,21 +108,45 @@ const ERROR_MESSAGES = {
             FAILED_TO_LOGOUT: 'Failed to logout!'
         }
     },
-    ADMIN: {},
+
+    ADMIN: {
+        RESET_USER_PASSWORD_FAILED: 'Failed to reset user password!'
+    },
+
     LOCATION: {
         INVALID_PROVINCE: 'Invalid province. Please try again!',
         INVALID_DISTRICT: 'Invalid district. Please try again!',
         INVALID_WARD: 'Invalid ward. Please try again!',
         INVALID_LOCATION_PROVIDED:
-            'Complete address information required. You must provide provinceCode, districtCode, and wardCode together!'
+            'Complete address information required. You must provide provinceCode, districtCode, and wardCode together!',
+        GET_PROVINCES: 'Failed to get list provinces!',
+        GET_DISTRICTS: 'Failed to get list districts!',
+        GET_WARDS: 'Failed to get list wards!',
+        CREATE_NEW_LOCATION: 'Failed to create new location!',
+        PROVINCES_NOT_FOUND: 'No province found!',
+        DISTRICTS_NOT_FOUND: 'No district found!',
+        WARDS_NOT_FOUND: 'No ward found!',
+        REQUIRE_PROVINCE: 'Province code is required!',
+        REQUIRE_DISTRICT: 'District code is required!'
     },
+
     AUTHENTICATION: {
         NOT_AUTHENTICATED: 'Please Authenticate!',
         PERMISSION_DENIED: 'Permission denied!'
     },
+
     SEND_EMAIL: {
         INVALID_EMAIL: `Invalid or missing recipient email address!`,
-        FAILED_TO_SEND_EMAIL: 'Failed to send email!'
+        FAILED_TO_SEND_EMAIL: 'Failed to send email!',
+        INVALID_EMAIL_ID_OR_PASSWORD: 'Invalid email or newPassword!'
+    },
+
+    FEATURE: {
+        GET_FEATURES: 'Failed to get list features!'
+    },
+
+    CATEGORY: {
+        GET_CATEGORIES: 'Failed to get list categories!'
     }
 }
 
