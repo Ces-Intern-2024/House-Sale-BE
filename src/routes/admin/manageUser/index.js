@@ -9,5 +9,9 @@ const router = express.Router()
 router.get('', validate(adminValidation.getAllUsers), asyncHandler(adminController.getAllUsers))
 router.get('/:userId', validate(adminValidation.getUserById), asyncHandler(adminController.getUserById))
 router.delete('/:userId', validate(adminValidation.deleteUserById), asyncHandler(adminController.deleteUserById))
-
+router.patch(
+    '/:userId/active',
+    validate(adminValidation.updateUserActiveStatus),
+    asyncHandler(adminController.updateUserActiveStatus)
+)
 module.exports = router

@@ -248,7 +248,12 @@ const login = async (userBody) => {
         throw new NotFoundError(ERROR_MESSAGES.LOGIN.EMAIL_NOT_FOUND)
     }
 
-    const { userId, password: hashedPassword, emailVerificationCode, ...userInfo } = user
+    const { userId, isActive, password: hashedPassword, emailVerificationCode, ...userInfo } = user
+
+    if (!isActive) {
+        throw new ForbiddenError(ERROR_MESSAGES.LOGIN.ACCOUNT_NOT_ACTIVE)
+    }
+
     const isMatchPassword = await bcrypt.compare(password, hashedPassword)
     if (!isMatchPassword) {
         throw new AuthFailureError(ERROR_MESSAGES.LOGIN.INCORRECT_EMAIL_PASSWORD)
@@ -261,7 +266,7 @@ const login = async (userBody) => {
         throw new BadRequestError(ERROR_MESSAGES.LOGIN.FAILED_CREATE_TOKENS)
     }
 
-    return { user: { userId, ...userInfo }, tokens }
+    return { user: { userId, isActive, ...userInfo }, tokens }
 }
 
 /**

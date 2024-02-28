@@ -1,5 +1,10 @@
 const Joi = require('joi')
 
+const updateUserActiveStatus = {
+    params: Joi.object().required().keys({
+        userId: Joi.number().required()
+    })
+}
 const deleteUserById = {
     params: Joi.object().required().keys({
         userId: Joi.number().required()
@@ -27,6 +32,7 @@ const getAllUsers = {
 }
 
 module.exports = {
+    updateUserActiveStatus,
     deleteUserById,
     getUserById,
     getAllUsers
