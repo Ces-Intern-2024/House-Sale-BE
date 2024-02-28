@@ -2,6 +2,16 @@ const { adminService } = require('../services')
 const { OK } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const updateUserActiveStatus = async (req, res) => {
+    const { userId } = req.params
+    const updatedActiveStatus = await adminService.updateUserActiveStatus(userId)
+    new OK({
+        message: updatedActiveStatus
+            ? SUCCESS_MESSAGES.ADMIN.UPDATE_USER_ACTIVE_STATUS.ACTIVE
+            : SUCCESS_MESSAGES.ADMIN.UPDATE_USER_ACTIVE_STATUS.INACTIVE
+    }).send(res)
+}
+
 const deleteUserById = async (req, res) => {
     const { userId } = req.params
     await adminService.deleteUserById(userId)
@@ -28,6 +38,7 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    updateUserActiveStatus,
     deleteUserById,
     getUserById,
     getAllUsers

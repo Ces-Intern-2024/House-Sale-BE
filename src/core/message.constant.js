@@ -9,7 +9,11 @@ const SUCCESS_MESSAGES = {
     ADMIN: {
         GET_USER: 'Get user success!',
         GET_ALL_USERS: 'Get list users success!',
-        DELETE_USER: 'Delete user success!'
+        DELETE_USER: 'Delete user success!',
+        UPDATE_USER_ACTIVE_STATUS: {
+            ACTIVE: 'User has been successfully activated!',
+            INACTIVE: 'User has been successfully deactivated!'
+        }
     }
 }
 
@@ -31,7 +35,8 @@ const ERROR_MESSAGES = {
     LOGIN: {
         EMAIL_NOT_FOUND: 'Email not registered!',
         INCORRECT_EMAIL_PASSWORD: 'Incorrect email or password!',
-        FAILED_CREATE_TOKENS: 'Failed to create tokens!'
+        FAILED_CREATE_TOKENS: 'Failed to create tokens!',
+        ACCOUNT_NOT_ACTIVE: 'Your account is not active!'
     },
     LOGOUT: {
         INVALID_REFRESH_TOKEN: 'RefreshToken not valid!',
@@ -54,7 +59,8 @@ const ERROR_MESSAGES = {
         GET_USER_BY_EMAIL: 'Failed to get user by email!',
         GENERATE_EMAIL_VERIFICATION_CODE: 'Failed to generate email verification code!',
         GET_ALL_USERS: 'Failed to get all users!',
-        DELETE_USER: 'Failed to delete user!'
+        DELETE_USER: 'Failed to delete user!',
+        UPDATE_USER_ACTIVE_STATUS: 'Failed to update user active status!'
     },
     ADMIN: {}
 }

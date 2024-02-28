@@ -755,7 +755,7 @@ paths:
                                                 type: string
                                                 example: Incorrect email or password!
                 '403':
-                    description: Email not verified! (For seller)
+                    description: Your account is not active! or Email not verified! (For seller)
                     content:
                         application/json:
                             schema:
@@ -769,7 +769,9 @@ paths:
                                                 example: 403
                                             message:
                                                 type: string
-                                                example: Your email has not been verified. Please check your email and verify it!
+                                                enum:
+                                                    -  Your account is not active!
+                                                    -  Your email has not been verified. Please check your email and verify it!
                 '404':
                     description: Email not registered!
                     content:
@@ -2497,6 +2499,88 @@ paths:
                                                 example: User not found!
             security:
                 - bearerAuth: []
+    /admin/manage-user/{userId}/active:
+        patch:
+            tags:
+            -   Admin
+            summary: Update user active status by Id
+            description: Update user active status by Id
+            operationId: updateUserActiveStatus
+            parameters:
+            -   name: userId
+                in: path
+                description: Id of user to update active status
+                required: true
+                schema:
+                    type: number
+                    example: 5
+            responses:
+                '200':
+                    description: Update user active status success!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        enum:
+                                            - User has been successfully activated!
+                                            - User has been successfully deactivated!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Failed to update user active status!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to update user active status!
+                '401':
+                    description: Unauthorized or Permission denied
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example:  Please Authenticate!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
 components:
     schemas:
         Property:

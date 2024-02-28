@@ -15,6 +15,32 @@ const validateEmail = (email) => {
         throw new BadRequestError(ERROR_MESSAGES.COMMON.REQUIRED_EMAIL)
     }
 }
+
+/**
+ *  Update user active status
+ * @param {id} userId  - the id of user
+ * @returns {Promise<Boolean>}
+ */
+const updateUserActiveStatus = async (userId) => {
+    validateUserId(userId)
+
+    try {
+        const user = await db.Users.findByPk(userId)
+        if (!user) {
+            throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+        }
+        const updatedActiveStatus = !user.isActive
+        await user.update({ isActive: updatedActiveStatus })
+
+        return updatedActiveStatus
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.USER.UPDATE_USER_ACTIVE_STATUS)
+    }
+}
+
 /**
  * Delete user by id
  * @param {id} userId - the id of user
@@ -158,6 +184,7 @@ const generateEmailVerificationCode = async (userId) => {
 }
 
 module.exports = {
+    updateUserActiveStatus,
     deleteUserById,
     getAllUsers,
     generateEmailVerificationCode,
