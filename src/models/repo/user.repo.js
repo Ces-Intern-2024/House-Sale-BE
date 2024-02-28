@@ -1,8 +1,10 @@
+const bcrypt = require('bcrypt')
 const db = require('..')
-const { BadRequestError, NotFoundError } = require('../../core/error.response')
-const { generateVerifyEmailCode, paginatedData } = require('../../utils')
+const { BadRequestError, NotFoundError, AuthFailureError } = require('../../core/error.response')
+const { generateVerifyEmailCode, paginatedData, hashPassword } = require('../../utils')
 const { ERROR_MESSAGES } = require('../../core/message.constant')
 const { PAGINATION_DEFAULT, COMMON_EXCLUDE_ATTRIBUTES } = require('../../core/data.constant')
+const { checkLocation } = require('./location.repo')
 
 const validateUserId = (userId) => {
     if (!userId) {
@@ -183,7 +185,128 @@ const generateEmailVerificationCode = async (userId) => {
     }
 }
 
+const validateUserBody = async ({ userId, userBody }) => {
+    const user = await getUserById(userId)
+    if (!user) {
+        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+    }
+
+    if (!userBody || Object.keys(userBody).length === 0) {
+        throw new BadRequestError(ERROR_MESSAGES.COMMON.NOTHING_TO_UPDATE)
+    }
+
+    const { phone: newPhoneNumber, provinceCode, districtCode, wardCode } = userBody
+    if (newPhoneNumber && newPhoneNumber === user.phone) {
+        throw new BadRequestError(ERROR_MESSAGES.USER.CAN_NOT_SAME_PHONE)
+    }
+
+    const locationProvided = [provinceCode, districtCode, wardCode].filter(Boolean).length
+    if (locationProvided > 0 && locationProvided < 3) {
+        throw new BadRequestError(ERROR_MESSAGES.LOCATION.INVALID_LOCATION_PROVIDED)
+    }
+    if (locationProvided === 3) {
+        await checkLocation({ provinceCode, districtCode, wardCode })
+    }
+}
+
+const updateUserById = async ({ userId, userBody }) => {
+    validateUserId(userId)
+    const user = await getUserById(userId)
+    if (!user) {
+        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+    }
+
+    await validateUserBody({ userId, userBody })
+    try {
+        const [affectedRows] = await db.Users.update(userBody, { where: { userId } })
+        if (affectedRows === 0) {
+            throw new BadRequestError(ERROR_MESSAGES.USER.FAILED_TO_UPDATE_USER)
+        }
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.USER.FAILED_TO_UPDATE_USER)
+    }
+}
+
+const updateAvatar = async ({ userId, imageUrl }) => {
+    validateUserId(userId)
+    const user = await getUserById(userId)
+    if (!user) {
+        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+    }
+
+    try {
+        const [affectedRows] = await db.Users.update({ avatar: imageUrl }, { where: { userId } })
+        if (affectedRows === 0) {
+            throw new BadRequestError(ERROR_MESSAGES.USER.UPDATE_AVATAR_FAILED)
+        }
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.USER.UPDATE_AVATAR_FAILED)
+    }
+}
+
+const changePassword = async ({ userId, currentPassword, newPassword }) => {
+    validateUserId(userId)
+    const user = await getUserById(userId)
+    if (!user) {
+        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+    }
+
+    const isMatchPassword = await bcrypt.compare(currentPassword, user.password)
+    if (!isMatchPassword) {
+        throw new AuthFailureError(ERROR_MESSAGES.USER.INCORRECT_CURRENT_PASSWORD)
+    }
+    if (newPassword === currentPassword) {
+        throw new BadRequestError(ERROR_MESSAGES.USER.CAN_NOT_SAME_PASSWORD)
+    }
+
+    const hashedPassword = await hashPassword(newPassword)
+    try {
+        const [affectedRows] = await db.Users.update({ password: hashedPassword }, { where: { userId } })
+        if (affectedRows === 0) {
+            throw new BadRequestError(ERROR_MESSAGES.USER.CHANGE_PASSWORD_FAILED)
+        }
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.USER.CHANGE_PASSWORD_FAILED)
+    }
+}
+
+/**
+ * Verify user email with verification code
+ * @param {Object} params
+ * @param {id} userId - user id
+ * @param {string} code - email verification code
+ * @returns {Promise<boolean>}
+ */
+const verifyEmail = async ({ userId, code }) => {
+    validateUserId(userId)
+    const user = await getUserById(userId)
+    if (!user) {
+        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+    }
+
+    if (user.isEmailVerified) {
+        throw new BadRequestError(ERROR_MESSAGES.USER.EMAIL_ALREADY_VERIFIED)
+    }
+
+    const isMatchEmailVerificationCode = await bcrypt.compare(code, user.emailVerificationCode)
+    if (!isMatchEmailVerificationCode) {
+        throw new AuthFailureError(ERROR_MESSAGES.USER.INVALID_EMAIL_VERIFICATION_CODE)
+    }
+
+    const updatedUser = await db.Users.update(
+        { isEmailVerified: true, emailVerificationCode: null },
+        { where: { userId } }
+    )
+    if (!updatedUser) {
+        throw new BadRequestError(ERROR_MESSAGES.USER.FAILED_TO_VERIFY_EMAIL)
+    }
+}
+
 module.exports = {
+    verifyEmail,
+    changePassword,
+    updateAvatar,
+    updateUserById,
     updateUserActiveStatus,
     deleteUserById,
     getAllUsers,

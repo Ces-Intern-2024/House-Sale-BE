@@ -2,9 +2,8 @@ const axios = require('axios')
 const bcrypt = require('bcrypt')
 const { v4: uuidv4 } = require('uuid')
 const { BadRequestError } = require('../core/error.response')
-
-const ROUNDS_SALT = 10
-const GOOGLE_API_URL = 'https://www.googleapis.com/oauth2'
+const { ERROR_MESSAGES } = require('../core/message.constant')
+const { GOOGLE_API_URL, ROUNDS_SALT } = require('../core/data.constant')
 
 const verifyGoogleToken = async (accessToken) => {
     try {
@@ -12,10 +11,10 @@ const verifyGoogleToken = async (accessToken) => {
         const { aud: clientId } = response.data
 
         if (clientId !== process.env.FE_GOOGLE_CLIENT_ID) {
-            throw new Error('Invalid client ID')
+            throw new Error(ERROR_MESSAGES.USER.LOGIN_GOOGLE.INVALID_CLIENT_ID)
         }
     } catch (error) {
-        throw new BadRequestError(error.message || 'Invalid google access token')
+        throw new BadRequestError(ERROR_MESSAGES.USER.LOGIN_GOOGLE.INVALID_ACCESS_TOKEN)
     }
 }
 

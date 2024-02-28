@@ -1,6 +1,17 @@
 const { userRepo } = require('../models/repo')
 
 /**
+ *
+ * @param {Object} params
+ * @param {id} userId
+ * @param {Object} userBody
+ * @returns
+ */
+const updateUserById = async ({ userId, userBody }) => {
+    return userRepo.updateUserById({ userId, userBody })
+}
+
+/**
  *  Update user active status
  * @param {id} userId - the id of user
  * @returns {Promise<Boolean>}
@@ -37,6 +48,7 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    updateUserById,
     updateUserActiveStatus,
     deleteUserById,
     getUserById,

@@ -1,117 +1,19 @@
 const { transporter, emailConfig } = require('../config/nodemailer.config')
+const { EMAIL_TEMPLATE } = require('../core/data.constant')
 const { BadRequestError, FailedDependenciesError } = require('../core/error.response')
+const { ERROR_MESSAGES } = require('../core/message.constant')
 const { userRepo } = require('../models/repo')
-
-const contactHtmlTemplate = ({ propertyId, name, email, phone, message }) => {
-    return `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <style>
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f4f4f4;
-          margin: 0;
-          padding: 0;
-        }
-        .container {
-          max-width: 600px;
-          margin: 20px auto;
-          background-color: #fff;
-          padding: 20px;
-          border-radius: 5px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-          color: #333;
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 20px;
-        }
-        th, td {
-          border: 1px solid #ddd;
-          padding: 8px;
-          text-align: left;
-        }
-        th {
-          background-color: #f2f2f2;
-        }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <h2>Your property has received a new contact</h2>
-        <table>
-          <tr>
-            <th>User</th>
-            <th>Information</th>
-          </tr>
-          <tr>
-            <td>Name</td>
-            <td>${name}</td>
-          </tr>
-          <tr>
-            <td>Email</td>
-            <td>${email}</td>
-          </tr>
-          <tr>
-            <td>Phone</td>
-            <td>${phone}</td>
-          </tr>
-          <tr>
-            <td>Message</td>
-            <td>${message}</td>
-          </tr>
-          <tr>
-            <td>Property</td>
-            <td>${propertyId}</td>
-          </tr>
-        </table>
-      </div>
-    </body>
-    </html>`
-}
-
-const verifyEmailHtmlTemplate = (verificationEmailUrl) => {
-    return `
-    <html>
-        <body>
-            <h1>Welcome New Seller to HOUSE SALE!</h1>
-            <p>Please click the button below to verify your email address:</p>
-            <a href="${verificationEmailUrl}" style="background-color: #4CAF50; color: white; text-decoration: none; padding: 10px 20px; margin: 15px 0; cursor: pointer; display: inline-block;">Verify Email</a>
-            <p>If you did not sign up for this account, you can ignore this email.</p>
-        </body>
-    </html>
-`
-}
-
-const confirmUpgradeSellerHtmlTemplate = (verificationEmailUrl) => {
-    return `
-    <html>
-        <body>
-            <h1>Welcome New Seller to HOUSE SALE!</h1>
-            <p>Please click the button below to confirm your upgrade to seller:</p>
-            <a href="${verificationEmailUrl}" style="background-color: #4CAF50; color: white; text-decoration: none; padding: 10px 20px; margin: 15px 0; cursor: pointer; display: inline-block;">Confirm Upgrade</a>
-            <p> If you did not request to upgrade to seller, you can ignore this email.</p>
-            </body>
-    </html>
-`
-}
 
 const sendEmail = async ({ to, subject, text, html }) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!to || typeof to !== 'string' || !emailRegex.test(to)) {
-        throw new BadRequestError('Invalid or missing recipient email address')
+        throw new BadRequestError(ERROR_MESSAGES.SEND_EMAIL.INVALID_EMAIL)
     }
 
     const msg = { from: emailConfig.from, to, subject, text, html }
     const info = await transporter.sendMail(msg)
     if (!info.messageId) {
-        throw new FailedDependenciesError('Error sending email')
+        throw new FailedDependenciesError(ERROR_MESSAGES.SEND_EMAIL.FAILED_TO_SEND_EMAIL)
     }
 
     return info
@@ -120,9 +22,9 @@ const sendEmail = async ({ to, subject, text, html }) => {
 const sendContactEmailToSeller = async (contact) => {
     const { email: sellerEmail } = await userRepo.getUserById(contact.sellerId)
     const { propertyId, name, email, phone, message } = contact
-    const subject = `NEW CONTACT FOR YOUR PROPERTY`
-    const text = `Your property has been received new contact`
-    const html = contactHtmlTemplate({ propertyId, name, email, phone, message })
+    const subject = EMAIL_TEMPLATE.CONTACT_EMAIL_TO_SELLER.SUBJECT
+    const text = EMAIL_TEMPLATE.CONTACT_EMAIL_TO_SELLER.TEXT
+    const html = EMAIL_TEMPLATE.CONTACT_EMAIL_TO_SELLER.HTML({ propertyId, name, email, phone, message })
 
     return sendEmail({ to: sellerEmail, subject, text, html })
 }
@@ -130,13 +32,13 @@ const sendContactEmailToSeller = async (contact) => {
 const sendVerificationEmail = async ({ userId, email }) => {
     const emailVerificationCode = await userRepo.generateEmailVerificationCode(userId)
     if (!emailVerificationCode) {
-        throw new BadRequestError('Error occurred when generate email verification code')
+        throw new BadRequestError(ERROR_MESSAGES.USER.GENERATE_EMAIL_VERIFICATION_CODE)
     }
 
-    const subject = `VERIFY YOUR EMAIL`
-    const text = `Please verify your email address`
+    const subject = EMAIL_TEMPLATE.VERIFICATION_EMAIL.SUBJECT
+    const text = EMAIL_TEMPLATE.VERIFICATION_EMAIL.TEXT
     const verificationEmailUrl = `${emailConfig.prefixVerifyEmailUrl}/${userId}/${emailVerificationCode}`
-    const html = verifyEmailHtmlTemplate(verificationEmailUrl)
+    const html = EMAIL_TEMPLATE.VERIFICATION_EMAIL.HTML(verificationEmailUrl)
 
     return sendEmail({ to: email, subject, text, html })
 }
@@ -144,19 +46,18 @@ const sendVerificationEmail = async ({ userId, email }) => {
 const sendConfirmUpgradeSellerEmail = async ({ userId, email }) => {
     const emailVerificationCode = await userRepo.generateEmailVerificationCode(userId)
     if (!emailVerificationCode) {
-        throw new BadRequestError('Error occurred when generate email verification code')
+        throw new BadRequestError(ERROR_MESSAGES.USER.GENERATE_EMAIL_VERIFICATION_CODE)
     }
 
-    const subject = `CONFIRM YOUR UPGRADE TO SELLER`
-    const text = `Please confirm your upgrade to seller by verifying your email address`
+    const subject = EMAIL_TEMPLATE.CONFIRM_UPGRADE_SELLER_EMAIL.SUBJECT
+    const text = EMAIL_TEMPLATE.CONFIRM_UPGRADE_SELLER_EMAIL.TEXT
     const verificationEmailUrl = `${emailConfig.prefixVerifyEmailUrl}/${userId}/${emailVerificationCode}`
-    const html = confirmUpgradeSellerHtmlTemplate(verificationEmailUrl)
+    const html = EMAIL_TEMPLATE.CONFIRM_UPGRADE_SELLER_EMAIL.HTML(verificationEmailUrl)
 
     return sendEmail({ to: email, subject, text, html })
 }
 
 module.exports = {
-    confirmUpgradeSellerHtmlTemplate,
     sendConfirmUpgradeSellerEmail,
     sendVerificationEmail,
     sendContactEmailToSeller

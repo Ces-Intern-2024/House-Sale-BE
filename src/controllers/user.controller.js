@@ -1,20 +1,20 @@
 const { Created, OK } = require('../core/success.response')
 const { userService, emailService } = require('../services')
-const { SUCCESS_MESSAGES } = require('../core/message.constant')
+const { SUCCESS_MESSAGES, ERROR_MESSAGES, VERIFY_EMAIL_RESPONSE_MESSAGE } = require('../core/message.constant')
 
 const upgradeToSeller = async (req, res) => {
     const userId = req.user?.userId
     const { email } = await userService.fulFillSellerInformation({ userId, information: req.body })
     await emailService.sendConfirmUpgradeSellerEmail({ userId, email })
     new OK({
-        message: 'Your upgrade request has been sent! Please check your email to confirm'
+        message: SUCCESS_MESSAGES.USER.UPGRADE_TO_SELLER
     }).send(res)
 }
 
 const loginWithGoogle = async (req, res) => {
     const result = await userService.loginWithGoogle(req.body)
     new OK({
-        message: 'Login with google success!',
+        message: SUCCESS_MESSAGES.USER.LOGIN_GOOGLE,
         metaData: result
     }).send(res)
 }
@@ -22,19 +22,14 @@ const loginWithGoogle = async (req, res) => {
 const verifyEmail = async (req, res) => {
     const { userId, code } = req.params
     const redirectWithMessage = (message) => {
-        return `
-            <script>
-                alert('${message} Click OK to redirect to home page!');
-                window.location.href = 'https://house-sale-three.vercel.app/home';
-            </script>
-        `
+        return VERIFY_EMAIL_RESPONSE_MESSAGE(message)
     }
 
     try {
         await userService.verifyEmail({ userId, code })
-        res.send(redirectWithMessage('Your email had been verified successfully!'))
+        res.send(redirectWithMessage(SUCCESS_MESSAGES.USER.VERIFY_EMAIL_SUCCESS))
     } catch (error) {
-        res.send(redirectWithMessage(error.message || 'There was an error verifying your email!'))
+        res.send(redirectWithMessage(ERROR_MESSAGES.USER.FAILED_TO_VERIFY_EMAIL))
     }
 }
 
@@ -43,16 +38,16 @@ const updateAvatar = async (req, res) => {
     const { imageUrl } = req.body
     await userService.updateAvatar({ userId, imageUrl })
     new OK({
-        message: 'Your avatar had been changed successfully!'
+        message: SUCCESS_MESSAGES.USER.UPDATE_AVATAR
     }).send(res)
 }
 
 const updateProfile = async (req, res) => {
     const userId = req.user?.userId
-    const information = req.body
-    await userService.updateProfile({ userId, information })
+    const userBody = req.body
+    await userService.updateProfile({ userId, userBody })
     new OK({
-        message: 'Your profile had been changed successfully!'
+        message: SUCCESS_MESSAGES.USER.UPDATE_PROFILE
     }).send(res)
 }
 
@@ -60,7 +55,7 @@ const getProfile = async (req, res) => {
     const userId = req.user?.userId
     const profile = await userService.getProfile(userId)
     new OK({
-        message: 'Get your profile successfully!',
+        message: SUCCESS_MESSAGES.USER.GET_PROFILE,
         metaData: profile
     }).send(res)
 }
@@ -70,7 +65,7 @@ const changePassword = async (req, res) => {
     const { currentPassword, newPassword } = req.body
     await userService.changePassword({ userId, currentPassword, newPassword })
     new OK({
-        message: 'Your password has been changed successfully!'
+        message: SUCCESS_MESSAGES.USER.CHANGE_PASSWORD
     }).send(res)
 }
 
@@ -78,7 +73,7 @@ const refreshTokens = async (req, res) => {
     const { refreshToken } = req.body
     const newTokens = await userService.refreshTokens(refreshToken)
     new Created({
-        message: SUCCESS_MESSAGES.REFRESH_TOKENS,
+        message: SUCCESS_MESSAGES.USER.REFRESH_TOKENS,
         metaData: newTokens
     }).send(res)
 }
@@ -88,14 +83,14 @@ const logout = async (req, res) => {
     const { refreshToken } = req.body
     await userService.logout({ userId, refreshToken })
     new OK({
-        message: SUCCESS_MESSAGES.LOGOUT
+        message: SUCCESS_MESSAGES.USER.LOGOUT
     }).send(res)
 }
 
 const login = async (req, res) => {
     const result = await userService.login(req.body)
     new OK({
-        message: SUCCESS_MESSAGES.LOGIN,
+        message: SUCCESS_MESSAGES.USER.LOGIN,
         metaData: result
     }).send(res)
 }
@@ -108,14 +103,14 @@ const registerSeller = async (req, res) => {
         email
     })
     new Created({
-        message: SUCCESS_MESSAGES.REGISTER.SELLER
+        message: SUCCESS_MESSAGES.USER.REGISTER_SELLER
     }).send(res)
 }
 
 const registerUser = async (req, res) => {
     await userService.registerUser(req.body)
     new Created({
-        message: SUCCESS_MESSAGES.REGISTER.USER
+        message: SUCCESS_MESSAGES.USER.REGISTER_USER
     }).send(res)
 }
 
