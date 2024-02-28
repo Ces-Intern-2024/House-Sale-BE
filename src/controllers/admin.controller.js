@@ -2,6 +2,15 @@ const { adminService } = require('../services')
 const { OK } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const updateUserById = async (req, res) => {
+    const { userId } = req.params
+    const userBody = req.body
+    await adminService.updateUserById({ userId, userBody })
+    new OK({
+        message: SUCCESS_MESSAGES.ADMIN.UPDATE_USER
+    }).send(res)
+}
+
 const updateUserActiveStatus = async (req, res) => {
     const { userId } = req.params
     const updatedActiveStatus = await adminService.updateUserActiveStatus(userId)
@@ -38,6 +47,7 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    updateUserById,
     updateUserActiveStatus,
     deleteUserById,
     getUserById,

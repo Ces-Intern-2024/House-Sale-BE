@@ -75,7 +75,7 @@ const expenseUserBalance = async ({ userId, amount, description }) => {
         throw new BadRequestError('Invalid amount')
     }
 
-    const user = await userRepo.getUserById(userId)
+    const user = await db.Users.findOne({ where: { userId } })
     if (!user) {
         throw new NotFoundError('User not found')
     }
@@ -115,7 +115,7 @@ const depositUserBalance = async ({ userId, amount }) => {
         throw new BadRequestError('Invalid amount')
     }
 
-    const user = await userRepo.getUserById(userId)
+    const user = await db.Users.findOne({ where: { userId } })
     if (!user) {
         throw new NotFoundError('User not found')
     }

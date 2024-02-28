@@ -8,10 +8,7 @@ const { locationRepo } = require('../models/repo')
  * @returns {Promise<Locations>}
  */
 const createNewLocation = async ({ provinceCode, districtCode, wardCode, address, street }) => {
-    const isValidLocation = await locationRepo.isValidLocation({ provinceCode, districtCode, wardCode })
-    if (!isValidLocation) {
-        throw new BadRequestError('Error occurred when checking location information!')
-    }
+    await locationRepo.checkLocation({ provinceCode, districtCode, wardCode })
     const newLocation = await db.Locations.create({
         provinceCode,
         districtCode,

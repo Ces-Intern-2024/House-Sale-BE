@@ -506,7 +506,7 @@ paths:
         post:
             tags:
                 - User
-            summary: Login with Google
+            summary: Login with Google (UPDATED)
             description: Login with Google account and create new user if not exists
             operationId: loginWithGoogle
             requestBody:
@@ -521,12 +521,16 @@ paths:
                                 fullName:
                                     type: string
                                     example: Le Nhat Trinh
+                                accessToken:
+                                    type: string
+                                    example: ya29.a0AfB_byCOM7ZN5OwZufgwFPU8A6AjjkTqkE3bRGy9lK8-WpxYiqWsK0w8eNxpCQByOyAx1u3zXF6jfcyQsgw_g4HCNQapLt3VY4CMsYYj9PTmeYmruWDGnXTx5pcT7v3pyLQh2j9MtxY2JjR-Fz-115EKumts9IqWxU4aCgYKARsSARASFQHGX2Mi8zlej3VgBu267rnav1JUjg0170
                             required:
                                 - "email"
                                 - "fullName"
+                                - "accessToken"
             responses:
                 '200':
-                    description: Login with Google success!
+                    description: Login with Google successfully!
                     content:
                         application/json:
                             schema:
@@ -537,7 +541,7 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example: Login with Google success!
+                                        example: Login with Google successfully!
                                     metaData:
                                         type: object
                                         properties:
@@ -560,12 +564,16 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Error occurred when login with your google account!
+                                                enum:
+                                                    -   Failed to login with Google!
+                                                    -   Failed to create tokens!
+                                                    -   Invalid client ID!
+                                                    -   Invalid google access token!
     /user/register-user:
         post:
             tags:
                 - User
-            summary: Create new user
+            summary: Create new user (UPDATED)
             description: Create new user
             operationId: registerUser
             requestBody:
@@ -628,7 +636,7 @@ paths:
         post:
             tags:
                 - User
-            summary: Create new seller
+            summary: Create new seller (UPDATED)
             description: Create new seller, send verification email to seller's email
             operationId: registerSeller
             requestBody:
@@ -691,7 +699,7 @@ paths:
         post:
             tags:
                 - User
-            summary: Login to access system
+            summary: Login to access system (UPDATED)
             description: Login to access system
             operationId: login
             requestBody:
@@ -792,7 +800,7 @@ paths:
         post:
             tags:
                 - User
-            summary: Refresh Tokens
+            summary: Refresh Tokens (UPDATED)
             description: Refresh Tokens
             operationId: refreshTokens
             requestBody:
@@ -842,7 +850,10 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Failed to create tokens!
+                                                enum:
+                                                    -   Failed to verify refreshToken!
+                                                    -   Failed to remove tokens!
+                                                    -   Failed to create tokens!
                 '404':
                     description: Tokens or user not found!
                     content:
@@ -858,13 +869,15 @@ paths:
                                                 example: 404
                                             message:
                                                 type: string
-                                                example: Tokens not found!
+                                                enum:
+                                                    -   Tokens not found!
+                                                    -   User not found!
     /user/verify-email/{userId}/{code}:
         get:
             tags:
                 - User
-            summary: Verify seller email when register seller account or user upgrade to seller or user upgrade to seller
-            description: System send a verify link to seller's email, seller must verify email to access system
+            summary: Verify email (UPDATED)
+            description: Verify seller email when register seller account or user upgrade to seller or user upgrade to seller. System send a verify link to seller's email, seller must verify email to access system
             operationId: verifyEmail
             parameters:
                 -   name: userId
@@ -889,7 +902,7 @@ paths:
         post:
             tags:
                 - User
-            summary: Logout
+            summary: Logout (UPDATED)
             description: Logout
             operationId: logout
             requestBody:
@@ -937,9 +950,12 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Failed to logout!
+                                                enum:
+                                                    -   Failed to logout!
+                                                    -   Failed to get tokens!
+                                                    -   Failed to remove tokens!
                 '401':
-                    description: Unauthorized or Invalid accessToken
+                    description: Unauthorized or Invalid accessToken!
                     content:
                         application/json:
                             schema:
@@ -953,7 +969,9 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Unauthorized
+                                                enum:
+                                                    -  Please Authenticate!
+                                                    -   Invalid accessToken!
                 '404':
                     description: RefreshToken not valid!
                     content:
@@ -969,14 +987,14 @@ paths:
                                                 example: 404
                                             message:
                                                 type: string
-                                                example: RefreshToken not valid.
+                                                example: RefreshToken not valid!
             security:
                 - bearerAuth: []
     /user/change-password:
         post:
             tags:
                 - User
-            summary: Change user password
+            summary: Change user password (UPDATED)
             description: Change user password
             operationId: changePassword
             requestBody:
@@ -1009,12 +1027,12 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example: 'Your password has been changed successfully!'
+                                        example: Your password has been changed successfully!
                                     metaData:
                                         type: object
                                         example: {}
                 '400':
-                    description: Failed update password
+                    description: Failed to change your password!
                     content:
                         application/json:
                             schema:
@@ -1028,9 +1046,13 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Failed update password
+                                                example: Failed to change your password!
+                                                enum:
+                                                    -   Failed to change your password!
+                                                    -   New Password cannot be same as your current password. Please choose a different password!
+
                 '401':
-                    description: Unauthorized or Incorrect current password
+                    description: Unauthorized or Incorrect current password!
                     content:
                         application/json:
                             schema:
@@ -1044,9 +1066,27 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Incorrect current password
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Incorrect current password!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
                 '404':
-                    description: Not found user
+                    description: User not found!
                     content:
                         application/json:
                             schema:
@@ -1060,14 +1100,14 @@ paths:
                                                 example: 404
                                             message:
                                                 type: string
-                                                example: Not found user
+                                                example: User not found!
             security:
                 - bearerAuth: []
     /user/profile:
         get:
             tags:
             -   User
-            summary: Get user profile  by ID
+            summary: Get user profile  (UPDATED)
             description: Returns a user profile
             operationId: getProfile
             responses:
@@ -1085,25 +1125,9 @@ paths:
                                         type: string
                                         example:  Get your profile successfully!
                                     metaData:
-                                        $ref: '#/components/schemas/UserProfile'
-                '401':
-                    description: Unauthorized
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 401
-                                            message:
-                                                type: string
-                                                example:  Please Authenticate!
-                '404':
-                    description: User profile not found or User not found
+                                        $ref: '#/components/schemas/User'
+                '400':
+                    description: User profile not found!
                     content:
                         application/json:
                             schema:
@@ -1117,13 +1141,68 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: User profile not found!
+                                                enum:
+                                                    -   User profile not found!
+                                                    -   userId is required!
+                                                    -   Failed to get user!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Unauthorized
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: User not found!
             security:
               - bearerAuth: []
         patch:
             tags:
             -   User
-            summary: Update user profile  by ID
+            summary: Update user profile (UPDATED)
             description: Update a user profile
             operationId: updateProfile
             requestBody:
@@ -1133,7 +1212,7 @@ paths:
                         $ref: '#/components/schemas/UpdateUserProfile'
             responses:
                 '200':
-                    description: Your profile had been changed successfully!
+                    description: Your profile had been updated successfully!
                     content:
                         application/json:
                             schema:
@@ -1144,12 +1223,12 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:  Your profile had been changed successfully!
+                                        example:  Your profile had been updated successfully!
                                     metaData:
                                         type: object
                                         example: {}
                 '400':
-                    description: Failed update phone number or new phone number cannot be same as your current phone number or Invalid location provided.
+                    description: Nothing to update!
                     content:
                         application/json:
                             schema:
@@ -1163,9 +1242,17 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: New phone number cannot be same as your current phone number!
+                                                enum:
+                                                    -   Nothing to update!
+                                                    -   userId is required!
+                                                    -   Failed to update your profile!
+                                                    -   New phone number cannot be same as your current phone number. Please choose a different phone number!
+                                                    -   Complete address information required. You must provide provinceCode, districtCode, and wardCode together!
+                                                    -   Invalid province. Please try again!
+                                                    -   Invalid district. Please try again!
+                                                    -   Invalid ward. Please try again!
                 '401':
-                    description: Unauthorized
+                    description: Unauthorized!
                     content:
                         application/json:
                             schema:
@@ -1179,9 +1266,30 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Please Authenticate!
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Unauthorized
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
                 '404':
-                    description: User profile not found or User not found
+                    description: User not found!
                     content:
                         application/json:
                             schema:
@@ -1195,14 +1303,14 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: User profile not found!
+                                                example: User not found!
             security:
               - bearerAuth: []
     /user/update-avatar:
         post:
             tags:
                 - User
-            summary: Update user avatar
+            summary: Update user avatar (UPDATED)
             description: Update user avatar
             operationId: updateAvatar
             requestBody:
@@ -1220,7 +1328,7 @@ paths:
                 required: true
             responses:
                 '200':
-                    description: 'Your avatar had been changed successfully!'
+                    description: Your avatar had been updated successfully!
                     content:
                         application/json:
                             schema:
@@ -1231,12 +1339,12 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example: Your avatar had been changed successfully!
+                                        example: Your avatar had been updated successfully!
                                     metaData:
                                         type: object
                                         example: {}
                 '400':
-                    description: Update your avatar failed
+                    description: Failed to update your avatar!
                     content:
                         application/json:
                             schema:
@@ -1250,9 +1358,12 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Update your avatar failed
+                                                enum:
+                                                    -   Failed to update your avatar!
+                                                    -   userId is required!
+                                                    -   User not found!
                 '401':
-                    description: Unauthorized
+                    description: Unauthorized!
                     content:
                         application/json:
                             schema:
@@ -1266,7 +1377,27 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Please Authenticate!
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Unauthorized
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
                 '404':
                     description: User not found
                     content:
@@ -1289,7 +1420,7 @@ paths:
         post:
             tags:
                 - User
-            summary: Upgrade user to seller
+            summary: Upgrade user to seller (UPDATED)
             description: Upgrade user to seller, fulfill seller information and send verification email to seller's email
             operationId: upgradeSeller
             requestBody:
@@ -1330,7 +1461,7 @@ paths:
                 required: true
             responses:
                 '200':
-                    description: Your upgrade request has been sent! Please check your email to confirm.
+                    description: Your upgrade request has been sent! Please check your email to confirm!
                     content:
                         application/json:
                             schema:
@@ -1341,12 +1472,12 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example: Your upgrade request has been sent! Please check your email to confirm.
+                                        example: Your upgrade request has been sent! Please check your email to confirm!
                                     metaData:
                                         type: object
                                         example: {}
                 '400':
-                    description: Invalid location provided, valid location contains valid provinceCode, districtCode, wardCode. Or Error occurred when update your information!
+                    description: Invalid or missing recipient email address!
                     content:
                         application/json:
                             schema:
@@ -1361,8 +1492,18 @@ paths:
                                             message:
                                                 type: string
                                                 example: Upgrade to seller failed!
+                                                enum:
+                                                    -   userId is required!
+                                                    -   Failed to generate email verification code!
+                                                    -   Invalid or missing recipient email address!
+                                                    -   Failed to update user!
+                                                    -   Complete address information required. You must provide provinceCode, districtCode, and wardCode together!
+                                                    -   Invalid province. Please try again!
+                                                    -   Invalid district. Please try again!
+                                                    -   Invalid ward. Please try again!
+
                 '401':
-                    description: Unauthorized
+                    description: Unauthorized!
                     content:
                         application/json:
                             schema:
@@ -1376,9 +1517,30 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Please Authenticate!
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Unauthorized
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
                 '404':
-                    description: User not found
+                    description: User not found!
                     content:
                         application/json:
                             schema:
@@ -1392,7 +1554,23 @@ paths:
                                                 example: 404
                                             message:
                                                 type: string
-                                                example: User not found
+                                                example: User not found!
+                '424':
+                    description: Failed to send email!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 424
+                                            message:
+                                                type: string
+                                                example: Failed to send email!
             security:
                 - bearerAuth: []
     /seller/properties:
@@ -1576,7 +1754,7 @@ paths:
                                                 type: string
                                                 example: This feature is not available yet. Please try again.
                 '401':
-                    description: Unauthorized
+                    description: Unauthorized!
                     content:
                         application/json:
                             schema:
@@ -1590,7 +1768,28 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Please Authenticate!
+                                                enum:
+                                                    -  Please Authenticate!
+                                                    -  Unauthorized
+                                                    -  Invalid accessToken!
+                                                    - Please verify your email!
+                                                    - Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
             security:
               - bearerAuth: []
         post:
@@ -1639,7 +1838,7 @@ paths:
                                                 type: string
                                                 example: Your balance is not enough to create new property. Please refill your balance!
                 '401':
-                    description: Unauthorized
+                    description: Unauthorized!
                     content:
                         application/json:
                             schema:
@@ -1653,7 +1852,28 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Please Authenticate!
+                                                enum:
+                                                    -  Please Authenticate!
+                                                    -  Unauthorized
+                                                    -  Invalid accessToken!
+                                                    - Please verify your email!
+                                                    - Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
             security:
               - bearerAuth: []
     /seller/properties/{propertyId}:
@@ -1937,7 +2157,7 @@ paths:
                                                 type: string
                                                 example: Error occurred when add new property to your favorites list!
                 '401':
-                    description: Unauthorized
+                    description: Unauthorized!
                     content:
                         application/json:
                             schema:
@@ -1951,7 +2171,28 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Please Authenticate!
+                                                enum:
+                                                    -  Please Authenticate!
+                                                    -  Unauthorized
+                                                    -  Invalid accessToken!
+                                                    - Please verify your email!
+                                                    - Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
                 '404':
                     description: User not found or Property not found
                     content:
@@ -2000,9 +2241,8 @@ paths:
                                                 type: array
                                                 items:
                                                     $ref: '#/components/schemas/PropertyJoinedAllTable'
-
                 '401':
-                    description: Unauthorized
+                    description: Unauthorized!
                     content:
                         application/json:
                             schema:
@@ -2016,7 +2256,28 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Please Authenticate!
+                                                enum:
+                                                    -  Please Authenticate!
+                                                    -  Unauthorized
+                                                    -  Invalid accessToken!
+                                                    - Please verify your email!
+                                                    - Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
                 '404':
                     description: User not found
                     content:
@@ -2115,7 +2376,7 @@ paths:
                                                 type: string
                                                 example: Error occurred when get all transactions
                 '401':
-                    description: Unauthorized
+                    description: Unauthorized!
                     content:
                         application/json:
                             schema:
@@ -2129,7 +2390,28 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Please Authenticate!
+                                                enum:
+                                                    -  Please Authenticate!
+                                                    -  Unauthorized
+                                                    -  Invalid accessToken!
+                                                    - Please verify your email!
+                                                    - Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
                 '404':
                     description: User not found
                     content:
@@ -2201,7 +2483,7 @@ paths:
                                                 type: string
                                                 example: Invalid amount
                 '401':
-                    description: Unauthorized
+                    description: Unauthorized!
                     content:
                         application/json:
                             schema:
@@ -2215,14 +2497,35 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Please Authenticate!
+                                                enum:
+                                                    -  Please Authenticate!
+                                                    -  Unauthorized
+                                                    -  Invalid accessToken!
+                                                    - Please verify your email!
+                                                    - Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
             security:
                 - bearerAuth: []
     /admin/manage-user:
         get:
             tags:
                 - Admin
-            summary: Get all users
+            summary: Get all users (NEW)
             description: Get all users by queries
             operationId: getAllUsers
             parameters:
@@ -2320,7 +2623,7 @@ paths:
                                                 type: string
                                                 example: Failed to get all users!
                 '401':
-                    description: Unauthorized or Permission denied
+                    description: Unauthorized!
                     content:
                         application/json:
                             schema:
@@ -2334,14 +2637,34 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Please Authenticate!
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
             security:
                 - bearerAuth: []
     /admin/manage-user/{userId}:
         get:
             tags:
             -   Admin
-            summary: Get user by Id
+            summary: Get user by Id (NEW)
             description: Returns a user by Id
             operationId: getUserById
             parameters:
@@ -2354,7 +2677,7 @@ paths:
                     example: 5
             responses:
                 '200':
-                    description: Get user success!
+                    description: Get user successfully!
                     content:
                         application/json:
                             schema:
@@ -2365,7 +2688,7 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:  Get user success!
+                                        example:  Get user successfully!
                                     metaData:
                                         $ref: '#/components/schemas/User'
                 '400':
@@ -2383,9 +2706,11 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Failed to get user!
+                                                enum:
+                                                    -   Failed to get user!
+                                                    -   userId is required!
                 '401':
-                    description: Unauthorized
+                    description: Unauthorized!
                     content:
                         application/json:
                             schema:
@@ -2399,7 +2724,28 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Please Authenticate!
+                                                enum:
+                                                    -  Please Authenticate!
+                                                    -  Unauthorized
+                                                    -  Invalid accessToken!
+                                                    - Please verify your email!
+                                                    - Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
                 '404':
                     description: User not found!
                     content:
@@ -2421,7 +2767,7 @@ paths:
         delete:
             tags:
             -   Admin
-            summary: Delete user by Id
+            summary: Delete user by Id (NEW)
             description: Delete a user by Id
             operationId: deleteUserById
             parameters:
@@ -2434,7 +2780,7 @@ paths:
                     example: 5
             responses:
                 '200':
-                    description: Delete user success!
+                    description: Delete user successfully!
                     content:
                         application/json:
                             schema:
@@ -2445,7 +2791,7 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:  Delete user success!
+                                        example:  Delete user successfully!
                                     metaData:
                                         type: object
                                         example: {}
@@ -2464,9 +2810,11 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Failed to delete user!
+                                                enum:
+                                                    -   Failed to delete user!
+                                                    -   userId is required!
                 '401':
-                    description: Unauthorized or Permission denied
+                    description: Unauthorized!
                     content:
                         application/json:
                             schema:
@@ -2480,7 +2828,141 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Please Authenticate!
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
+            security:
+                - bearerAuth: []
+        patch:
+            tags:
+                - Admin
+            summary: Update user by Id (NEW)
+            description: Update user by Id
+            operationId: updateUserById
+            parameters:
+                -   name: userId
+                    in: path
+                    description: Id of user to update
+                    required: true
+                    schema:
+                        type: number
+                        example: 83
+            requestBody:
+                content:
+                  application/json:
+                    schema:
+                        $ref: '#/components/schemas/UpdateUserBodyByAdmin'
+            responses:
+                '200':
+                    description: Update user successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Update user successfully!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Complete address information required. You must provide provinceCode, districtCode, and wardCode together!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Complete address information required. You must provide provinceCode, districtCode, and wardCode together!
+                                                    -   Failed to update user!
+                                                    -   userId is required!
+                                                    -   Nothing to update!
+                                                    -   New phone number cannot be same as your current phone number. Please choose a different phone number!
+                                                     -   Invalid province. Please try again!
+                                                    -   Invalid district. Please try again!
+                                                    -   Invalid ward. Please try again!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
                 '404':
                     description: User not found!
                     content:
@@ -2503,7 +2985,7 @@ paths:
         patch:
             tags:
             -   Admin
-            summary: Update user active status by Id
+            summary: Update user active status by Id (NEW)
             description: Update user active status by Id
             operationId: updateUserActiveStatus
             parameters:
@@ -2516,7 +2998,7 @@ paths:
                     example: 5
             responses:
                 '200':
-                    description: Update user active status success!
+                    description: Update user active status successfully!
                     content:
                         application/json:
                             schema:
@@ -2548,9 +3030,11 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Failed to update user active status!
+                                                enum:
+                                                    -   Failed to update user active status!
+                                                    -   userId is required!
                 '401':
-                    description: Unauthorized or Permission denied
+                    description: Unauthorized!
                     content:
                         application/json:
                             schema:
@@ -2564,7 +3048,27 @@ paths:
                                                 example: 401
                                             message:
                                                 type: string
-                                                example:  Please Authenticate!
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
                 '404':
                     description: User not found!
                     content:
@@ -2581,6 +3085,8 @@ paths:
                                             message:
                                                 type: string
                                                 example: User not found!
+            security:
+                - bearerAuth: []
 components:
     schemas:
         Property:
@@ -3495,6 +4001,42 @@ components:
                     type: string
                     format: date-time
                     example: 2024-02-21T04:32:26.000Z
+        UpdateUserBodyByAdmin:
+            type: object
+            properties:
+                roleId:
+                    type: number
+                    enum:
+                        - 1
+                        - 2
+                        - 3
+                fullName:
+                    type: string
+                    example: Le Nhat Trinh
+                phone:
+                    type: string
+                    example: 0899619252
+                isEmailVerified:
+                    type: boolean
+                    example: true
+                avatar:
+                    type: string
+                    example: 'link'
+                provinceCode:
+                    type: string
+                    example: 48
+                districtCode:
+                    type: string
+                    example: 492
+                wardCode:
+                    type: string
+                    example: 20236
+                street:
+                    type: string
+                    example: Bach Dang
+                address:
+                    type: string
+                    example: 107
     securitySchemes:
         bearerAuth:
             type: http

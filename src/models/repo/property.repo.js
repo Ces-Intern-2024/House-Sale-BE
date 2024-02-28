@@ -1,7 +1,7 @@
 const { Op } = require('sequelize')
 const db = require('..')
 const { BadRequestError, NotFoundError } = require('../../core/error.response')
-const { paginatedData, transformPropertyData, isValidKeyOfModel } = require('../../utils')
+const { paginatedData, isValidKeyOfModel } = require('../../utils')
 
 const propertyScopes = {
     feature: {
@@ -176,27 +176,29 @@ const getAllPropertiesBySellerOptions = async ({ validOptions, queries, sellerId
 const getProperty = async (propertyId) => {
     const property = await db.Properties.findOne({
         include: getScopesArray(userScopes),
-        where: { propertyId }
+        where: { propertyId },
+        attributes: { exclude: commonExcludeAttributes }
     })
 
     if (!property) {
         throw new BadRequestError('This property is not available now. Please try another property!')
     }
 
-    return transformPropertyData(property)
+    return property
 }
 
 const getPropertyBySeller = async ({ userId, propertyId }) => {
     const property = await db.Properties.findOne({
         include: getScopesArray(sellerScopes),
-        where: { userId, propertyId }
+        where: { userId, propertyId },
+        attributes: { exclude: commonExcludeAttributes }
     })
 
     if (!property) {
         throw new BadRequestError('This property is not available now. Please try another property!')
     }
 
-    return transformPropertyData(property)
+    return property
 }
 
 const createNewProperty = async ({ propertyOptions, userId, locationId }) => {

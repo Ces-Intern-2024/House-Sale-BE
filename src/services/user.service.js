@@ -2,8 +2,6 @@ const bcrypt = require('bcrypt')
 const { BadRequestError, AuthFailureError, NotFoundError, ForbiddenError } = require('../core/error.response')
 const { userRepo, tokenRepo, locationRepo } = require('../models/repo')
 const db = require('../models')
-const { generateAuthTokens, verifyRefreshToken } = require('./token.service')
-const { tokenTypes } = require('../config/tokens.config')
 const { hashPassword, verifyGoogleToken } = require('../utils')
 const { rolesId } = require('../config/roles.config')
 const { ERROR_MESSAGES } = require('../core/message.constant')
@@ -18,14 +16,14 @@ const { ERROR_MESSAGES } = require('../core/message.constant')
 const fulFillSellerInformation = async ({ userId, information }) => {
     const user = await userRepo.getUserById(userId)
     if (!user) {
-        throw new NotFoundError('User not found')
+        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
     }
 
     await locationRepo.checkLocation(information)
 
     const updatedUser = await db.Users.update({ ...information, roleId: rolesId.Seller }, { where: { userId } })
     if (!updatedUser[0]) {
-        throw new BadRequestError('Error occurred when update your information!')
+        throw new BadRequestError(ERROR_MESSAGES.USER.FAILED_TO_UPDATE_USER)
     }
 
     return userRepo.getUserById(userId)
@@ -44,13 +42,13 @@ const loginWithGoogle = async (profile) => {
         defaults: { fullName, roleId: rolesId.User, isActive: true, isEmailVerified: true }
     })
     if (!user) {
-        throw new BadRequestError('Error occurred when login with your google account!')
+        throw new BadRequestError(ERROR_MESSAGES.USER.LOGIN_GOOGLE.LOGIN_GOOGLE_FAILED)
     }
 
     const { userId } = user
-    const tokens = await generateAuthTokens(userId)
+    const tokens = await tokenRepo.generateAuthTokens(userId)
     if (!tokens) {
-        throw new BadRequestError('Error occurred when login with your google account!')
+        throw new BadRequestError(ERROR_MESSAGES.TOKENS.FAILED_TO_CREATE_TOKENS)
     }
     if (created) {
         await user.reload()
@@ -68,27 +66,7 @@ const loginWithGoogle = async (profile) => {
  * @returns {Promise<boolean>}
  */
 const verifyEmail = async ({ userId, code }) => {
-    const user = await userRepo.getUserById(userId)
-    if (!user || user?.roleId !== rolesId.Seller) {
-        throw new NotFoundError('Seller not found')
-    }
-
-    if (user.isEmailVerified) {
-        throw new BadRequestError('Your email already verified!')
-    }
-
-    const isMatchEmailVerificationCode = await bcrypt.compare(code, user.emailVerificationCode)
-    if (!isMatchEmailVerificationCode) {
-        throw new AuthFailureError('Incorrect email verification code!')
-    }
-
-    const updatedUser = await db.Users.update(
-        { isEmailVerified: true, emailVerificationCode: null },
-        { where: { userId } }
-    )
-    if (!updatedUser) {
-        throw new BadRequestError('Verify email failed')
-    }
+    return userRepo.verifyEmail({ userId, code })
 }
 
 /**
@@ -99,52 +77,18 @@ const verifyEmail = async ({ userId, code }) => {
  * @returns {Promise<boolean>}
  */
 const updateAvatar = async ({ userId, imageUrl }) => {
-    const user = await userRepo.getUserById(userId)
-    if (!user) {
-        throw new NotFoundError('User not found')
-    }
-
-    const updatedAvatar = await db.Users.update({ avatar: imageUrl }, { where: { userId } })
-    if (!updatedAvatar) {
-        throw new BadRequestError('Update your avatar failed')
-    }
+    return userRepo.updateAvatar({ userId, imageUrl })
 }
 
 /**
  * Update user's profile
  * @param {Object} params
  * @param {id} userId
- * @param {string} information - user's profile information
+ * @param {string} userBody - user's profile information
  * @returns {Promise<boolean>}
  */
-const updateProfile = async ({ userId, information }) => {
-    const { phone: newPhoneNumber, provinceCode, districtCode, wardCode } = information
-    const user = await userRepo.getUserById(userId)
-    if (!user) {
-        throw new NotFoundError('User not found')
-    }
-
-    if (newPhoneNumber && newPhoneNumber === user.phone) {
-        throw new BadRequestError(
-            'New phone number cannot be same as your current phone number. Please choose a different phone number.'
-        )
-    }
-
-    if (provinceCode && districtCode && wardCode) {
-        await locationRepo.checkLocation({ provinceCode, districtCode, wardCode })
-    } else {
-        const locationProvided = [provinceCode, districtCode, wardCode].filter(Boolean).length
-        if (locationProvided > 0 && locationProvided < 3) {
-            throw new BadRequestError(
-                'Complete address information required. You must provide provinceCode, districtCode, and wardCode together.'
-            )
-        }
-    }
-
-    const [affectedRows] = await db.Users.update(information, { where: { userId } })
-    if (affectedRows === 0) {
-        throw new BadRequestError('Update your profile failed')
-    }
+const updateProfile = async ({ userId, userBody }) => {
+    return userRepo.updateUserById({ userId, userBody })
 }
 
 /**
@@ -167,26 +111,7 @@ const getProfile = async (userId) => {
  * @throws {BadRequestError} if update password failed
  */
 const changePassword = async ({ userId, currentPassword, newPassword }) => {
-    const user = await userRepo.getUserById(userId)
-    if (!user) {
-        throw new NotFoundError('Not found user')
-    }
-
-    const isMatchPassword = await bcrypt.compare(currentPassword, user.password)
-    if (!isMatchPassword) {
-        throw new AuthFailureError('Incorrect current password')
-    }
-    if (newPassword === currentPassword) {
-        throw new BadRequestError(
-            'New Password cannot be same as your current password. Please choose a different password.'
-        )
-    }
-
-    const hashedPassword = await hashPassword(newPassword)
-    const isUpdatedUser = await user.update({ password: hashedPassword })
-    if (!isUpdatedUser) {
-        throw new BadRequestError('Failed update password')
-    }
+    return userRepo.changePassword({ userId, currentPassword, newPassword })
 }
 
 /**
@@ -195,28 +120,7 @@ const changePassword = async ({ userId, currentPassword, newPassword }) => {
  * @returns {Promise<Tokens>}
  */
 const refreshTokens = async (refreshToken) => {
-    const tokens = await verifyRefreshToken({ refreshToken, type: tokenTypes.REFRESH })
-    if (!tokens) {
-        throw new NotFoundError(ERROR_MESSAGES.REFRESH_TOKEN.TOKENS_NOT_FOUND)
-    }
-
-    const { tokenId, userId } = tokens
-    const user = await userRepo.getUserById(userId)
-    if (!user) {
-        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-    }
-
-    const removedTokens = await tokenRepo.removeTokensByTokenId(tokenId)
-    if (!removedTokens) {
-        throw new BadRequestError(ERROR_MESSAGES.REFRESH_TOKEN.FAILED_TO_REMOVE_TOKENS)
-    }
-
-    const newTokens = await generateAuthTokens(userId)
-    if (!newTokens) {
-        throw new BadRequestError(ERROR_MESSAGES.REFRESH_TOKEN.FAILED_TO_CREATE_TOKENS)
-    }
-
-    return newTokens
+    return tokenRepo.refreshTokens(refreshToken)
 }
 
 /**
@@ -227,12 +131,12 @@ const refreshTokens = async (refreshToken) => {
 const logout = async ({ userId, refreshToken }) => {
     const tokens = await tokenRepo.getTokensByRefreshToken(refreshToken)
     if (!tokens || tokens.userId !== userId) {
-        throw new NotFoundError(ERROR_MESSAGES.LOGOUT.INVALID_REFRESH_TOKEN)
+        throw new NotFoundError(ERROR_MESSAGES.USER.LOGOUT.INVALID_REFRESH_TOKEN)
     }
 
     const removedTokens = await tokenRepo.removeTokensByTokenId(tokens.tokenId)
     if (!removedTokens) {
-        throw new BadRequestError(ERROR_MESSAGES.LOGOUT.FAILED_TO_LOGOUT)
+        throw new BadRequestError(ERROR_MESSAGES.USER.LOGOUT.FAILED_TO_LOGOUT)
     }
 }
 
@@ -245,25 +149,25 @@ const login = async (userBody) => {
     const { email, password } = userBody
     const user = await userRepo.getUserByEmail(email)
     if (!user) {
-        throw new NotFoundError(ERROR_MESSAGES.LOGIN.EMAIL_NOT_FOUND)
+        throw new NotFoundError(ERROR_MESSAGES.USER.LOGIN.EMAIL_NOT_FOUND)
     }
 
     const { userId, isActive, password: hashedPassword, emailVerificationCode, ...userInfo } = user
 
     if (!isActive) {
-        throw new ForbiddenError(ERROR_MESSAGES.LOGIN.ACCOUNT_NOT_ACTIVE)
+        throw new ForbiddenError(ERROR_MESSAGES.COMMON.ACCOUNT_NOT_ACTIVE)
     }
 
     const isMatchPassword = await bcrypt.compare(password, hashedPassword)
     if (!isMatchPassword) {
-        throw new AuthFailureError(ERROR_MESSAGES.LOGIN.INCORRECT_EMAIL_PASSWORD)
+        throw new AuthFailureError(ERROR_MESSAGES.USER.LOGIN.INCORRECT_EMAIL_PASSWORD)
     }
 
     let tokens
     try {
-        tokens = await generateAuthTokens(userId)
+        tokens = await tokenRepo.generateAuthTokens(userId)
     } catch (error) {
-        throw new BadRequestError(ERROR_MESSAGES.LOGIN.FAILED_CREATE_TOKENS)
+        throw new BadRequestError(ERROR_MESSAGES.USER.LOGIN.FAILED_CREATE_TOKENS)
     }
 
     return { user: { userId, isActive, ...userInfo }, tokens }
@@ -277,7 +181,7 @@ const login = async (userBody) => {
 const registerSeller = async (userBody) => {
     const { email, password } = userBody
     if (await userRepo.isEmailTaken(email)) {
-        throw new ForbiddenError(ERROR_MESSAGES.REGISTER.EMAIL_ALREADY_TAKEN)
+        throw new ForbiddenError(ERROR_MESSAGES.USER.REGISTER.EMAIL_ALREADY_TAKEN)
     }
 
     await locationRepo.checkLocation(userBody)
@@ -285,7 +189,7 @@ const registerSeller = async (userBody) => {
     const hashedPassword = await hashPassword(password)
     const newSeller = await db.Users.create({ ...userBody, password: hashedPassword, roleId: rolesId.Seller })
     if (!newSeller) {
-        throw new BadRequestError(ERROR_MESSAGES.REGISTER_SELLER.FAILED_TO_CREATE_SELLER)
+        throw new BadRequestError(ERROR_MESSAGES.USER.REGISTER_SELLER.FAILED_TO_CREATE_SELLER)
     }
 
     return newSeller.get({ plain: true })
@@ -299,13 +203,13 @@ const registerSeller = async (userBody) => {
 const registerUser = async (userBody) => {
     const { email, password } = userBody
     if (await userRepo.isEmailTaken(email)) {
-        throw new ForbiddenError(ERROR_MESSAGES.REGISTER.EMAIL_ALREADY_TAKEN)
+        throw new ForbiddenError(ERROR_MESSAGES.USER.REGISTER.EMAIL_ALREADY_TAKEN)
     }
 
     const hashedPassword = await hashPassword(password)
     const newUser = await db.Users.create({ email, password: hashedPassword, roleId: rolesId.User })
     if (!newUser) {
-        throw new BadRequestError(ERROR_MESSAGES.REGISTER_USER.FAILED_TO_CREATE_USER)
+        throw new BadRequestError(ERROR_MESSAGES.USER.REGISTER_USER.FAILED_TO_CREATE_USER)
     }
 }
 
