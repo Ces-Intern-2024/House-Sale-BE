@@ -21,12 +21,12 @@ paths:
         get:
             tags:
                 - Feature
-            summary: Get all features
+            summary: Get all features (UPDATED 28/02)
             description: Get all features
             operationId: getAllFeatures
             responses:
                 '200':
-                    description: Get list features success!
+                    description: Get list features successfully!
                     content:
                         application/json:
                             schema:
@@ -37,7 +37,7 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:  Get list features success!
+                                        example:  Get list features successfully!
                                     metaData:
                                         type: array
                                         items:
@@ -50,7 +50,7 @@ paths:
                                                     type: string
                                                     example: Sale
                 '400':
-                    description: Error occurred when get all features
+                    description: Failed to get list features!
                     content:
                         application/json:
                             schema:
@@ -64,17 +64,17 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Error occurred when get all features
+                                                example: Failed to get list features!
     /categories:
         get:
             tags:
                 - Category
-            summary: Get all categories
+            summary: Get all categories (UPDATED 28/02)
             description: Get all categories
             operationId: getAllCategories
             responses:
                 '200':
-                    description: Get list categories success!
+                    description: Get list categories successfully!
                     content:
                         application/json:
                             schema:
@@ -85,7 +85,7 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:  Get list categories success!
+                                        example:  Get list categories successfully!
                                     metaData:
                                         type: array
                                         items:
@@ -98,7 +98,7 @@ paths:
                                                     type: string
                                                     example: Apartment
                 '400':
-                    description: Error occurred when get all categories
+                    description: Failed to get list categories!
                     content:
                         application/json:
                             schema:
@@ -112,7 +112,7 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Error occurred when get all categories
+                                                example: Failed to get list categories!
     /properties:
         get:
             tags:
@@ -367,12 +367,12 @@ paths:
         get:
             tags:
                 - Location
-            summary: Get all provinces
+            summary: Get all provinces (UPDATED 28/02)
             description: Get all provinces
             operationId: getAllProvinces
             responses:
                 '200':
-                    description: Get list provinces success!
+                    description: Get list provinces successfully!
                     content:
                         application/json:
                             schema:
@@ -383,13 +383,13 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:  Get list provinces success!
+                                        example:  Get list provinces successfully!
                                     metaData:
                                         type: array
                                         items:
                                             $ref: '#/components/schemas/Province'
                 '400':
-                    description: Get all provinces failed!
+                    description: Failed to get list provinces!
                     content:
                         application/json:
                             schema:
@@ -403,12 +403,29 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Get all provinces failed!
+                                                enum:
+                                                    -   Failed to get list provinces!
+                '404':
+                    description: No province found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: No province found!
     /location/districts:
         get:
             tags:
             - Location
-            summary: Get all district by provinceCode
+            summary: Get all district by provinceCode (UPDATED 28/02)
             description: get all district by provinceCode
             operationId: getAllDistrictsByProvinceCode
             parameters:
@@ -421,7 +438,7 @@ paths:
                     example: 48
             responses:
                 '200':
-                    description: Get list districts success!
+                    description: Get list districts successfully!
                     content:
                         application/json:
                             schema:
@@ -438,7 +455,7 @@ paths:
                                         items:
                                             $ref: '#/components/schemas/District'
                 '400':
-                    description: Get all districts failed!
+                    description: Failed to get list districts!
                     content:
                         application/json:
                             schema:
@@ -452,12 +469,31 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Get all districts failed!
+                                                enum:
+                                                    -   Invalid province. Please try again!
+                                                    -   Failed to get list districts!
+                                                    -   Province code is required!
+                '404':
+                    description: No district found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: No district found!
     /location/wards:
         get:
             tags:
             - Location
-            summary: Get all wards by districtCode
+            summary: Get all wards by districtCode (UPDATED 28/02)
             description: get all wards by districtCode
             operationId: getAllWardsByDistrictCode
             parameters:
@@ -470,7 +506,7 @@ paths:
                     example: 490
             responses:
                 '200':
-                    description: Get list wards success!
+                    description: Get list wards successfully!
                     content:
                         application/json:
                             schema:
@@ -481,7 +517,7 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:  Get list wards success!
+                                        example:  Get list wards successfully!
                                     metaData:
                                         type: array
                                         items:
@@ -501,7 +537,26 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Get all ward failed!
+                                                enum:
+                                                    -   Invalid district. Please try again!
+                                                    -   Failed to get list wards!
+                                                    -   District code is required!
+                '404':
+                    description: No ward found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: No ward found!
     /user/login-with-google:
         post:
             tags:
@@ -3085,6 +3140,127 @@ paths:
                                             message:
                                                 type: string
                                                 example: User not found!
+            security:
+                - bearerAuth: []
+    /admin/manage-user/{userId}/reset-password:
+        post:
+            tags:
+            -   Admin
+            summary: Reset user password by Id (NEW)
+            description: Reset user password and send email contain new password to user
+            operationId: resetUserPassword
+            parameters:
+            -   name: userId
+                in: path
+                description: Id of user to reset password
+                required: true
+                schema:
+                    type: number
+                    example: 83
+            responses:
+                '200':
+                    description: Reset user password successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Reset user password successfully! New password has been sent to user's email!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Failed to reset user password, userId is required!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Failed to reset user password!
+                                                    -   userId is required!
+                                                    -   Invalid email or newPassword!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
+                '424':
+                    description: Failed to send email to user!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 424
+                                            message:
+                                                type: string
+                                                example: Failed to send email to user!
             security:
                 - bearerAuth: []
 components:

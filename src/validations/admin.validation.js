@@ -1,5 +1,11 @@
 const Joi = require('joi')
 
+const resetUserPassword = {
+    params: Joi.object().required().keys({
+        userId: Joi.number().required()
+    })
+}
+
 const updateUserById = {
     params: Joi.object().required().keys({
         userId: Joi.number().required()
@@ -62,6 +68,7 @@ const getAllUsers = {
 }
 
 module.exports = {
+    resetUserPassword,
     updateUserById,
     updateUserActiveStatus,
     deleteUserById,

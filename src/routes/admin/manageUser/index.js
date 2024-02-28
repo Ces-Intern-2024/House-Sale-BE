@@ -15,4 +15,9 @@ router.patch(
     validate(adminValidation.updateUserActiveStatus),
     asyncHandler(adminController.updateUserActiveStatus)
 )
+router.post(
+    '/:userId/reset-password',
+    validate(adminValidation.resetUserPassword),
+    asyncHandler(adminController.resetUserPassword)
+)
 module.exports = router

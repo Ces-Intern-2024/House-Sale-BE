@@ -1,4 +1,5 @@
 const { BadRequestError } = require('../core/error.response')
+const { ERROR_MESSAGES } = require('../core/message.constant')
 const db = require('../models')
 const { locationRepo } = require('../models/repo')
 
@@ -17,7 +18,7 @@ const createNewLocation = async ({ provinceCode, districtCode, wardCode, address
         street
     })
     if (!newLocation) {
-        throw new BadRequestError('Creating new location failed!')
+        throw new BadRequestError(ERROR_MESSAGES.LOCATION.CREATE_NEW_LOCATION)
     }
 
     return newLocation
@@ -29,12 +30,7 @@ const createNewLocation = async ({ provinceCode, districtCode, wardCode, address
  * @returns {Promise<Wards>}
  */
 const getAllWardsByDistrictCode = async (districtCode) => {
-    const wardsList = await db.Wards.findAll({ where: { districtCode } })
-    if (!wardsList || !wardsList.length) {
-        throw new BadRequestError('Get all wards failed!')
-    }
-
-    return wardsList
+    return locationRepo.getAllWardsByDistrictCode(districtCode)
 }
 
 /**
@@ -43,12 +39,7 @@ const getAllWardsByDistrictCode = async (districtCode) => {
  * @returns {Promise<Districts>}
  */
 const getAllDistrictsByProvinceCode = async (provinceCode) => {
-    const districtsList = await db.Districts.findAll({ where: { provinceCode } })
-    if (!districtsList || !districtsList.length) {
-        throw new BadRequestError('Get all districts failed!')
-    }
-
-    return districtsList
+    return locationRepo.getAllDistrictsByProvinceCode(provinceCode)
 }
 
 /**
@@ -56,12 +47,7 @@ const getAllDistrictsByProvinceCode = async (provinceCode) => {
  * @returns {Promise<Provinces>}
  */
 const getAllProvinces = async () => {
-    const provincesList = await db.Provinces.findAll()
-    if (!provincesList || !provincesList.length) {
-        throw new BadRequestError('Get all provinces failed!')
-    }
-
-    return provincesList
+    return locationRepo.getAllProvinces()
 }
 
 module.exports = {
