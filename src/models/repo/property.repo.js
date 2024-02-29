@@ -2,6 +2,9 @@ const { Op } = require('sequelize')
 const db = require('..')
 const { BadRequestError, NotFoundError } = require('../../core/error.response')
 const { paginatedData, isValidKeyOfModel } = require('../../utils')
+const { SCOPES, COMMON_EXCLUDE_ATTRIBUTES, PAGINATION_DEFAULT } = require('../../core/data.constant')
+const { ERROR_MESSAGES } = require('../../core/message.constant')
+const { getUserById } = require('./user.repo')
 
 const propertyScopes = {
     feature: {
@@ -35,14 +38,12 @@ const propertyScopes = {
         required: true
     }
 }
-const userScopes = ['feature', 'category', 'location', 'images', 'seller']
-const sellerScopes = ['feature', 'category', 'location', 'images']
-const commonExcludeAttributes = ['userId', 'featureId', 'categoryId', 'locationId']
 
 const getScopesArray = (scopes) => scopes.map((scope) => propertyScopes[scope])
 
 const validatePropertyOptions = async ({ propertyOptions }) => {
     const {
+        userId,
         keyword,
         featureId,
         categoryId,
@@ -62,14 +63,22 @@ const validatePropertyOptions = async ({ propertyOptions }) => {
         numberOfToiletFrom,
         numberOfToiletTo,
         direction,
-        limit = 10,
-        page = 1,
-        orderBy = 'createdAt',
-        sortBy = 'desc'
+        limit = PAGINATION_DEFAULT.PROPERTY.LIMIT,
+        page = PAGINATION_DEFAULT.PROPERTY.PAGE,
+        orderBy = PAGINATION_DEFAULT.PROPERTY.ORDER_BY,
+        sortBy = PAGINATION_DEFAULT.PROPERTY.SORT_BY
     } = propertyOptions
 
     const options = {}
     const queries = { limit, page, sortBy, orderBy }
+
+    if (userId) {
+        const user = await getUserById(userId)
+        if (!user) {
+            throw new BadRequestError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+        }
+        options.userId = userId
+    }
 
     if (keyword) {
         const validKeyword = keyword.replace(/"/g, '').trim()
@@ -94,31 +103,21 @@ const validatePropertyOptions = async ({ propertyOptions }) => {
     }
 
     await Promise.all([
-        validateAndAssign(db.Features, 'featureId', featureId, 'This feature is not available yet. Please try again.'),
-        validateAndAssign(
-            db.Categories,
-            'categoryId',
-            categoryId,
-            'This category is not available yet. Please try again.'
-        ),
+        validateAndAssign(db.Features, 'featureId', featureId, ERROR_MESSAGES.FEATURE.INVALID),
+        validateAndAssign(db.Categories, 'categoryId', categoryId, ERROR_MESSAGES.CATEGORY.INVALID),
         validateAndAssign(
             db.Provinces,
             '$location.provinceCode$',
             provinceCode,
-            'This province is not available yet. Please try again.'
+            ERROR_MESSAGES.LOCATION.INVALID_PROVINCE
         ),
         validateAndAssign(
             db.Districts,
             '$location.districtCode$',
             districtCode,
-            'This district is not available yet. Please try again.'
+            ERROR_MESSAGES.LOCATION.INVALID_DISTRICT
         ),
-        validateAndAssign(
-            db.Wards,
-            '$location.wardCode$',
-            wardCode,
-            'This ward is not available yet. Please try again.'
-        )
+        validateAndAssign(db.Wards, '$location.wardCode$', wardCode, ERROR_MESSAGES.LOCATION.INVALID_WARD)
     ])
 
     validateAndAssignRange('price', priceFrom, priceTo)
@@ -138,17 +137,17 @@ const validatePropertyOptions = async ({ propertyOptions }) => {
 const getAllPropertiesByOptions = async ({ validOptions, queries }) => {
     const { page, limit, orderBy, sortBy } = queries
     const propertiesData = await db.Properties.findAndCountAll({
-        include: getScopesArray(userScopes),
+        include: getScopesArray(SCOPES.PROPERTY.USER_GET),
         where: validOptions,
         distinct: true,
-        attributes: { exclude: commonExcludeAttributes },
+        attributes: { exclude: COMMON_EXCLUDE_ATTRIBUTES.PROPERTY },
         offset: (page - 1) * limit,
         limit,
         order: [[orderBy, sortBy]]
     })
 
     if (!propertiesData) {
-        throw new BadRequestError('Error ocurred when find properties')
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.GET_ALL)
     }
 
     return paginatedData({ data: propertiesData, page, limit })
@@ -158,8 +157,8 @@ const getAllPropertiesBySellerOptions = async ({ validOptions, queries, sellerId
     const { page, limit, orderBy, sortBy } = queries
     const propertiesData = await db.Properties.findAndCountAll({
         where: { ...validOptions, userId: sellerId },
-        include: getScopesArray(sellerScopes),
-        attributes: { exclude: commonExcludeAttributes },
+        include: getScopesArray(SCOPES.PROPERTY.SELLER_GET),
+        attributes: { exclude: COMMON_EXCLUDE_ATTRIBUTES.PROPERTY },
         distinct: true,
         offset: (page - 1) * limit,
         limit,
@@ -167,38 +166,46 @@ const getAllPropertiesBySellerOptions = async ({ validOptions, queries, sellerId
     })
 
     if (!propertiesData) {
-        throw new BadRequestError('Error ocurred when find properties')
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.GET_ALL)
     }
 
     return paginatedData({ data: propertiesData, page, limit })
 }
 
 const getProperty = async (propertyId) => {
-    const property = await db.Properties.findOne({
-        include: getScopesArray(userScopes),
-        where: { propertyId },
-        attributes: { exclude: commonExcludeAttributes }
-    })
+    try {
+        const property = await db.Properties.findOne({
+            include: getScopesArray(SCOPES.PROPERTY.USER_GET),
+            where: { propertyId },
+            attributes: { exclude: COMMON_EXCLUDE_ATTRIBUTES.PROPERTY }
+        })
+        if (!property) {
+            throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
+        }
 
-    if (!property) {
-        throw new BadRequestError('This property is not available now. Please try another property!')
+        return property
+    } catch (error) {
+        if (error instanceof NotFoundError) throw error
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.GET)
     }
-
-    return property
 }
 
 const getPropertyBySeller = async ({ userId, propertyId }) => {
-    const property = await db.Properties.findOne({
-        include: getScopesArray(sellerScopes),
-        where: { userId, propertyId },
-        attributes: { exclude: commonExcludeAttributes }
-    })
+    try {
+        const property = await db.Properties.findOne({
+            include: getScopesArray(SCOPES.PROPERTY.SELLER_GET),
+            where: { userId, propertyId },
+            attributes: { exclude: COMMON_EXCLUDE_ATTRIBUTES.PROPERTY }
+        })
+        if (!property) {
+            throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
+        }
 
-    if (!property) {
-        throw new BadRequestError('This property is not available now. Please try another property!')
+        return property
+    } catch (error) {
+        if (error instanceof NotFoundError) throw error
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.GET)
     }
-
-    return property
 }
 
 const createNewProperty = async ({ propertyOptions, userId, locationId }) => {
@@ -209,7 +216,7 @@ const createNewProperty = async ({ propertyOptions, userId, locationId }) => {
     })
 
     if (!newProperty) {
-        throw new BadRequestError('Error occurred when create your property!')
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.CREATE)
     }
 
     return newProperty
@@ -220,12 +227,12 @@ const updateProperty = async ({ propertyId, userId, updatedData }) => {
         where: { propertyId, userId }
     })
     if (!property) {
-        throw new NotFoundError('This property is not available now. Please try another property!')
+        throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
     }
 
     const updatedProperty = await db.Properties.update(updatedData, { where: { propertyId, userId } })
     if (!updatedProperty[0]) {
-        throw new BadRequestError('Failed to update property')
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.UPDATE)
     }
 
     return updatedProperty[0]
@@ -235,16 +242,14 @@ const deleteProperty = async ({ propertyId, userId }) => {
     const property = await db.Properties.findOne({
         where: { propertyId, userId }
     })
-    if (!property) throw new NotFoundError('This property is not available now. Please try another property!')
+    if (!property) throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
 
     const deleted = await db.Locations.destroy({ where: { locationId: property.locationId } })
-    if (!deleted) throw new BadRequestError('Failed to delete property')
+    if (!deleted) throw new BadRequestError(ERROR_MESSAGES.PROPERTY.DELETE)
 }
 
 module.exports = {
     propertyScopes,
-    userScopes,
-    sellerScopes,
     getScopesArray,
     deleteProperty,
     updateProperty,

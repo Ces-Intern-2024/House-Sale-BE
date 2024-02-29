@@ -1,5 +1,39 @@
 const Joi = require('joi')
 
+const getAllProperties = {
+    query: Joi.object().keys({
+        userId: Joi.number(),
+        keyword: Joi.string(),
+        featureId: Joi.number(),
+        categoryId: Joi.number(),
+        provinceCode: Joi.string(),
+        districtCode: Joi.string(),
+        wardCode: Joi.string(),
+        priceFrom: Joi.number(),
+        priceTo: Joi.number(),
+        landAreaFrom: Joi.number(),
+        landAreaTo: Joi.number(),
+        areaOfUseFrom: Joi.number(),
+        areaOfUseTo: Joi.number(),
+        numberOfFloorFrom: Joi.number(),
+        numberOfFloorTo: Joi.number(),
+        numberOfBedRoomFrom: Joi.number(),
+        numberOfBedRoomTo: Joi.number(),
+        numberOfToiletFrom: Joi.number(),
+        numberOfToiletTo: Joi.number(),
+        page: Joi.number(),
+        limit: Joi.number(),
+        orderBy: Joi.string().valid('price', 'createdAt', 'updatedAt'),
+        sortBy: Joi.string().valid('ASC', 'asc', 'DESC', 'desc')
+    })
+}
+
+const getProperty = {
+    params: Joi.object().required().keys({
+        propertyId: Joi.number().required()
+    })
+}
+
 const resetUserPassword = {
     params: Joi.object().required().keys({
         userId: Joi.number().required()
@@ -68,6 +102,8 @@ const getAllUsers = {
 }
 
 module.exports = {
+    getProperty,
+    getAllProperties,
     resetUserPassword,
     updateUserById,
     updateUserActiveStatus,

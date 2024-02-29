@@ -1,6 +1,7 @@
 const Joi = require('joi')
 const { BadRequestError } = require('../core/error.response')
 const { getExistingKeysInObject } = require('../utils')
+const { ERROR_MESSAGES } = require('../core/message.constant')
 
 const validate = (schema) => (req, res, next) => {
     try {
@@ -9,7 +10,7 @@ const validate = (schema) => (req, res, next) => {
 
         const hasValidSchema = Object.keys(validSchema).length > 0
         if (!hasValidSchema) {
-            return next(new BadRequestError('Invalid validation schema.'))
+            return next(new BadRequestError(ERROR_MESSAGES.JOI.INVALID_SCHEMA))
         }
 
         const { value, error } = Joi.compile(validSchema)

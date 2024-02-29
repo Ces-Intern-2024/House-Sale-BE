@@ -1,7 +1,26 @@
+const TRANSACTION = {
+    EXPENSE_DESC: (message) => {
+        return `Create new property!. ID: ${message}`
+    },
+    FEE_CREATE_NEW_PROPERTY: 20,
+    DEFAULT_DATE_RANGE: {
+        FROM: new Date(new Date() - 7 * 24 * 60 * 60 * 1000),
+        TO: new Date()
+    }
+}
+
+const SCOPES = {
+    PROPERTY: {
+        USER_GET: ['feature', 'category', 'location', 'images', 'seller'],
+        SELLER_GET: ['feature', 'category', 'location', 'images']
+    }
+}
+
 const COMMON_EXCLUDE_ATTRIBUTES = {
     USER: ['password', 'emailVerificationCode'],
     FEATURE: ['createdAt', 'updatedAt'],
-    CATEGORY: ['createdAt', 'updatedAt']
+    CATEGORY: ['createdAt', 'updatedAt'],
+    PROPERTY: ['userId', 'featureId', 'categoryId', 'locationId']
 }
 
 const PAGINATION_DEFAULT = {
@@ -151,6 +170,8 @@ const EMAIL_TEMPLATE = {
 }
 
 module.exports = {
+    TRANSACTION,
+    SCOPES,
     COMMON_EXCLUDE_ATTRIBUTES,
     ROUNDS_SALT,
     PAGINATION_DEFAULT,

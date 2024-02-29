@@ -1,6 +1,7 @@
 const db = require('..')
+const { SCOPES } = require('../../core/data.constant')
 const { BadRequestError } = require('../../core/error.response')
-const { getScopesArray, userScopes } = require('./property.repo')
+const { getScopesArray } = require('./property.repo')
 
 const getFavoritesListByUser = async (userId) => {
     try {
@@ -10,7 +11,7 @@ const getFavoritesListByUser = async (userId) => {
                 {
                     model: db.Properties,
                     as: 'propertyInfo',
-                    include: getScopesArray(userScopes)
+                    include: getScopesArray(SCOPES.PROPERTY.USER_GET)
                 }
             ],
             distinct: true,

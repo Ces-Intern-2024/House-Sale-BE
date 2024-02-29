@@ -1,4 +1,5 @@
 const { BadRequestError } = require('../core/error.response')
+const { ERROR_MESSAGES } = require('../core/message.constant')
 const { imageRepo } = require('../models/repo')
 
 /**
@@ -12,7 +13,7 @@ const addImagesToProperty = async ({ propertyId, images }) => {
     const savedPropertyImages = await imageRepo.savedPropertyImages({ images, propertyId })
 
     if (!savedPropertyImages) {
-        throw new BadRequestError('Error occurred when saving images of new property')
+        throw new BadRequestError(ERROR_MESSAGES.IMAGE.SAVING_IMAGE_FAILED)
     }
 
     return savedPropertyImages
