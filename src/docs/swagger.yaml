@@ -15,7 +15,8 @@ tags:
     -   name: Contact
     -   name: Favorite Property
     -   name: Transaction
-    -   name: Admin
+    -   name: Admin - Manage User
+    -   name: Admin - Manage Property
 paths:
     /features:
         get:
@@ -117,7 +118,7 @@ paths:
         get:
             tags:
                 - Property
-            summary: Get all properties
+            summary: Get all properties (UPDATED 28/02)
             description: Get all properties by queries
             operationId: getAllProperties
             parameters:
@@ -272,7 +273,7 @@ paths:
                         default: 'desc'
             responses:
                 '200':
-                    description: Get list properties success!
+                    description: Get list properties successfully!
                     content:
                         application/json:
                             schema:
@@ -283,7 +284,7 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:   Get list properties success!
+                                        example: Get list properties successfully!
                                     metaData:
                                         type: object
                                         properties:
@@ -301,7 +302,7 @@ paths:
                                                 items:
                                                     $ref: '#/components/schemas/PropertyJoinedAllTable'
                 '400':
-                    description: Invalid featureId, categoryId, provinceCode, districtCode, wardCode
+                    description: Failed to get list properties!
                     content:
                         application/json:
                             schema:
@@ -315,12 +316,18 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: This feature is not available yet. Please try again.
+                                                enum:
+                                                -   Failed to get list properties!
+                                                -   Invalid Feature!
+                                                -   Invalid Category!
+                                                -   Invalid Province!
+                                                -   Invalid District!
+                                                -   Invalid Ward!
     /properties/{propertyId}:
         get:
             tags:
             -   Property
-            summary: Get property by ID
+            summary: Get property by Id (UPDATED 28/02)
             description: Returns a single property
             operationId: getProperty
             parameters:
@@ -333,7 +340,7 @@ paths:
                     example: 1
             responses:
                 '200':
-                    description: Get property success!
+                    description: Get property successfully!
                     content:
                         application/json:
                             schema:
@@ -344,11 +351,11 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:  Get all properties success!
+                                        example:  Get property successfully!
                                     metaData:
                                         $ref: '#/components/schemas/PropertyJoinedAllTable'
                 '400':
-                    description: Invalid propertyId
+                    description: Failed to get property!
                     content:
                         application/json:
                             schema:
@@ -362,7 +369,23 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: This property is not available now. Please try another property!.
+                                                example: Failed to get property!
+                '404':
+                    description: Property not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: Property not found!
     /location/provinces:
         get:
             tags:
@@ -648,7 +671,7 @@ paths:
                                 properties:
                                     status:
                                         type: number
-                                        example: 200
+                                        example: 201
                                     message:
                                         type: string
                                         example: Registration success for new user!
@@ -711,7 +734,7 @@ paths:
                                 properties:
                                     status:
                                         type: number
-                                        example: 200
+                                        example: 201
                                     message:
                                         type: string
                                         example: Registration success for new seller! Please check your email to verify your account!
@@ -1248,7 +1271,7 @@ paths:
                                         properties:
                                             status:
                                                 type: number
-                                                example: 400
+                                                example: 404
                                             message:
                                                 type: string
                                                 example: User not found!
@@ -1355,7 +1378,7 @@ paths:
                                         properties:
                                             status:
                                                 type: number
-                                                example: 400
+                                                example: 404
                                             message:
                                                 type: string
                                                 example: User not found!
@@ -1632,7 +1655,7 @@ paths:
         get:
             tags:
                 - Seller
-            summary: Get all properties
+            summary: Get all properties (UPDATED 28/02)
             description: Get all properties by queries
             operationId: getAllPropertiesBySeller
             parameters:
@@ -1764,7 +1787,7 @@ paths:
                         enum: ['ASC', 'asc', 'DESC', 'desc']
             responses:
                 '200':
-                    description: Get list properties success!
+                    description: Get list properties successfully!
                     content:
                         application/json:
                             schema:
@@ -1775,7 +1798,7 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:   Get list properties success!
+                                        example: Get list properties successfully!
                                     metaData:
                                         type: object
                                         properties:
@@ -1793,7 +1816,7 @@ paths:
                                                 items:
                                                     $ref: '#/components/schemas/PropertyOfSeller'
                 '400':
-                    description: Invalid featureId, categoryId, provinceCode, districtCode, wardCode
+                    description: Failed to get list properties!
                     content:
                         application/json:
                             schema:
@@ -1807,7 +1830,13 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: This feature is not available yet. Please try again.
+                                                enum:
+                                                -   Failed to get list properties!
+                                                -   Invalid Feature!
+                                                -   Invalid Category!
+                                                -   Invalid Province!
+                                                -   Invalid District!
+                                                -   Invalid Ward!
                 '401':
                     description: Unauthorized!
                     content:
@@ -1825,10 +1854,9 @@ paths:
                                                 type: string
                                                 enum:
                                                     -  Please Authenticate!
-                                                    -  Unauthorized
                                                     -  Invalid accessToken!
-                                                    - Please verify your email!
-                                                    - Permission denied!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
                 '403':
                     description: Your account is not active!
                     content:
@@ -1850,7 +1878,7 @@ paths:
         post:
             tags:
                 - Seller
-            summary: Create new property by seller
+            summary: Create new property by seller (UPDATED 28/02)
             description: Create new property by seller (if your balance > 20$ to create new property)
             operationId: createNewProperty
             requestBody:
@@ -1877,7 +1905,7 @@ paths:
 
 
                 '400':
-                    description: Not enough money, Invalid featureId, categoryId, provinceCode, districtCode, wardCode
+                    description: Not enough money!
                     content:
                         application/json:
                             schema:
@@ -1891,7 +1919,17 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Your balance is not enough to create new property. Please refill your balance!
+                                                enum:
+                                                    -   Your balance is not enough to create new property. Please refill your balance!
+                                                    -   Failed to create new location!
+                                                    -   Invalid Province!
+                                                    -   Invalid District!
+                                                    -   Invalid Ward!
+                                                    -   Failed to create new property!
+                                                    -   Invalid amount!
+                                                    -   Failed to init expense transaction!
+                                                    -   Failed to update user balance!
+                                                    -   Failed to save image!
                 '401':
                     description: Unauthorized!
                     content:
@@ -1908,11 +1946,10 @@ paths:
                                             message:
                                                 type: string
                                                 enum:
-                                                    -  Please Authenticate!
-                                                    -  Unauthorized
+                                                    -   Please Authenticate!
                                                     -  Invalid accessToken!
-                                                    - Please verify your email!
-                                                    - Permission denied!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
                 '403':
                     description: Your account is not active!
                     content:
@@ -1929,13 +1966,29 @@ paths:
                                             message:
                                                 type: string
                                                 example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
             security:
               - bearerAuth: []
     /seller/properties/{propertyId}:
         get:
             tags:
             -   Seller
-            summary: Get property of seller by ID
+            summary: Get property of seller by Id (UPDATED 28/02)
             description: Returns a single property
             operationId: getProperty
             parameters:
@@ -1948,7 +2001,7 @@ paths:
                     example: 1
             responses:
                 '200':
-                    description: Get property success!
+                    description: Get property successfully!
                     content:
                         application/json:
                             schema:
@@ -1959,11 +2012,11 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:  Get all properties success!
+                                        example: Get property successfully!
                                     metaData:
                                         $ref: '#/components/schemas/PropertyOfSeller'
                 '400':
-                    description: Invalid propertyId
+                    description: Failed to get property!
                     content:
                         application/json:
                             schema:
@@ -1977,13 +2030,29 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: This property of seller is not available now. Please try another property!
+                                                example: Failed to get property!
+                '404':
+                    description: Property not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: Property not found!
             security:
               - bearerAuth: []
         patch:
             tags:
             -   Seller
-            summary: Update property by ID
+            summary: Update property by Id (UPDATED 28/02)
             description: Update a property
             operationId: updateProperty
             parameters:
@@ -2012,12 +2081,14 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:  Your property had been updated successfully!
+                                        enum:
+                                            -   Your property had been updated successfully!
+                                            -   No changes made!
                                     metaData:
                                         type: string
                                         example: 1
                 '400':
-                    description: Failed to update property
+                    description: Failed to update property!
                     content:
                         application/json:
                             schema:
@@ -2031,9 +2102,46 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Failed to update property
+                                                example: Failed to update property!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Unauthorized
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
                 '404':
-                    description: Invalid propertyId.
+                    description: Property not found!
                     content:
                         application/json:
                             schema:
@@ -2044,16 +2152,16 @@ paths:
                                         properties:
                                             status:
                                                 type: number
-                                                example: 400
+                                                example: 404
                                             message:
                                                 type: string
-                                                example: This property is not available now. Please try another property!
+                                                example: Property not found!
             security:
               - bearerAuth: []
         delete:
             tags:
             -   Seller
-            summary: Delete property by ID
+            summary: Delete property by Id (UPDATED 28/02)
             description: Delete a property
             operationId: deleteProperty
             parameters:
@@ -2097,8 +2205,8 @@ paths:
                                             message:
                                                 type: string
                                                 example: Failed to delete property
-                '404':
-                    description: Invalid propertyId.
+                '401':
+                    description: Unauthorized!
                     content:
                         application/json:
                             schema:
@@ -2109,10 +2217,47 @@ paths:
                                         properties:
                                             status:
                                                 type: number
-                                                example: 400
+                                                example: 401
                                             message:
                                                 type: string
-                                                example: This property is not available now. Please try another property!
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Unauthorized
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: Property not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: Property not found!
             security:
               - bearerAuth: []
     /contact:
@@ -2579,7 +2724,7 @@ paths:
     /admin/manage-user:
         get:
             tags:
-                - Admin
+                - Admin - Manage User
             summary: Get all users (NEW)
             description: Get all users by queries
             operationId: getAllUsers
@@ -2718,7 +2863,7 @@ paths:
     /admin/manage-user/{userId}:
         get:
             tags:
-            -   Admin
+            -   Admin - Manage User
             summary: Get user by Id (NEW)
             description: Returns a user by Id
             operationId: getUserById
@@ -2821,7 +2966,7 @@ paths:
                 - bearerAuth: []
         delete:
             tags:
-            -   Admin
+            -   Admin - Manage User
             summary: Delete user by Id (NEW)
             description: Delete a user by Id
             operationId: deleteUserById
@@ -2924,7 +3069,7 @@ paths:
                 - bearerAuth: []
         patch:
             tags:
-                - Admin
+                - Admin - Manage User
             summary: Update user by Id (NEW)
             description: Update user by Id
             operationId: updateUserById
@@ -3039,7 +3184,7 @@ paths:
     /admin/manage-user/{userId}/active:
         patch:
             tags:
-            -   Admin
+            -   Admin - Manage User
             summary: Update user active status by Id (NEW)
             description: Update user active status by Id
             operationId: updateUserActiveStatus
@@ -3145,7 +3290,7 @@ paths:
     /admin/manage-user/{userId}/reset-password:
         post:
             tags:
-            -   Admin
+            -   Admin - Manage User
             summary: Reset user password by Id (NEW)
             description: Reset user password and send email contain new password to user
             operationId: resetUserPassword
@@ -3261,6 +3406,270 @@ paths:
                                             message:
                                                 type: string
                                                 example: Failed to send email to user!
+            security:
+                - bearerAuth: []
+    /admin/manage-property:
+        get:
+            tags:
+                - Admin - Manage Property
+            summary: Get all properties by ADMIN (NEW)
+            description: Get all properties by queries
+            operationId: getAllPropertiesByAdmin
+            parameters:
+                -   name: userId
+                    in: query
+                    description: The ID of user who created the property
+                    required: false
+                    schema:
+                        type: string
+                        example: 2
+                -   name: keyword
+                    in: query
+                    description: A keyword to search for properties
+                    required: false
+                    schema:
+                        type: string
+                        example: apart
+                -   name: featureId
+                    in: query
+                    description: The ID of feature
+                    required: false
+                    schema:
+                        type: number
+                        enum:
+                            - 1
+                            - 2
+                -   name: categoryId
+                    in: query
+                    description: The ID of category
+                    required: false
+                    schema:
+                        type: number
+                        enum:
+                            - 1
+                            - 2
+                            - 3
+                            - 4
+                            - 5
+                -   name: provinceCode
+                    in: query
+                    description: The code of province
+                    required: false
+                    schema:
+                        type: string
+                        example: 48
+                -   name: districtCode
+                    in: query
+                    description: The code of district
+                    required: false
+                    schema:
+                        type: string
+                        example: 493
+                -   name: wardCode
+                    in: query
+                    description: The code of ward
+                    required: false
+                    schema:
+                        type: string
+                        example: 20275
+                -   name: priceFrom
+                    in: query
+                    description: The minimum price of a property
+                    required: false
+                    schema:
+                        type: number
+                -   name: priceTo
+                    in: query
+                    description: The maximum price of a property
+                    required: false
+                    schema:
+                        type: number
+                -   name: landAreaFrom
+                    in: query
+                    description: The minimum land area of a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: landAreaTo
+                    in: query
+                    description: The maximum land area of a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: areaOfUseFrom
+                    in: query
+                    description: The minimum area of use of a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: areaOfUseTo
+                    in: query
+                    description: The maximum area of use of a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfFloorFrom
+                    in: query
+                    description: The minimum number of floors in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfFloorTo
+                    in: query
+                    description: The maximum number of floors in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfBedRoomFrom
+                    in: query
+                    description: The minimum number of bedrooms in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfBedRoomTo
+                    in: query
+                    description: The maximum number of bedrooms in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfToiletFrom
+                    in: query
+                    description: The minimum number of toilets in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: numberOfToiletTo
+                    in: query
+                    description: The maximum number of toilets in a property.
+                    required: false
+                    schema:
+                        type: number
+                -   name: page
+                    in: query
+                    description: The page number for pagination.
+                    required: false
+                    schema:
+                        type: number
+                -   name: limit
+                    in: query
+                    description: The maximum number of items per page.
+                    required: false
+                    schema:
+                        type: number
+                -   name: orderBy
+                    in: query
+                    description: The field to order results by.
+                    required: false
+                    schema:
+                        type: string
+                        enum: ['createdAt','updatedAt','price']
+                        default: 'createdAt'
+                -   name: sortBy
+                    in: query
+                    description: The sort order ('ASC' for ascending, 'DESC' for descending).
+                    required: false
+                    schema:
+                        type: string
+                        enum: ['ASC', 'asc', 'DESC', 'desc']
+                        default: 'desc'
+            responses:
+                '200':
+                    description: Get list properties successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:   Get list properties successfully!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            totalPages:
+                                                type: number
+                                                example: 1
+                                            currentPage:
+                                                type: number
+                                                example: 1
+                                            totalItems:
+                                                type: number
+                                                example: 7
+                                            data:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/PropertyJoinedAllTable'
+                '400':
+                    description: Failed to get all properties!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to get all properties!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
             security:
                 - bearerAuth: []
 components:

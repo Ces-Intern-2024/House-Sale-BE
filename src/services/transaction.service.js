@@ -2,16 +2,13 @@ const { Op } = require('sequelize')
 const { BadRequestError, NotFoundError } = require('../core/error.response')
 const db = require('../models')
 const { userRepo } = require('../models/repo')
-
-const defaultDateRange = {
-    fromDateRange: new Date(new Date() - 7 * 24 * 60 * 60 * 1000),
-    toDateRange: new Date()
-}
+const { ERROR_MESSAGES } = require('../core/message.constant')
+const { TRANSACTION } = require('../core/data.constant')
 
 const getAllTransactions = async ({
     userId,
-    fromDateRange = defaultDateRange.fromDateRange,
-    toDateRange = defaultDateRange.toDateRange
+    fromDateRange = TRANSACTION.DEFAULT_DATE_RANGE.FROM,
+    toDateRange = TRANSACTION.DEFAULT_DATE_RANGE.TO
 }) => {
     try {
         const user = await userRepo.getUserById(userId)
@@ -72,12 +69,12 @@ const getAllTransactions = async ({
  */
 const expenseUserBalance = async ({ userId, amount, description }) => {
     if (amount < 0) {
-        throw new BadRequestError('Invalid amount')
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_AMOUNT)
     }
 
     const user = await db.Users.findOne({ where: { userId } })
     if (!user) {
-        throw new NotFoundError('User not found')
+        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
     }
 
     const transaction = await db.sequelize.transaction()
@@ -88,12 +85,12 @@ const expenseUserBalance = async ({ userId, amount, description }) => {
             { transaction }
         )
         if (!newExpenseTransaction) {
-            throw new BadRequestError('Error occurred when init expense transaction')
+            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INIT_EXPENSE_TRANSACTION)
         }
 
         const updatedUser = await user.decrement({ balance: amount }, { transaction })
         if (!updatedUser) {
-            throw new BadRequestError('Error occurred when updated your balance')
+            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.UPDATE_USER_BALANCE)
         }
         await transaction.commit()
         await updatedUser.reload()

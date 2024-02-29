@@ -1,4 +1,7 @@
 const SUCCESS_MESSAGES = {
+    COMMON: {
+        NO_DATA_UPDATED: 'No changes made!'
+    },
     USER: {
         REGISTER_USER: 'Registration success for new user!',
         REGISTER_SELLER: 'Registration success for new seller! Please check your email to verify your account!',
@@ -39,10 +42,29 @@ const SUCCESS_MESSAGES = {
         GET_PROVINCES: 'Get list provinces successfully!',
         GET_DISTRICTS: 'Get list districts successfully!',
         GET_WARDS: 'Get list wards successfully!'
+    },
+
+    PROPERTY: {
+        GET_ALL: 'Get list properties successfully!',
+        GET: 'Get property successfully!'
+    },
+
+    SELLER: {
+        CREATE_NEW_PROPERTY: 'New property had been created successfully!',
+        GET_PROPERTY: 'Get property successfully!',
+        GET_ALL_PROPERTIES: 'Get list properties successfully!',
+        UPDATE_PROPERTY: 'Your property had been updated successfully!',
+        DELETE_PROPERTY: 'Your property had been deleted successfully!'
     }
 }
 
 const ERROR_MESSAGES = {
+    INTERNAL_SERVER_ERROR: 'Internal server error!',
+
+    JOI: {
+        INVALID_SCHEMA: 'Invalid validation schema!'
+    },
+
     COMMON: {
         USER_NOT_FOUND: 'User not found!',
         REQUIRED_USER_ID: 'userId is required!',
@@ -114,9 +136,9 @@ const ERROR_MESSAGES = {
     },
 
     LOCATION: {
-        INVALID_PROVINCE: 'Invalid province. Please try again!',
-        INVALID_DISTRICT: 'Invalid district. Please try again!',
-        INVALID_WARD: 'Invalid ward. Please try again!',
+        INVALID_PROVINCE: 'Invalid Province!',
+        INVALID_DISTRICT: 'Invalid District!',
+        INVALID_WARD: 'Invalid Ward!',
         INVALID_LOCATION_PROVIDED:
             'Complete address information required. You must provide provinceCode, districtCode, and wardCode together!',
         GET_PROVINCES: 'Failed to get list provinces!',
@@ -142,11 +164,34 @@ const ERROR_MESSAGES = {
     },
 
     FEATURE: {
-        GET_FEATURES: 'Failed to get list features!'
+        GET_FEATURES: 'Failed to get list features!',
+        INVALID: 'Invalid Feature!'
     },
 
     CATEGORY: {
-        GET_CATEGORIES: 'Failed to get list categories!'
+        GET_CATEGORIES: 'Failed to get list categories!',
+        INVALID: 'Invalid Category!'
+    },
+
+    PROPERTY: {
+        GET_ALL: 'Failed to get list properties!',
+        GET: 'Failed to get property!',
+        NOT_FOUND: 'Property not found!',
+        CREATE: 'Failed to create new property!',
+        UPDATE: 'Failed to update property!',
+        DELETE: 'Failed to delete property!'
+    },
+
+    TRANSACTION: {
+        NOT_ENOUGH_CREDIT: 'Your balance is not enough to create new property. Please refill your balance!',
+        INVALID_AMOUNT: 'Invalid amount!',
+        INIT_EXPENSE_TRANSACTION: 'Failed to init expense transaction!',
+        INVALID_DATE_RANGE: 'Invalid date range!',
+        FAILED_TO_GET_ALL_TRANSACTIONS: 'Failed to get all transactions!'
+    },
+
+    IMAGE: {
+        SAVING_IMAGE_FAILED: 'Failed to save image!'
     }
 }
 

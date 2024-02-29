@@ -1,16 +1,18 @@
+const { TRANSACTION } = require('../core/data.constant')
 const { BadRequestError } = require('../core/error.response')
+const { ERROR_MESSAGES } = require('../core/message.constant')
 const { userRepo } = require('../models/repo')
 
-const FEE_CREATE_NEW_PROPERTY = 20
+const feeToCreateProperty = TRANSACTION.FEE_CREATE_NEW_PROPERTY
 
 const canCreateNewProperty = async (req, res, next) => {
     try {
         const userId = req.user?.userId
         const { balance } = await userRepo.getUserById(userId)
-        if (balance < FEE_CREATE_NEW_PROPERTY) {
-            throw new BadRequestError('Your balance is not enough to create new property. Please refill your balance!')
+        if (balance < feeToCreateProperty) {
+            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.NOT_ENOUGH_CREDIT)
         }
-        req.amount = FEE_CREATE_NEW_PROPERTY
+        req.amount = feeToCreateProperty
         next()
     } catch (error) {
         next(error)
