@@ -1,4 +1,5 @@
-const { BadRequestError } = require('../core/error.response')
+const { BadRequestError, NotFoundError } = require('../core/error.response')
+const { ERROR_MESSAGES } = require('../core/message.constant')
 const db = require('../models')
 
 /**
@@ -18,12 +19,12 @@ const createContact = async (bodyContact) => {
         where: { propertyId, userId }
     })
     if (!property) {
-        throw new BadRequestError('This property is not available now. Please try another property!')
+        throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
     }
 
     const newContact = await db.Contacts.create({ ...bodyContact })
     if (!newContact) {
-        throw new BadRequestError('Error encountered when create new contact!')
+        throw new BadRequestError(ERROR_MESSAGES.CONTACT.FAILED_TO_CREATE_CONTACT)
     }
 
     return newContact

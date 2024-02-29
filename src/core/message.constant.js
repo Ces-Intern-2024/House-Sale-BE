@@ -55,6 +55,15 @@ const SUCCESS_MESSAGES = {
         GET_ALL_PROPERTIES: 'Get list properties successfully!',
         UPDATE_PROPERTY: 'Your property had been updated successfully!',
         DELETE_PROPERTY: 'Your property had been deleted successfully!'
+    },
+
+    CONTACT: {
+        CREATE_CONTACT: 'Your contact had been sent successfully!'
+    },
+
+    FAVORITES_LIST: {
+        GET_FAVORITES_LIST: 'Get your favorites list successfully!',
+        UPDATE_FAVORITE_PROPERTY: 'Your favorites list had been updated successfully!'
     }
 }
 
@@ -192,6 +201,16 @@ const ERROR_MESSAGES = {
 
     IMAGE: {
         SAVING_IMAGE_FAILED: 'Failed to save image!'
+    },
+
+    CONTACT: {
+        FAILED_TO_CREATE_CONTACT: 'Failed to create new contact!'
+    },
+
+    FAVORITES_LIST: {
+        GET_FAVORITES_LIST: 'Failed to get favorites list!',
+        UPDATE_FAVORITE_PROPERTY: 'Failed to update favorite property!',
+        FAILED_TO_ADD_TO_FAVORITES_LIST: 'Failed to add to favorites list!'
     }
 }
 

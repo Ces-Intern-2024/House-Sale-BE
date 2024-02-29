@@ -1,4 +1,5 @@
 const { BadRequestError, NotFoundError } = require('../core/error.response')
+const { ERROR_MESSAGES } = require('../core/message.constant')
 const db = require('../models')
 const { userRepo, favoritePropertiesRepo } = require('../models/repo')
 
@@ -10,7 +11,7 @@ const { userRepo, favoritePropertiesRepo } = require('../models/repo')
 const getFavoritesList = async (userId) => {
     const user = await userRepo.getUserById(userId)
     if (!user) {
-        throw new NotFoundError('User not found')
+        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
     }
 
     return favoritePropertiesRepo.getFavoritesListByUser(userId)
@@ -24,26 +25,33 @@ const getFavoritesList = async (userId) => {
  * @returns {Promise<Boolean>}
  */
 const updateFavoriteProperty = async ({ userId, propertyId }) => {
-    const user = await userRepo.getUserById(userId)
-    if (!user) {
-        throw new NotFoundError('User not found')
-    }
+    try {
+        const user = await userRepo.getUserById(userId)
+        if (!user) {
+            throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+        }
 
-    const property = await db.Properties.findOne({
-        where: { propertyId }
-    })
-    if (!property) {
-        throw new NotFoundError('This property is not available now. Please try another property!')
-    }
+        const property = await db.Properties.findOne({
+            where: { propertyId }
+        })
+        if (!property) {
+            throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
+        }
 
-    const [newFavoriteProperty, created] = await db.FavoriteProperties.findOrCreate({
-        where: { userId, propertyId }
-    })
-    if (!created) {
-        return db.FavoriteProperties.destroy({ where: { userId, propertyId } })
-    }
-    if (!newFavoriteProperty) {
-        throw new BadRequestError('Error occurred when add new property to your favorites list!')
+        const [newFavoriteProperty, created] = await db.FavoriteProperties.findOrCreate({
+            where: { userId, propertyId }
+        })
+        if (!created) {
+            return db.FavoriteProperties.destroy({ where: { userId, propertyId } })
+        }
+        if (!newFavoriteProperty) {
+            throw new BadRequestError(ERROR_MESSAGES.FAVORITES_LIST.FAILED_TO_ADD_TO_FAVORITES_LIST)
+        }
+    } catch (error) {
+        if (error instanceof BadRequestError || error instanceof NotFoundError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.FAVORITES_LIST.UPDATE_FAVORITE_PROPERTY)
     }
 }
 

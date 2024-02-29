@@ -2031,6 +2031,42 @@ paths:
                                             message:
                                                 type: string
                                                 example: Failed to get property!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -  Please Authenticate!
+                                                    -  Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
                 '404':
                     description: Property not found!
                     content:
@@ -2222,7 +2258,6 @@ paths:
                                                 type: string
                                                 enum:
                                                     -   Please Authenticate!
-                                                    -   Unauthorized
                                                     -   Invalid accessToken!
                                                     -   Please verify your email!
                                                     -   Permission denied!
@@ -2264,7 +2299,7 @@ paths:
         post:
             tags:
               - Contact
-            summary: Create new contact
+            summary: Create new contact and send to seller (UPDATED 29/02)
             description: Create new contact and send to seller
             operationId: createNewContact
             requestBody:
@@ -2286,11 +2321,12 @@ paths:
                                         example: 201
                                     message:
                                         type: string
-                                        example: New contact had been created successfully!
+                                        example: Your contact had been sent successfully!
                                     metaData:
-                                        $ref: '#/components/schemas/NewContactResponse'
+                                        type: object
+                                        example: {}
                 '400':
-                    description: Invalid property
+                    description: Failed to create new contact!
                     content:
                         application/json:
                             schema:
@@ -2304,12 +2340,146 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: This property is not available now. Please try another property!
+                                                enum:
+                                                    -   Failed to create new contact!
+                                                    -   Invalid or missing recipient email address!
+                '404':
+                    description: Property not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: Property not found!
+                '424':
+                    description: Failed to send email!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 424
+                                            message:
+                                                type: string
+                                                example: Failed to send email!
     /favorites-list:
+        get:
+            tags:
+              - "Favorite Property"
+            summary: Get all properties in user's favorites list (UPDATED 29/02)
+            description: Get all properties in user's favorites list
+            operationId: getFavoritesProperty
+            responses:
+                '200':
+                    description: Get your favorites list successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get your favorites list successfully!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            count:
+                                                type: number
+                                                example: 1
+                                            favoritesList:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/PropertyJoinedAllTable'
+                '400':
+                    description: Failed to get favorites list!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to get favorites list!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
+            security:
+                - bearerAuth: []
         post:
             tags:
                 - "Favorite Property"
-            summary: Update user's favorites list
+            summary: Update user's favorites list (UPDATED 29/02)
             description: Update user's favorites list. Add property to favorites list or remove property from favorites list if it already exists.
             operationId: updateFavoritesProperty
             requestBody:
@@ -2341,7 +2511,7 @@ paths:
                                         type: object
                                         example: {}
                 '400':
-                    description: Error occurred when add new property to your favorites list!
+                    description: Failed to add to favorites list!
                     content:
                         application/json:
                             schema:
@@ -2355,7 +2525,9 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Error occurred when add new property to your favorites list!
+                                                enum:
+                                                    -   Failed to add to favorites list!
+                                                    -   Failed to update favorite property!
                 '401':
                     description: Unauthorized!
                     content:
@@ -2394,7 +2566,7 @@ paths:
                                                 type: string
                                                 example: Your account is not active!
                 '404':
-                    description: User not found or Property not found
+                    description: User not found! or Property not found!
                     content:
                         application/json:
                             schema:
@@ -2406,94 +2578,11 @@ paths:
                                             status:
                                                 type: number
                                                 example: 404
-                                            message:
-                                                type: string
-                                                example: This property is not available now. Please try another property!
-            security:
-                - bearerAuth: []
-        get:
-            tags:
-              - "Favorite Property"
-            summary: Get all properties in user's favorites list
-            description: Get all properties in user's favorites list
-            operationId: getFavoritesProperty
-            responses:
-                '200':
-                    description: Get your favorites list successfully!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    status:
-                                        type: number
-                                        example: 200
-                                    message:
-                                        type: string
-                                        example: Get your favorites list successfully!
-                                    metaData:
-                                        type: object
-                                        properties:
-                                            count:
-                                                type: number
-                                                example: 1
-                                            favoritesList:
-                                                type: array
-                                                items:
-                                                    $ref: '#/components/schemas/PropertyJoinedAllTable'
-                '401':
-                    description: Unauthorized!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 401
                                             message:
                                                 type: string
                                                 enum:
-                                                    -  Please Authenticate!
-                                                    -  Unauthorized
-                                                    -  Invalid accessToken!
-                                                    - Please verify your email!
-                                                    - Permission denied!
-                '403':
-                    description: Your account is not active!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 403
-                                            message:
-                                                type: string
-                                                example: Your account is not active!
-                '404':
-                    description: User not found
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 404
-                                            message:
-                                                type: string
-                                                example: User not found
+                                                    -   User not found!
+                                                    -   Property not found!
             security:
                 - bearerAuth: []
     /transaction:
@@ -3672,6 +3761,100 @@ paths:
                                                 example: User not found!
             security:
                 - bearerAuth: []
+    /admin/manage-property/{propertyId}:
+        get:
+            tags:
+            -   Admin - Manage Property
+            summary: Get property by ADMIN (NEW)
+            description: Returns a property by Id
+            operationId: getPropertyById
+
+            responses:
+                '200':
+                    description: Get property successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Get property successfully!
+                                    metaData:
+                                        $ref: '#/components/schemas/PropertyJoinedAllTable'
+                '400':
+                    description: Failed to get property!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to get property!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -  Please Authenticate!
+                                                    -  Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: Property not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: Property not found!
+            security:
+                - bearerAuth: []
 components:
     schemas:
         Property:
@@ -4485,38 +4668,6 @@ components:
                 -   "email"
                 -   "phone"
                 -   "message"
-        NewContactResponse:
-            type: object
-            properties:
-                contactId:
-                    type: number
-                    example: 1
-                propertyId:
-                    type: number
-                    example: 4
-                sellerId:
-                    type: number
-                    example: 2
-                name:
-                    type: string
-                    example: Le Khach Hang
-                email:
-                    type: string
-                    example: avs73ltqb@gmail.com
-                phone:
-                    type: string
-                    example: 0899619250
-                message:
-                    type: string
-                    example: I want to rent your property!
-                updatedAt:
-                    type: string
-                    format: date-time
-                    example: 2024-02-10T03:20:55.544Z
-                createdAt:
-                    type: string
-                    format: date-time
-                    example: 2024-02-10T03:20:55.544Z
         UpdateUserProfile:
             type: object
             properties:
