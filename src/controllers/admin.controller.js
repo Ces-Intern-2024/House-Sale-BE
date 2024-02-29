@@ -2,6 +2,15 @@ const { adminService, emailService, propertyService } = require('../services')
 const { OK } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const getProperty = async (req, res) => {
+    const { propertyId } = req.params
+    const property = await propertyService.getProperty(propertyId)
+    new OK({
+        message: SUCCESS_MESSAGES.PROPERTY.GET,
+        metaData: property
+    }).send(res)
+}
+
 const getAllProperties = async (req, res) => {
     const propertyOptions = req.query
     const properties = await propertyService.getAllProperties({ propertyOptions })
@@ -65,6 +74,7 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    getProperty,
     getAllProperties,
     resetUserPassword,
     updateUserById,

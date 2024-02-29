@@ -112,7 +112,7 @@ const EMAIL_TEMPLATE = {
                   </tr>
                   <tr>
                     <td>Property</td>
-                    <td>${propertyId}</td>
+                    <td><a href="https://house-sale-three.vercel.app/details//${propertyId}">Link to property ID: ${propertyId}</a></td>
                   </tr>
                 </table>
               </div>

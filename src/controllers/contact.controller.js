@@ -1,13 +1,13 @@
 const { contactService, emailService } = require('../services')
 const { OK } = require('../core/success.response')
+const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
 const createContact = async (req, res) => {
     const bodyContact = req.body
     const newContact = await contactService.createContact(bodyContact)
-    const newEmail = await emailService.sendContactEmailToSeller(newContact)
+    await emailService.sendContactEmailToSeller(newContact)
     new OK({
-        message: 'Create new contact success!',
-        metaData: { newContact, newEmail }
+        message: SUCCESS_MESSAGES.CONTACT.CREATE_CONTACT
     }).send(res)
 }
 
