@@ -248,6 +248,17 @@ const deleteProperty = async ({ propertyId, userId }) => {
     if (!deleted) throw new BadRequestError(ERROR_MESSAGES.PROPERTY.DELETE)
 }
 
+const updatePropertyStatus = async (propertyId) => {
+    const property = await db.Properties.findByPk(propertyId)
+    if (!property) throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
+
+    const updatedStatus = !property.status
+    const updated = await db.Properties.update({ status: updatedStatus }, { where: { propertyId } })
+    if (!updated[0]) throw new BadRequestError(ERROR_MESSAGES.PROPERTY.UPDATE_STATUS)
+
+    return updatedStatus
+}
+
 module.exports = {
     propertyScopes,
     getScopesArray,
@@ -258,5 +269,6 @@ module.exports = {
     validatePropertyOptions,
     getAllPropertiesByOptions,
     getProperty,
-    getAllPropertiesBySellerOptions
+    getAllPropertiesBySellerOptions,
+    updatePropertyStatus
 }

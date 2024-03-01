@@ -27,7 +27,11 @@ const SUCCESS_MESSAGES = {
             INACTIVE: 'User has been successfully deactivated!'
         },
         UPDATE_USER: 'Update user successfully!',
-        RESET_USER_PASSWORD: `Reset user password successfully! New password has been sent to user's email!`
+        RESET_USER_PASSWORD: `Reset user password successfully! New password has been sent to user's email!`,
+        UPDATE_STATUS: {
+            ACTIVE: 'Property has been successfully activated!',
+            INACTIVE: 'Property has been successfully deactivated!'
+        }
     },
 
     FEATURE: {
@@ -188,7 +192,8 @@ const ERROR_MESSAGES = {
         NOT_FOUND: 'Property not found!',
         CREATE: 'Failed to create new property!',
         UPDATE: 'Failed to update property!',
-        DELETE: 'Failed to delete property!'
+        DELETE: 'Failed to delete property!',
+        UPDATE_STATUS: 'Failed to update property status!'
     },
 
     TRANSACTION: {
