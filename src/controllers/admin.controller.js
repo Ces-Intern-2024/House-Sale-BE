@@ -2,6 +2,14 @@ const { adminService, emailService, propertyService } = require('../services')
 const { OK } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const deleteProperty = async (req, res) => {
+    const { propertyId } = req.params
+    await propertyService.deleteProperty({ propertyId })
+    new OK({
+        message: SUCCESS_MESSAGES.PROPERTY.DELETE
+    }).send(res)
+}
+
 const updatePropertyStatus = async (req, res) => {
     const { propertyId } = req.params
     const updatedPropertyStatus = await propertyService.updatePropertyStatus(propertyId)
@@ -84,6 +92,7 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    deleteProperty,
     updatePropertyStatus,
     getProperty,
     getAllProperties,

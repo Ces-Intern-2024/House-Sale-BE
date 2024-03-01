@@ -1,5 +1,9 @@
 const { propertyRepo } = require('../models/repo')
 
+const deleteProperty = async ({ propertyId }) => {
+    return propertyRepo.deleteProperty({ propertyId })
+}
+
 const updatePropertyStatus = async (propertyId) => {
     return propertyRepo.updatePropertyStatus(propertyId)
 }
@@ -22,6 +26,7 @@ const updateProperty = async ({ propertyId, userId, updatedData }) => {
 }
 
 module.exports = {
+    deleteProperty,
     updatePropertyStatus,
     getAllProperties,
     getProperty,

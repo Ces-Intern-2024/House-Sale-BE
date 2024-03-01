@@ -239,9 +239,8 @@ const updateProperty = async ({ propertyId, userId, updatedData }) => {
 }
 
 const deleteProperty = async ({ propertyId, userId }) => {
-    const property = await db.Properties.findOne({
-        where: { propertyId, userId }
-    })
+    const where = userId ? { propertyId, userId } : { propertyId }
+    const property = await db.Properties.findOne({ where })
     if (!property) throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
 
     const deleted = await db.Locations.destroy({ where: { locationId: property.locationId } })
