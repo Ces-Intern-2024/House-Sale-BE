@@ -1,5 +1,11 @@
 const Joi = require('joi')
 
+const updatePropertyStatus = {
+    params: Joi.object().required().keys({
+        propertyId: Joi.number().required()
+    })
+}
+
 const getAllProperties = {
     query: Joi.object().keys({
         userId: Joi.number(),
@@ -102,6 +108,7 @@ const getAllUsers = {
 }
 
 module.exports = {
+    updatePropertyStatus,
     getProperty,
     getAllProperties,
     resetUserPassword,
