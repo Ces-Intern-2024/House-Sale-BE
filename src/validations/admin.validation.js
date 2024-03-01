@@ -1,5 +1,11 @@
 const Joi = require('joi')
 
+const deleteProperty = {
+    params: Joi.object().required().keys({
+        propertyId: Joi.number().required()
+    })
+}
+
 const updatePropertyStatus = {
     params: Joi.object().required().keys({
         propertyId: Joi.number().required()
@@ -108,6 +114,7 @@ const getAllUsers = {
 }
 
 module.exports = {
+    deleteProperty,
     updatePropertyStatus,
     getProperty,
     getAllProperties,

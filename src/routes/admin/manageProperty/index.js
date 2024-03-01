@@ -8,9 +8,11 @@ const router = express.Router()
 
 router.get('', validate(adminValidation.getAllProperties), asyncHandler(adminController.getAllProperties))
 router.get('/:propertyId', validate(adminValidation.getProperty), asyncHandler(adminController.getProperty))
+router.delete('/:propertyId', validate(adminValidation.deleteProperty), asyncHandler(adminController.deleteProperty))
 router.patch(
     '/:propertyId/active',
     validate(adminValidation.updatePropertyStatus),
     asyncHandler(adminController.updatePropertyStatus)
 )
+
 module.exports = router

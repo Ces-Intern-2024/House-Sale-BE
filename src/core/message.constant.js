@@ -50,7 +50,8 @@ const SUCCESS_MESSAGES = {
 
     PROPERTY: {
         GET_ALL: 'Get list properties successfully!',
-        GET: 'Get property successfully!'
+        GET: 'Get property successfully!',
+        DELETE: 'Delete property successfully!'
     },
 
     SELLER: {
