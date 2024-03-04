@@ -66,12 +66,20 @@ const updateProperty = {
     body: Joi.object().keys({
         name: Joi.string(),
         code: Joi.string(),
-        status: Joi.boolean(),
         landArea: Joi.number(),
         areaOfUse: Joi.number(),
         price: Joi.number(),
         direction: Joi.string(),
         description: Joi.string()
+    })
+}
+
+const updatePropertyStatus = {
+    params: Joi.object().required().keys({
+        propertyId: Joi.number().required()
+    }),
+    body: Joi.object().keys({
+        status: Joi.string().valid('Available', 'Unavailable').required()
     })
 }
 
@@ -82,6 +90,7 @@ const deleteProperty = {
 }
 
 module.exports = {
+    updatePropertyStatus,
     deleteProperty,
     updateProperty,
     createNewProperty,

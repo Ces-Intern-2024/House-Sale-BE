@@ -67,9 +67,10 @@ module.exports = {
                     allowNull: false
                 },
                 status: {
-                    type: Sequelize.BOOLEAN,
+                    type: Sequelize.STRING,
                     allowNull: false,
-                    defaultValue: true
+                    enum: ['Available', 'Unavailable', 'Disabled'],
+                    defaultValue: 'Available'
                 },
                 landArea: {
                     type: Sequelize.DECIMAL(10, 2),

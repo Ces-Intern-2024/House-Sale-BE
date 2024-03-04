@@ -9,7 +9,12 @@ const deleteProperty = {
 const updatePropertyStatus = {
     params: Joi.object().required().keys({
         propertyId: Joi.number().required()
-    })
+    }),
+    body: Joi.object()
+        .required()
+        .keys({
+            status: Joi.string().valid('Available', 'Unavailable', 'Disabled', 'Deleted').required()
+        })
 }
 
 const getAllProperties = {

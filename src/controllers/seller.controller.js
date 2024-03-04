@@ -12,6 +12,16 @@ const deleteProperty = async (req, res) => {
     }).send(res)
 }
 
+const updatePropertyStatus = async (req, res) => {
+    const userId = req.user?.userId
+    const { propertyId } = req.params
+    const { status } = req.body
+    await sellerService.updatePropertyStatus({ propertyId, status, userId })
+    new OK({
+        message: SUCCESS_MESSAGES.SELLER.UPDATE_PROPERTY_STATUS
+    }).send(res)
+}
+
 const updateProperty = async (req, res) => {
     const userId = req.user?.userId
     const { propertyId } = req.params
@@ -65,9 +75,9 @@ const createNewProperty = async (req, res) => {
 }
 
 const getProperty = async (req, res) => {
-    const sellerId = req.user?.userId
+    const userId = req.user?.userId
     const { propertyId } = req.params
-    const property = await sellerService.getProperty({ propertyId, sellerId })
+    const property = await sellerService.getProperty({ propertyId, userId })
     new OK({
         message: SUCCESS_MESSAGES.SELLER.GET_PROPERTY,
         metaData: property
@@ -75,9 +85,9 @@ const getProperty = async (req, res) => {
 }
 
 const getAllProperties = async (req, res) => {
-    const sellerId = req.user?.userId
+    const userId = req.user?.userId
     const options = req.query
-    const properties = await sellerService.getAllProperties({ options, sellerId })
+    const properties = await sellerService.getAllProperties({ options, userId })
     new OK({
         message: SUCCESS_MESSAGES.SELLER.GET_ALL_PROPERTIES,
         metaData: properties
@@ -86,6 +96,7 @@ const getAllProperties = async (req, res) => {
 
 module.exports = {
     deleteProperty,
+    updatePropertyStatus,
     updateProperty,
     createNewProperty,
     getProperty,

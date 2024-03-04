@@ -1,10 +1,10 @@
-const { adminService, emailService, propertyService } = require('../services')
+const { adminService, emailService } = require('../services')
 const { OK } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
 const deleteProperty = async (req, res) => {
     const { propertyId } = req.params
-    await propertyService.deleteProperty({ propertyId })
+    await adminService.deleteProperty({ propertyId })
     new OK({
         message: SUCCESS_MESSAGES.PROPERTY.DELETE
     }).send(res)
@@ -12,17 +12,16 @@ const deleteProperty = async (req, res) => {
 
 const updatePropertyStatus = async (req, res) => {
     const { propertyId } = req.params
-    const updatedPropertyStatus = await propertyService.updatePropertyStatus(propertyId)
+    const { status } = req.body
+    await adminService.updatePropertyStatus({ propertyId, status })
     new OK({
-        message: updatedPropertyStatus
-            ? SUCCESS_MESSAGES.ADMIN.UPDATE_STATUS.ACTIVE
-            : SUCCESS_MESSAGES.ADMIN.UPDATE_STATUS.INACTIVE
+        message: SUCCESS_MESSAGES.ADMIN.UPDATE_PROPERTY_STATUS
     }).send(res)
 }
 
 const getProperty = async (req, res) => {
     const { propertyId } = req.params
-    const property = await propertyService.getProperty(propertyId)
+    const property = await adminService.getProperty(propertyId)
     new OK({
         message: SUCCESS_MESSAGES.PROPERTY.GET,
         metaData: property
@@ -31,7 +30,7 @@ const getProperty = async (req, res) => {
 
 const getAllProperties = async (req, res) => {
     const propertyOptions = req.query
-    const properties = await propertyService.getAllProperties({ propertyOptions })
+    const properties = await adminService.getAllProperties({ propertyOptions })
     new OK({
         message: SUCCESS_MESSAGES.PROPERTY.GET_ALL,
         metaData: properties

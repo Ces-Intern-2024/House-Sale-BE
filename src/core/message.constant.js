@@ -28,10 +28,7 @@ const SUCCESS_MESSAGES = {
         },
         UPDATE_USER: 'Update user successfully!',
         RESET_USER_PASSWORD: `Reset user password successfully! New password has been sent to user's email!`,
-        UPDATE_STATUS: {
-            ACTIVE: 'Property has been successfully activated!',
-            INACTIVE: 'Property has been successfully deactivated!'
-        }
+        UPDATE_PROPERTY_STATUS: 'Property status had been updated successfully!'
     },
 
     FEATURE: {
@@ -59,7 +56,8 @@ const SUCCESS_MESSAGES = {
         GET_PROPERTY: 'Get property successfully!',
         GET_ALL_PROPERTIES: 'Get list properties successfully!',
         UPDATE_PROPERTY: 'Your property had been updated successfully!',
-        DELETE_PROPERTY: 'Your property had been deleted successfully!'
+        DELETE_PROPERTY: 'Your property had been deleted successfully!',
+        UPDATE_PROPERTY_STATUS: 'Your property status had been updated successfully!'
     },
 
     CONTACT: {

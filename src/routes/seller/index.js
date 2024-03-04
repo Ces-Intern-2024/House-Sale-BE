@@ -31,6 +31,11 @@ router.patch(
     validate(propertyValidation.updateProperty),
     asyncHandler(sellerController.updateProperty)
 )
+router.patch(
+    '/properties/:propertyId/status',
+    validate(propertyValidation.updatePropertyStatus),
+    asyncHandler(sellerController.updatePropertyStatus)
+)
 router.delete(
     '/properties/:propertyId',
     validate(propertyValidation.deleteProperty),
