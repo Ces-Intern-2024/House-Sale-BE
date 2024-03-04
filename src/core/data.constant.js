@@ -1,3 +1,12 @@
+const { Op } = require('sequelize')
+const db = require('../models')
+
+const ROLE_NAME = {
+    USER: 'User',
+    SELLER: 'Seller',
+    ADMIN: 'Admin'
+}
+
 const TRANSACTION = {
     EXPENSE_DESC: (message) => {
         return `Create new property!. ID: ${message}`
@@ -9,10 +18,96 @@ const TRANSACTION = {
     }
 }
 
+const COMMON_SCOPES = {
+    feature: {
+        model: db.Features,
+        attributes: ['featureId', 'name'],
+        as: 'feature',
+        required: true
+    },
+    category: {
+        model: db.Categories,
+        attributes: ['categoryId', 'name'],
+        as: 'category',
+        required: true
+    },
+    location: {
+        model: db.Locations,
+        as: 'location',
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        required: true
+    },
+    images: {
+        model: db.Images,
+        as: 'images',
+        attributes: ['imageId', 'imageUrl']
+    },
+    seller: {
+        model: db.Users,
+        as: 'seller',
+        attributes: ['userId', 'fullName', 'email', 'phone', 'avatar'],
+        required: true
+    }
+}
+
 const SCOPES = {
     PROPERTY: {
-        USER_GET: ['feature', 'category', 'location', 'images', 'seller'],
-        SELLER_GET: ['feature', 'category', 'location', 'images']
+        GET_ALL: {
+            User: ['feature', 'category', 'location', 'images', 'seller'],
+            Seller: ['feature', 'category', 'location', 'images'],
+            Admin: ['feature', 'category', 'location', 'images', 'seller']
+        },
+        GET: {
+            User: ['feature', 'category', 'location', 'images', 'seller'],
+            Seller: ['feature', 'category', 'location', 'images'],
+            Admin: ['feature', 'category', 'location', 'images', 'seller']
+        }
+    }
+}
+
+const PROPERTY_STATUS = {
+    AVAILABLE: 'Available',
+    UNAVAILABLE: 'Unavailable',
+    DISABLED: 'Disabled'
+}
+
+const PROPERTY_STATUS_PERMISSION = {
+    GET_ALL: {
+        User: 'Available',
+        Seller: {
+            [Op.or]: ['Available', 'Unavailable', 'Disabled']
+        },
+        Admin: {
+            [Op.or]: ['Available', 'Unavailable', 'Disabled']
+        }
+    },
+
+    GET: {
+        User: 'Available',
+        Seller: {
+            [Op.or]: ['Available', 'Unavailable', 'Disabled']
+        },
+        Admin: {
+            [Op.or]: ['Available', 'Unavailable', 'Disabled']
+        }
+    },
+
+    UPDATE: {
+        Seller: {
+            [Op.or]: ['Available', 'Unavailable']
+        },
+        Admin: {
+            [Op.or]: ['Available', 'Unavailable', 'Disabled']
+        }
+    },
+
+    UPDATE_STATUS: {
+        Seller: {
+            [Op.or]: ['Available', 'Unavailable']
+        },
+        Admin: {
+            [Op.or]: ['Available', 'Unavailable', 'Disabled']
+        }
     }
 }
 
@@ -170,6 +265,10 @@ const EMAIL_TEMPLATE = {
 }
 
 module.exports = {
+    PROPERTY_STATUS,
+    ROLE_NAME,
+    PROPERTY_STATUS_PERMISSION,
+    COMMON_SCOPES,
     TRANSACTION,
     SCOPES,
     COMMON_EXCLUDE_ATTRIBUTES,

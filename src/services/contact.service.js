@@ -1,3 +1,4 @@
+const { PROPERTY_STATUS } = require('../core/data.constant')
 const { BadRequestError, NotFoundError } = require('../core/error.response')
 const { ERROR_MESSAGES } = require('../core/message.constant')
 const db = require('../models')
@@ -16,7 +17,7 @@ const db = require('../models')
 const createContact = async (bodyContact) => {
     const { propertyId, sellerId: userId } = bodyContact
     const property = await db.Properties.findOne({
-        where: { propertyId, userId }
+        where: { propertyId, userId, status: PROPERTY_STATUS.AVAILABLE }
     })
     if (!property) {
         throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)

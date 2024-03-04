@@ -118,8 +118,8 @@ paths:
         get:
             tags:
                 - Property
-            summary: Get all properties (UPDATED 28/02)
-            description: Get all properties by queries
+            summary: Get all properties (UPDATED 04/03)
+            description: Get list properties with status "Available" by queries
             operationId: getAllProperties
             parameters:
                 -   name: keyword
@@ -327,8 +327,8 @@ paths:
         get:
             tags:
             -   Property
-            summary: Get property by Id (UPDATED 28/02)
-            description: Returns a single property
+            summary: Get property by Id (UPDATED 04/03)
+            description: Returns a property has status "Available" by propertyId
             operationId: getProperty
             parameters:
             -   name: propertyId
@@ -1655,8 +1655,8 @@ paths:
         get:
             tags:
                 - Seller
-            summary: Get all properties (UPDATED 28/02)
-            description: Get all properties by queries
+            summary: Get all properties (UPDATED 04/03)
+            description: Return list property of seller has status "Available", "Unavailable" or "Disabled"
             operationId: getAllPropertiesBySeller
             parameters:
                 -   name: keyword
@@ -1988,8 +1988,8 @@ paths:
         get:
             tags:
             -   Seller
-            summary: Get property of seller by Id (UPDATED 28/02)
-            description: Returns a single property
+            summary: Get property of seller by Id (UPDATED 04/03)
+            description: Return a property of seller by Id has status Available, Unavailable or Disabled
             operationId: getProperty
             parameters:
             -   name: propertyId
@@ -2088,8 +2088,8 @@ paths:
         patch:
             tags:
             -   Seller
-            summary: Update property by Id (UPDATED 28/02)
-            description: Update a property
+            summary: Update property by Id (UPDATED 04/03)
+            description: Update a property (Only property status Available or Unavailable can be updated by seller!)
             operationId: updateProperty
             parameters:
             -   name: propertyId
@@ -2121,8 +2121,8 @@ paths:
                                             -   Your property had been updated successfully!
                                             -   No changes made!
                                     metaData:
-                                        type: string
-                                        example: 1
+                                        type: object
+                                        example: {}
                 '400':
                     description: Failed to update property!
                     content:
@@ -2197,9 +2197,9 @@ paths:
         delete:
             tags:
             -   Seller
-            summary: Delete property by Id (UPDATED 28/02)
-            description: Delete a property
-            operationId: deleteProperty
+            summary: Delete property by propertyId (UPDATED 04-03)
+            description: Delete a property by propertyId
+            operationId: deletePropertyBySeller
             parameters:
             -   name: propertyId
                 in: path
@@ -2221,12 +2221,12 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:  Your property had been deleted successfully!
+                                        example: Your property had been deleted successfully!
                                     metaData:
                                         type: object
                                         example: {}
                 '400':
-                    description: Failed to delete property
+                    description: Failed to delete property!
                     content:
                         application/json:
                             schema:
@@ -2240,7 +2240,124 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Failed to delete property
+                                                example: Failed to delete property!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Unauthorized
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: Property not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: Property not found!
+            security:
+              - bearerAuth: []
+    /seller/properties/{propertyId}/status:
+        patch:
+            tags:
+            -   Seller
+            summary: Update property status by Id (UPDATED 04/03)
+            description: Update property status (Only property status Available or Unavailable can be updated status by seller!)
+            operationId: updatePropertyStatusBySeller
+            parameters:
+            -   name: propertyId
+                in: path
+                description: ID of property to delete
+                required: true
+                schema:
+                    type: number
+                    example: 31
+            requestBody:
+                content:
+                  application/json:
+                    schema:
+                        type: object
+                        properties:
+                            status:
+                                type: string
+                                enum:
+                                    -   Available
+                                    -   Unavailable
+                                example: Unavailable
+                        required:
+                          - "status"
+            responses:
+                '200':
+                    description: Your property status had been updated successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Your property status had been updated successfully!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Failed to update property status!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to update property status!
                 '401':
                     description: Unauthorized!
                     content:
@@ -2294,13 +2411,13 @@ paths:
                                                 type: string
                                                 example: Property not found!
             security:
-              - bearerAuth: []
+                - bearerAuth: []
     /contact:
         post:
             tags:
               - Contact
-            summary: Create new contact and send to seller (UPDATED 29/02)
-            description: Create new contact and send to seller
+            summary: Create new contact and send to seller (UPDATED 04/03)
+            description: Create new contact about property with status "Available" and send to seller
             operationId: createNewContact
             requestBody:
                 content:
@@ -2379,8 +2496,8 @@ paths:
         get:
             tags:
               - "Favorite Property"
-            summary: Get all properties in user's favorites list (UPDATED 29/02)
-            description: Get all properties in user's favorites list
+            summary: Get all properties in user's favorites list (UPDATED 04/03)
+            description: Get all properties has status "Available" in user's favorites list
             operationId: getFavoritesProperty
             responses:
                 '200':
@@ -2479,8 +2596,8 @@ paths:
         post:
             tags:
                 - "Favorite Property"
-            summary: Update user's favorites list (UPDATED 29/02)
-            description: Update user's favorites list. Add property to favorites list or remove property from favorites list if it already exists.
+            summary: Update user's favorites list (UPDATED 04/03)
+            description: Add property (only property has status "Available") to favorites list or remove property from favorites list if it already exists.
             operationId: updateFavoritesProperty
             requestBody:
                 content:
@@ -2544,11 +2661,11 @@ paths:
                                             message:
                                                 type: string
                                                 enum:
-                                                    -  Please Authenticate!
-                                                    -  Unauthorized
-                                                    -  Invalid accessToken!
-                                                    - Please verify your email!
-                                                    - Permission denied!
+                                                    -   Please Authenticate!
+                                                    -   Unauthorized
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
                 '403':
                     description: Your account is not active!
                     content:
@@ -3947,13 +4064,13 @@ paths:
                                                 example: Property not found!
             security:
                 - bearerAuth: []
-    /admin/manage-property/{propertyId}/active:
+    /admin/manage-property/{propertyId}/status:
         patch:
             tags:
             -   Admin - Manage Property
             summary: Update property status by ADMIN (NEW)
             description: Update property status by Id
-            operationId: updatePropertyStatus
+            operationId: updatePropertyStatusByAdmin
             parameters:
             -   name: propertyId
                 in: path
@@ -3962,6 +4079,22 @@ paths:
                 schema:
                     type: number
                     example: 5
+            requestBody:
+                content:
+                  application/json:
+                    schema:
+                        type: object
+                        properties:
+                            status:
+                                type: string
+                                enum:
+                                    -   Available
+                                    -   Unavailable
+                                    -   Disabled
+                                    -   Deleted
+                                example: Unavailable
+                        required:
+                          - "status"
             responses:
                 '200':
                     description: Update property status successfully!
@@ -4138,8 +4271,12 @@ components:
                     type: string
                     example: USD
                 status:
-                    type: boolean
-                    example: true
+                    type: string
+                    enum:
+                        - Available
+                        - Unavailable
+                        - Disabled
+                    example: Available
                 landArea:
                     type: number
                     format: decimal(10,2)
@@ -4552,8 +4689,12 @@ components:
                     type: string
                     example: USD
                 status:
-                    type: boolean
-                    example: true
+                    type: string
+                    enum:
+                        - Available
+                        - Unavailable
+                        - Disabled
+                    example: Available
                 landArea:
                     type: number
                     format: decimal(10,2)
@@ -4725,8 +4866,12 @@ components:
             type: object
             properties:
                 status:
-                    type: boolean
-                    example: true
+                    type: string
+                    enum:
+                        - Available
+                        - Unavailable
+                        - Disabled
+                    example: Available
                 propertyId:
                     type: number
                     example: 24
@@ -4816,9 +4961,6 @@ components:
                 code:
                     type: string
                     example: CODE99
-                status:
-                    type: boolean
-                    example: false
                 landArea:
                     type: number
                     format: decimal(10,2)

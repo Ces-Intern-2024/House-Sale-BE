@@ -1,20 +1,24 @@
+const { ROLE_NAME } = require('../core/data.constant')
 const { propertyRepo } = require('../models/repo')
 
-const deleteProperty = async ({ propertyId }) => {
-    return propertyRepo.deleteProperty({ propertyId })
-}
+// const deleteProperty = async ({ propertyId }) => {
+//     return propertyRepo.deleteProperty({ propertyId })
+// }
 
 const updatePropertyStatus = async (propertyId) => {
     return propertyRepo.updatePropertyStatus(propertyId)
 }
 
 const getAllProperties = async ({ propertyOptions }) => {
-    const { validOptions, queries } = await propertyRepo.validatePropertyOptions({ propertyOptions })
-    return propertyRepo.getAllPropertiesByOptions({ validOptions, queries })
+    const { validOptions, queries } = await propertyRepo.validatePropertyOptions({
+        propertyOptions,
+        role: ROLE_NAME.USER
+    })
+    return propertyRepo.getAllProperties({ validOptions, queries })
 }
 
 const getProperty = async (propertyId) => {
-    return propertyRepo.getProperty(propertyId)
+    return propertyRepo.getProperty({ propertyId, role: ROLE_NAME.USER })
 }
 
 const createNewProperty = async ({ propertyOptions, userId, locationId }) => {
@@ -26,7 +30,7 @@ const updateProperty = async ({ propertyId, userId, updatedData }) => {
 }
 
 module.exports = {
-    deleteProperty,
+    // deleteProperty,
     updatePropertyStatus,
     getAllProperties,
     getProperty,

@@ -1,4 +1,47 @@
-const { userRepo } = require('../models/repo')
+const { ROLE_NAME } = require('../core/data.constant')
+const { userRepo, propertyRepo } = require('../models/repo')
+
+/**
+ * Permanently delete property by propertyId
+ * @param {id} propertyId - id of property
+ * @returns {Promise<boolean>}
+ */
+const deleteProperty = async ({ propertyId }) => {
+    return propertyRepo.deleteProperty({ propertyId })
+}
+
+/**
+ * Update property status by propertyId
+ * @param {Object} params
+ * @param {id} propertyId - id of property
+ * @param {string} status - status of property
+ * @returns {Promise<boolean>}
+ */
+const updatePropertyStatus = async ({ propertyId, status }) => {
+    return propertyRepo.updatePropertyStatus({ propertyId, status, role: ROLE_NAME.ADMIN })
+}
+
+/** Get property by propertyId
+ * @param {id} propertyId - propertyId
+ * @returns {Promise<Property>}
+ */
+const getProperty = async (propertyId) => {
+    return propertyRepo.getProperty({ propertyId, role: ROLE_NAME.ADMIN })
+}
+
+/**
+ * Get all properties by options: keyword, featureId, categoryId,...
+ * @param {Object} params
+ * @param {Object} params.options - keyword, featureId, categoryId,...
+ * @returns {Promise<Properties>}
+ */
+const getAllProperties = async ({ propertyOptions }) => {
+    const { validOptions, queries } = await propertyRepo.validatePropertyOptions({
+        propertyOptions,
+        role: ROLE_NAME.ADMIN
+    })
+    return propertyRepo.getAllProperties({ validOptions, queries, role: ROLE_NAME.ADMIN })
+}
 
 /**
  * Generate new user password
@@ -57,6 +100,10 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    deleteProperty,
+    updatePropertyStatus,
+    getProperty,
+    getAllProperties,
     resetUserPassword,
     updateUserById,
     updateUserActiveStatus,
