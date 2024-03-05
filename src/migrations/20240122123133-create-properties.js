@@ -22,11 +22,13 @@ module.exports = {
                 },
                 name: {
                     type: Sequelize.STRING,
-                    allowNull: false
+                    allowNull: false,
+                    unique: true
                 },
                 code: {
                     type: Sequelize.STRING,
-                    allowNull: true
+                    allowNull: true,
+                    unique: true
                 },
                 featureId: {
                     type: Sequelize.INTEGER,

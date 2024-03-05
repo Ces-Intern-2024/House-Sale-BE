@@ -15,6 +15,8 @@ tags:
     -   name: Contact
     -   name: Favorite Property
     -   name: Transaction
+    -   name: Service
+    -   name: Conversion Rate
     -   name: Admin - Manage User
     -   name: Admin - Manage Property
 paths:
@@ -1878,8 +1880,8 @@ paths:
         post:
             tags:
                 - Seller
-            summary: Create new property by seller (UPDATED 28/02)
-            description: Create new property by seller (if your balance > 20$ to create new property)
+            summary: Create new property by seller (UPDATED 05/03)
+            description: Create new property by seller
             operationId: createNewProperty
             requestBody:
                 content:
@@ -1901,7 +1903,8 @@ paths:
                                         type: string
                                         example: New property had been created successfully!
                                     metaData:
-                                        $ref: '#/components/schemas/NewPropertyResponse'
+                                        type: object
+                                        example: {}
 
 
                 '400':
@@ -1930,6 +1933,7 @@ paths:
                                                     -   Failed to init expense transaction!
                                                     -   Failed to update user balance!
                                                     -   Failed to save image!
+                                                    -   Failed to process rent service transaction!
                 '401':
                     description: Unauthorized!
                     content:
@@ -1947,7 +1951,7 @@ paths:
                                                 type: string
                                                 enum:
                                                     -   Please Authenticate!
-                                                    -  Invalid accessToken!
+                                                    -   Invalid accessToken!
                                                     -   Please verify your email!
                                                     -   Permission denied!
                 '403':
@@ -1967,7 +1971,7 @@ paths:
                                                 type: string
                                                 example: Your account is not active!
                 '404':
-                    description: User not found!
+                    description: User not found! Service not found!
                     content:
                         application/json:
                             schema:
@@ -1981,7 +1985,9 @@ paths:
                                                 example: 404
                                             message:
                                                 type: string
-                                                example: User not found!
+                                                enum:
+                                                    -   User not found!
+                                                    -   Service not found!
             security:
               - bearerAuth: []
     /seller/properties/{propertyId}:
@@ -2702,12 +2708,12 @@ paths:
                                                     -   Property not found!
             security:
                 - bearerAuth: []
-    /transaction:
+    /transaction/deposit:
         get:
             tags:
                 - Transaction
-            summary: Get all user transactions (deposit, expense)
-            description: Get all transactions by queries (fromDate - toDate)
+            summary: Get all user deposit transactions (NEW 05/03)
+            description: Get all deposit transactions of user by queries (fromDate - toDate)
             operationId: getAllTransactions
             parameters:
                 -   name: fromDateRange
@@ -2730,7 +2736,7 @@ paths:
                         default: today
             responses:
                 '200':
-                    description: Get all transactions successfully!
+                    description: Get all deposit transactions successfully!
                     content:
                         application/json:
                             schema:
@@ -2741,32 +2747,19 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:   Get list transactions success!
+                                        example: Get all deposit transactions successfully!
                                     metaData:
                                         type: object
                                         properties:
-                                            depositTransactions:
-                                                type: object
-                                                properties:
-                                                    count:
-                                                        type: number
-                                                        example: 27
-                                                    transactions:
-                                                        type: array
-                                                        items:
-                                                            $ref: '#/components/schemas/DepositTransaction'
-                                            expenseTransactions:
-                                                type: object
-                                                properties:
-                                                    count:
-                                                        type: number
-                                                        example: 3
-                                                    transactions:
-                                                        type: array
-                                                        items:
-                                                            $ref: '#/components/schemas/ExpenseTransaction'
+                                            count:
+                                                type: number
+                                                example: 27
+                                            data:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/DepositTransaction'
                 '400':
-                    description: Error occurred when get list transactions
+                    description: Failed to get all deposit transactions!
                     content:
                         application/json:
                             schema:
@@ -2780,7 +2773,9 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Error occurred when get all transactions
+                                                enum:
+                                                    -   Failed to get all deposit transactions!
+                                                    -   Invalid date range!
                 '401':
                     description: Unauthorized!
                     content:
@@ -2836,12 +2831,11 @@ paths:
                                                 example: User not found
             security:
                 - bearerAuth: []
-    /transaction/deposit:
         post:
             tags:
                 - Transaction
-            summary: Deposit money to user's balance
-            description: Deposit money to user's balance
+            summary: Deposit credit to seller's balance (NEW 05/03)
+            description: Deposit credit to seller's balance
             operationId: depositUserBalance
             requestBody:
                 content:
@@ -2852,12 +2846,16 @@ paths:
                             amount:
                                 type: number
                                 format: decimal(10,2)
-                                example: 50.5
+                                example: 100
+                            description:
+                                type: string
+                                example: Deposit $5 equivalent to 100 Credits
                         required:
-                          - "amount"
+                            -   "amount"
+                            -   "description"
             responses:
                 '200':
-                    description: Deposit money to user's balance successfully!
+                    description: Deposit credit to user's balance successfully!
                     content:
                         application/json:
                             schema:
@@ -2868,12 +2866,12 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example: Your balance has been added 50.5$ successfully! Your current balance is 603.00$
+                                        example: Your balance has been added 100.00 Credit successfully! Your current balance is 200.00 Credit!
                                     metaData:
                                         type: object
                                         example: {}
                 '400':
-                    description: Invalid amount, Error occurred when deposit into your balance, Error occurred when updated your balance
+                    description: Failed to deposit credit!
                     content:
                         application/json:
                             schema:
@@ -2887,7 +2885,12 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Invalid amount
+                                                enum:
+                                                    -   Invalid amount
+                                                    -   userId is required!
+                                                    -   Invalid description!
+                                                    -   Failed to deposit credit!
+                                                    -   Failed to update user balance!
                 '401':
                     description: Unauthorized!
                     content:
@@ -2909,6 +2912,400 @@ paths:
                                                     -  Invalid accessToken!
                                                     - Please verify your email!
                                                     - Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+            security:
+                - bearerAuth: []
+    /transaction/rent-service:
+        get:
+            tags:
+                - Transaction
+            summary: Get all user rent service transactions (NEW 05/03)
+            description: Get all rent service transactions of user by queries (fromDate - toDate)
+            operationId: getAllRentServiceTransactions
+            parameters:
+                -   name: fromDateRange
+                    in: query
+                    description: The start date of the range to filter transactions.
+                    required: false
+                    schema:
+                        type: string
+                        format: date-time
+                        example: 2024-03-05
+                        default: 7 days before today
+                -   name: toDateRange
+                    in: query
+                    description: The end date of the range to filter transactions.
+                    required: false
+                    schema:
+                        type: string
+                        format: date-time
+                        example: 2024-03-06
+                        default: today
+            responses:
+                '200':
+                    description: Get all rent service transactions successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get all rent service transactions successfully!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            count:
+                                                type: number
+                                                example: 1
+                                            data:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/RentServiceTransaction'
+                '400':
+                    description: Failed to get all rent service transactions!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Failed to get all rent service transactions!
+                                                    -   Invalid date range!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
+    /services:
+        get:
+            tags:
+                -   Service
+            summary: Get all services (NEW 05/03)
+            description: Get all services in system
+            operationId: getAllServices
+            responses:
+                '200':
+                    description: Get list services successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get list services successfully!
+                                    metaData:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/Service'
+                '400':
+                    description: Failed to get all services!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to get all services!
+        post:
+            tags:
+                -   Service
+            summary: Create new service by ADMIN (NEW 05/03)
+            description: Create new service by ADMIN
+            operationId: createNewService
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                serviceName:
+                                    type: string
+                                    enum:
+                                        -   Create New Property
+                                price:
+                                    type: number
+                                    format: decimal(10,2)
+                                    example: 20
+            responses:
+                '201':
+                    description: Create new service successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 201
+                                    message:
+                                        type: string
+                                        example: Create new service successfully!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Failed to create new service!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Failed to create new service!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+            security:
+                - bearerAuth: []
+    /conversion-rate:
+        get:
+            tags:
+              - Conversion Rate
+            summary: Get all conversion rates (NEW 05/03)
+            description: Get all conversion rates in system
+            operationId: getAllConversionRates
+            responses:
+                '200':
+                    description: Get list conversion rates successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get list conversion rates successfully!
+                                    metaData:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/ConversionRate'
+                '400':
+                    description: Failed to get list conversion rates!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to get list conversion rates!
+        post:
+            tags:
+                - Conversion Rate
+            summary: Create new conversion rate by ADMIN (NEW 05/03)
+            description: Create new conversion rate by ADMIN
+            operationId: createNewConversionRate
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                currencyFrom:
+                                    type: string
+                                    enum:
+                                        -   USD
+                                currencyTo:
+                                    type: string
+                                    enum:
+                                        -   Credit
+                                exchangeRate:
+                                    type: number
+                                    format: decimal(10,2)
+                                    example: 100
+                                effectiveDate:
+                                    type: string
+                                    format: date-time
+                                    example: 2024-03-04 00:00:00
+            responses:
+                '201':
+                    description: Create new conversion rate successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 201
+                                    message:
+                                        type: string
+                                        example: Create new conversion rate successfully!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Failed to create new conversion rate!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Failed to create new conversion rate!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
                 '403':
                     description: Your account is not active!
                     content:
@@ -4862,96 +5259,6 @@ components:
                 - "numberOfToilet"
                 - "numberOfFloor"
                 - "images"
-        NewPropertyResponse:
-            type: object
-            properties:
-                status:
-                    type: string
-                    enum:
-                        - Available
-                        - Unavailable
-                        - Disabled
-                    example: Available
-                propertyId:
-                    type: number
-                    example: 24
-                name:
-                    type: string
-                    example: Boutique Hotel For Sale - 7 Suite Room in Son Tra District, Beach Area
-                code:
-                    type: string
-                    example: KS04
-                featureId:
-                    type: number
-                    example: 1
-                categoryId:
-                    type: number
-                    example: 5
-                price:
-                    type: number
-                    format: decimal(10,2)
-                    example: 430000.0
-                currencyCode:
-                    type: string
-                    example: USD
-                landArea:
-                    type: number
-                    format: decimal(10,2)
-                    example: 92.5
-                areaOfUse:
-                    type: number
-                    format: decimal(10,2)
-                    example: 92.5
-                numberOfBedRoom:
-                    type: number
-                    example: 7
-                numberOfToilet:
-                    type: number
-                    example: 8
-                numberOfFloor:
-                    type: number
-                    example: 5
-                direction:
-                    type: string
-                    example: West
-                description:
-                    type: string
-                    example: Boutique Hotel For Sale Bedroom House for sale in An Hai Bac, Da Nang
-                locationId:
-                    type: number
-                    example: 24
-                    description: ID of the location of the property
-                userId:
-                    type: number
-                    example: 2
-                updatedAt:
-                    type: string
-                    format: date-time
-                    example: 2024-02-10T03:20:55.544Z
-                createdAt:
-                    type: string
-                    format: date-time
-                    example: 2024-02-10T03:20:55.544Z
-                images:
-                    type: array
-                    items:
-                        type: object
-                        properties:
-                            imageId:
-                                type: number
-                                example: 211
-                            propertyId:
-                                type: number
-                                example: 24
-                            imageUrl:
-                                type: string
-                                example: link1
-                            updatedAt:
-                                type: string
-                                example: 2024-02-10T03:20:55.557Z
-                            createdAt:
-                                type: string
-                                example: 2024-02-10T03:20:55.557Z
         UpdatePropertyBody:
             type: object
             properties:
@@ -5043,16 +5350,23 @@ components:
                 amount:
                     type: number
                     format: decimal(10,2)
-                    example: 50.5
+                    example: 100.0
+                balance:
+                    type: number
+                    format: decimal(10,2)
+                    example: 200.0
+                description:
+                    type: string
+                    example: Deposit $5 equivalent to 100 Credits
                 createdAt:
                     type: string
                     format: date-time
-                    example: 2024-02-21T04:32:26.000Z
+                    example: 2024-03-05T07:58:41.000Z
                 updatedAt:
                     type: string
                     format: date-time
-                    example: 2024-02-21T04:32:26.000Z
-        ExpenseTransaction:
+                    example: 2024-03-05T07:58:41.000Z
+        RentServiceTransaction:
             type: object
             properties:
                 transactionId:
@@ -5064,7 +5378,11 @@ components:
                 amount:
                     type: number
                     format: decimal(10,2)
-                    example: 20
+                    example: 20.0
+                balance:
+                    type: number
+                    format: decimal(10,2)
+                    example: 0
                 description:
                     type: string
                     example: "Create new property!. ID: 27"
@@ -5112,6 +5430,59 @@ components:
                 address:
                     type: string
                     example: 107
+        Service:
+            type: object
+            properties:
+                serviceId:
+                    type: number
+                    example: 1
+                serviceName:
+                    type: string
+                    example: Create New Property
+                price:
+                    type: number
+                    format: decimal(10,2)
+                    example: 20.00
+                isActive:
+                    type: boolean
+                    example: true
+                createdAt:
+                    type: string
+                    format: date-time
+                    example: 2024-03-04T15:09:35.000Z
+                updatedAt:
+                    type: string
+                    format: date-time
+                    example: 2024-03-04T15:09:35.000Z
+        ConversionRate:
+            type: object
+            properties:
+                conversionRateId:
+                    type: number
+                    example: 1
+                currencyFrom:
+                    type: string
+                    example: USD
+                currencyTo:
+                    type: string
+                    example: Credit
+                exchangeRate:
+                    type: number
+                    format: decimal(10,2)
+                    example: 100.00
+                effectiveDate:
+                    type: string
+                    format: date-time
+                    example: 2024-03-03T17:00:00.000Z
+                createdAt:
+                    type: string
+                    format: date-time
+                    example: 2024-03-04T08:52:53.000Z
+                updatedAt:
+                    type: string
+                    format: date-time
+                    example: 2024-03-04T08:52:53.000Z
+
     securitySchemes:
         bearerAuth:
             type: http

@@ -1,145 +1,191 @@
 const { Op } = require('sequelize')
 const { BadRequestError, NotFoundError } = require('../core/error.response')
 const db = require('../models')
-const { userRepo } = require('../models/repo')
 const { ERROR_MESSAGES } = require('../core/message.constant')
 const { TRANSACTION } = require('../core/data.constant')
+const { validateUserId } = require('../models/repo/user.repo')
 
-const getAllTransactions = async ({
+const getAllRentServiceTransactions = async ({
     userId,
     fromDateRange = TRANSACTION.DEFAULT_DATE_RANGE.FROM,
     toDateRange = TRANSACTION.DEFAULT_DATE_RANGE.TO
 }) => {
     try {
-        const user = await userRepo.getUserById(userId)
-        if (!user) {
-            throw new NotFoundError('User not found')
+        if (userId) {
+            const user = await db.Users.findByPk(userId)
+            if (!user) {
+                throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+            }
         }
+        const where = userId ? { userId } : {}
 
         const fromDate = new Date(fromDateRange)
         const toDate = new Date(toDateRange)
 
         if (fromDate > toDate) {
-            throw new BadRequestError('Invalid date range')
+            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_DATE_RANGE)
         }
 
-        const [depositTransactions, expenseTransactions] = await Promise.all([
-            db.DepositsTransactions.findAndCountAll({
-                where: {
-                    userId,
-                    createdAt: {
-                        [Op.lt]: toDate,
-                        [Op.gt]: fromDate
-                    }
+        const { count, rows: data } = await db.RentServiceTransactions.findAndCountAll({
+            where: {
+                ...where,
+                createdAt: {
+                    [Op.lt]: toDate,
+                    [Op.gt]: fromDate
                 }
-            }),
-            db.ExpenseTransactions.findAndCountAll({
-                where: {
-                    userId,
-                    createdAt: {
-                        [Op.lt]: toDate,
-                        [Op.gt]: fromDate
-                    }
-                }
-            })
-        ])
-
-        return {
-            depositTransactions: {
-                count: depositTransactions.count,
-                transactions: depositTransactions.rows
-            },
-            expenseTransactions: {
-                count: expenseTransactions.count,
-                transactions: expenseTransactions.rows
             }
-        }
+        })
+
+        return { count, data }
     } catch (error) {
-        throw new BadRequestError(error.message || 'Error occurred when get all transactions')
+        if (error instanceof NotFoundError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.GET_ALL_RENT_SERVICE_TRANSACTIONS)
     }
 }
 
 /**
- * Create Expense transaction from user balance
+ * Rent service and update user balance
  * @param {object} params
  * @param {id} params.userId - the id of user
- * @param {number} params.amount - the amount to expense
- * @param {string} params.description - the description of expense
+ * @param {id} params.serviceId - the id of service
+ * @param {string} params.description - the description of transaction
  * @returns {Promise<Boolean>}
  */
-const expenseUserBalance = async ({ userId, amount, description }) => {
-    if (amount < 0) {
-        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_AMOUNT)
-    }
-
+const rentService = async ({ userId, serviceId, description }) => {
     const user = await db.Users.findOne({ where: { userId } })
     if (!user) {
-        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+        throw new BadRequestError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+    }
+    const { balance } = user
+
+    const service = await db.Services.findOne({
+        where: { serviceId }
+    })
+    if (!service) {
+        throw new BadRequestError(ERROR_MESSAGES.SERVICE.SERVICE_NOT_FOUND)
+    }
+    const { price } = service
+    if (balance < price) {
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.NOT_ENOUGH_CREDIT)
     }
 
     const transaction = await db.sequelize.transaction()
 
     try {
-        const newExpenseTransaction = await db.ExpenseTransactions.create(
-            { userId, amount, description },
+        const newRentServiceTransaction = await db.RentServiceTransactions.create(
+            { userId, amount: price, balance: Number(balance) - Number(price), serviceId, description },
             { transaction }
         )
-        if (!newExpenseTransaction) {
-            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INIT_EXPENSE_TRANSACTION)
+        if (!newRentServiceTransaction) {
+            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.FAILED_TO_RENT_SERVICE)
         }
 
-        const updatedUser = await user.decrement({ balance: amount }, { transaction })
+        const updatedUser = await user.decrement({ balance: price }, { transaction })
         if (!updatedUser) {
-            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.UPDATE_USER_BALANCE)
+            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.FAILED_TO_UPDATE_USER_BALANCE)
         }
         await transaction.commit()
         await updatedUser.reload()
     } catch (error) {
         await transaction.rollback()
-        throw error
+        throw new BadRequestError(ERROR_MESSAGES.SERVICE.CAN_NOT_RENT_SERVICE)
     }
 }
 
 /**
- * Create Deposit transaction from user balance
+ * Deposit credit to user balance
  * @param {object} params
  * @param {id} params.userId - the id of user
- * @param {number} params.amount - the amount to deposit
- * @returns {Promise<number>}
+ * @param {Object} params - the info of deposit credit contains amount and description
+ * @returns {Promise<Object>}
  */
-const depositUserBalance = async ({ userId, amount }) => {
-    if (amount < 0) {
-        throw new BadRequestError('Invalid amount')
-    }
-
+const depositCredit = async ({ userId, info }) => {
+    validateUserId(userId)
     const user = await db.Users.findOne({ where: { userId } })
     if (!user) {
-        throw new NotFoundError('User not found')
+        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+    }
+    const { balance } = user
+
+    const { amount, description } = info
+    if (amount < 0) {
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_AMOUNT)
+    }
+    if (!description || typeof description !== 'string') {
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_DESCRIPTION)
     }
 
     const transaction = await db.sequelize.transaction()
 
     try {
-        const depositTransaction = await db.DepositsTransactions.create({ userId, amount }, { transaction })
+        const depositTransaction = await db.DepositsTransactions.create(
+            { userId, amount, balance: Number(balance) + Number(amount), description },
+            { transaction }
+        )
         if (!depositTransaction) {
-            throw new BadRequestError('Error occurred when init deposit transaction')
+            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.FAILED_TO_DEPOSIT_CREDIT)
         }
 
         const updatedUser = await user.increment({ balance: amount }, { transaction })
         if (!updatedUser) {
-            throw new BadRequestError('Error occurred when updated your balance')
+            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.FAILED_TO_UPDATE_USER_BALANCE)
         }
         await transaction.commit()
         await updatedUser.reload()
         return { newDeposit: amount, currentBalance: updatedUser.balance }
     } catch (error) {
         await transaction.rollback()
-        throw error
+        if (error instanceof BadRequestError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.FAILED_TO_DEPOSIT_CREDIT)
+    }
+}
+
+const getAllDepositTransactions = async ({
+    userId,
+    fromDateRange = TRANSACTION.DEFAULT_DATE_RANGE.FROM,
+    toDateRange = TRANSACTION.DEFAULT_DATE_RANGE.TO
+}) => {
+    try {
+        if (userId) {
+            const user = await db.Users.findByPk(userId)
+            if (!user) {
+                throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+            }
+        }
+        const where = userId ? { userId } : {}
+
+        const fromDate = new Date(fromDateRange)
+        const toDate = new Date(toDateRange)
+        if (fromDate > toDate) {
+            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_DATE_RANGE)
+        }
+
+        const { count, rows: data } = await db.DepositsTransactions.findAndCountAll({
+            where: {
+                ...where,
+                createdAt: {
+                    [Op.lt]: toDate,
+                    [Op.gt]: fromDate
+                }
+            }
+        })
+
+        return { count, data }
+    } catch (error) {
+        if (error instanceof NotFoundError || error instanceof BadRequestError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.GET_ALL_DEPOSIT_TRANSACTIONS)
     }
 }
 
 module.exports = {
-    getAllTransactions,
-    expenseUserBalance,
-    depositUserBalance
+    getAllRentServiceTransactions,
+    depositCredit,
+    getAllDepositTransactions,
+    rentService
 }

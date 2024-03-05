@@ -1,20 +1,19 @@
 const { Model } = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
-    class DepositsTransactions extends Model {
+    class RentServiceTransactions extends Model {
         static associate(models) {
-            DepositsTransactions.belongsTo(models.Users, {
-                foreignKey: 'userId'
-            })
+            RentServiceTransactions.belongsTo(models.Users, { foreignKey: 'userId' })
+            RentServiceTransactions.belongsTo(models.Services, { foreignKey: 'serviceId' })
         }
     }
-    DepositsTransactions.init(
+    RentServiceTransactions.init(
         {
             transactionId: {
-                type: DataTypes.INTEGER,
+                allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
-                allowNull: false
+                type: DataTypes.INTEGER
             },
             userId: {
                 type: DataTypes.INTEGER,
@@ -22,6 +21,16 @@ module.exports = (sequelize, DataTypes) => {
                 references: {
                     model: 'Users',
                     key: 'userId'
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE'
+            },
+            serviceId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                references: {
+                    model: 'Services',
+                    key: 'serviceId'
                 },
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE'
@@ -41,8 +50,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         {
             sequelize,
-            modelName: 'DepositsTransactions'
+            modelName: 'RentServiceTransactions'
         }
     )
-    return DepositsTransactions
+    return RentServiceTransactions
 }

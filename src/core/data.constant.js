@@ -11,10 +11,16 @@ const TRANSACTION = {
     EXPENSE_DESC: (message) => {
         return `Create new property!. ID: ${message}`
     },
-    FEE_CREATE_NEW_PROPERTY: 20,
     DEFAULT_DATE_RANGE: {
         FROM: new Date(new Date() - 7 * 24 * 60 * 60 * 1000),
         TO: new Date()
+    }
+}
+
+const SERVICES = {
+    CREATE_NEW_PROPERTY: {
+        NAME: 'Create New Property',
+        ID: 1
     }
 }
 
@@ -265,6 +271,7 @@ const EMAIL_TEMPLATE = {
 }
 
 module.exports = {
+    SERVICES,
     PROPERTY_STATUS,
     ROLE_NAME,
     PROPERTY_STATUS_PERMISSION,

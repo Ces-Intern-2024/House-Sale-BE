@@ -320,6 +320,7 @@ const resetUserPassword = async (userId) => {
 }
 
 module.exports = {
+    validateUserId,
     resetUserPassword,
     verifyEmail,
     changePassword,
