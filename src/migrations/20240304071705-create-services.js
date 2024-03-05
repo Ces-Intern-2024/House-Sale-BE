@@ -1,34 +1,26 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('DepositsTransactions', {
-            transactionId: {
+        await queryInterface.createTable('Services', {
+            serviceId: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            userId: {
-                type: Sequelize.INTEGER,
-                allowNull: false,
-                references: {
-                    model: 'Users',
-                    key: 'userId'
-                },
-                onUpdate: 'CASCADE',
-                onDelete: 'CASCADE'
-            },
-            amount: {
-                type: Sequelize.DECIMAL(10, 2),
-                allowNull: false
-            },
-            balance: {
-                type: Sequelize.DECIMAL(10, 2),
-                allowNull: false
-            },
-            description: {
+            serviceName: {
                 type: Sequelize.STRING,
+                allowNull: false,
+                unique: true
+            },
+            price: {
+                type: Sequelize.DECIMAL(10, 2),
                 allowNull: false
+            },
+            isActive: {
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+                defaultValue: true
             },
             createdAt: {
                 allowNull: false,
@@ -43,6 +35,6 @@ module.exports = {
         })
     },
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('DepositsTransactions')
+        await queryInterface.dropTable('Services')
     }
 }

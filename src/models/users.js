@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
             Users.hasMany(models.Tokens, { foreignKey: 'userId' })
             Users.hasMany(models.Contacts, { foreignKey: 'sellerId' })
             Users.hasMany(models.DepositsTransactions, { foreignKey: 'userId' })
-            Users.hasMany(models.ExpenseTransactions, { foreignKey: 'userId' })
+            Users.hasMany(models.RentServiceTransactions, { foreignKey: 'userId' })
         }
     }
     Users.init(

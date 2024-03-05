@@ -148,20 +148,6 @@ const getProperty = async ({ propertyId, userId, role = ROLE_NAME.USER }) => {
     }
 }
 
-const createNewProperty = async ({ propertyOptions, userId, locationId }) => {
-    const newProperty = await db.Properties.create({
-        ...propertyOptions,
-        locationId,
-        userId
-    })
-
-    if (!newProperty) {
-        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.CREATE)
-    }
-
-    return newProperty
-}
-
 const updateProperty = async ({ propertyId, userId, updatedData, role = ROLE_NAME.SELLER }) => {
     const where = userId ? { propertyId, userId } : { propertyId }
     const property = await db.Properties.findOne({ where: { ...where, status: PROPERTY_STATUS_PERMISSION.GET[role] } })
@@ -207,7 +193,6 @@ module.exports = {
     getScopesArray,
     deleteProperty,
     updateProperty,
-    createNewProperty,
     validatePropertyOptions,
     getAllProperties,
     getProperty,

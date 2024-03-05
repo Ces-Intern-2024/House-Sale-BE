@@ -67,6 +67,21 @@ const SUCCESS_MESSAGES = {
     FAVORITES_LIST: {
         GET_FAVORITES_LIST: 'Get your favorites list successfully!',
         UPDATE_FAVORITE_PROPERTY: 'Your favorites list had been updated successfully!'
+    },
+
+    SERVICE: {
+        GET_ALL_SERVICES: 'Get list services successfully!',
+        CREATE_SERVICE: 'Create new service successfully!'
+    },
+
+    CONVERSION_RATE: {
+        GET_ALL_CONVERSION_RATES: 'Get list conversion rates successfully!',
+        CREATE_CONVERSION_RATE: 'Create new conversion rate successfully!'
+    },
+
+    TRANSACTION: {
+        GET_ALL_DEPOSIT_TRANSACTIONS: 'Get all deposit transactions successfully!',
+        GET_ALL_RENT_SERVICE_TRANSACTIONS: 'Get all rent service transactions successfully!'
     }
 }
 
@@ -196,11 +211,17 @@ const ERROR_MESSAGES = {
     },
 
     TRANSACTION: {
-        NOT_ENOUGH_CREDIT: 'Your balance is not enough to create new property. Please refill your balance!',
+        NOT_ENOUGH_CREDIT: 'Your balance is not enough to use this service. Please refill your balance!',
         INVALID_AMOUNT: 'Invalid amount!',
-        INIT_EXPENSE_TRANSACTION: 'Failed to init expense transaction!',
         INVALID_DATE_RANGE: 'Invalid date range!',
-        FAILED_TO_GET_ALL_TRANSACTIONS: 'Failed to get all transactions!'
+        FAILED_TO_GET_ALL_TRANSACTIONS: 'Failed to get all transactions!',
+        GET_ALL_DEPOSIT_TRANSACTIONS: 'Failed to get all deposit transactions!',
+        GET_ALL_RENT_SERVICE_TRANSACTIONS: 'Failed to get all rent service transactions!',
+        FAILED_TO_DEPOSIT_CREDIT: 'Failed to deposit credit!',
+        FAILED_TO_UPDATE_USER_BALANCE: 'Failed to update user balance!',
+        INVALID_DESCRIPTION: 'Invalid description!',
+        FAILED_TO_RENT_SERVICE: 'Failed to rent service!',
+        FAILED_TO_PROCESS_RENT_SERVICE_TRANSACTION: 'Failed to process rent service transaction!'
     },
 
     IMAGE: {
@@ -215,6 +236,19 @@ const ERROR_MESSAGES = {
         GET_FAVORITES_LIST: 'Failed to get favorites list!',
         UPDATE_FAVORITE_PROPERTY: 'Failed to update favorite property!',
         FAILED_TO_ADD_TO_FAVORITES_LIST: 'Failed to add to favorites list!'
+    },
+
+    SERVICE: {
+        GET_ALL_SERVICES: 'Failed to get list services!',
+        CREATE_SERVICE: 'Failed to create new service!',
+        FAILED_TO_GET_SERVICE_PRICE: 'Failed to get service price!',
+        CAN_NOT_RENT_SERVICE: 'You can not rent this service!',
+        SERVICE_NOT_FOUND: 'Service not found!'
+    },
+
+    CONVERSION_RATE: {
+        GET_ALL_CONVERSION_RATES: 'Failed to get list conversion rates!',
+        CREATE_CONVERSION_RATE: 'Failed to create new conversion rate!'
     }
 }
 

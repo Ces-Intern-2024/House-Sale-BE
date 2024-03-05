@@ -1,30 +1,33 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('ExpenseTransactions', {
-            transactionId: {
+        await queryInterface.createTable('ConversionRates', {
+            conversionRateId: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            userId: {
-                type: Sequelize.INTEGER,
-                allowNull: false,
-                references: {
-                    model: 'Users',
-                    key: 'userId'
-                },
-                onUpdate: 'CASCADE',
-                onDelete: 'CASCADE'
+            currencyFrom: {
+                type: Sequelize.STRING,
+                allowNull: false
             },
-            amount: {
+            currencyTo: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
+            exchangeRate: {
                 type: Sequelize.DECIMAL(10, 2),
                 allowNull: false
             },
-            description: {
-                type: Sequelize.TEXT,
+            effectiveDate: {
+                type: Sequelize.DATE,
                 allowNull: false
+            },
+            isActive: {
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+                defaultValue: true
             },
             createdAt: {
                 allowNull: false,
@@ -39,6 +42,6 @@ module.exports = {
         })
     },
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('ExpenseTransactions')
+        await queryInterface.dropTable('ConversionRates')
     }
 }

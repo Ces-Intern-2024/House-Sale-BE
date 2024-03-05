@@ -1,7 +1,6 @@
-const { sellerService, locationService, propertyService, imageService, transactionService } = require('../services')
+const { sellerService } = require('../services')
 const { OK, Created } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
-const { TRANSACTION } = require('../core/data.constant')
 
 const deleteProperty = async (req, res) => {
     const userId = req.user?.userId
@@ -41,36 +40,9 @@ const updateProperty = async (req, res) => {
 
 const createNewProperty = async (req, res) => {
     const userId = req.user?.userId
-    const { provinceCode, districtCode, wardCode, street, address, images, ...propertyOptions } = req.body
-
-    const newLocation = await locationService.createNewLocation({
-        provinceCode,
-        districtCode,
-        wardCode,
-        street,
-        address
-    })
-
-    const newProperty = await propertyService.createNewProperty({
-        userId,
-        locationId: newLocation.locationId,
-        propertyOptions
-    })
-
-    await transactionService.expenseUserBalance({
-        userId,
-        amount: req.amount,
-        description: TRANSACTION.EXPENSE_DESC(newProperty.propertyId)
-    })
-
-    const newPropertyImages = await imageService.addImagesToProperty({
-        propertyId: newProperty.propertyId,
-        images
-    })
-
+    await sellerService.createProperty({ userId, propertyBody: req.body })
     new Created({
-        message: SUCCESS_MESSAGES.SELLER.CREATE_NEW_PROPERTY,
-        metaData: { ...newProperty.dataValues, images: newPropertyImages }
+        message: SUCCESS_MESSAGES.SELLER.CREATE_NEW_PROPERTY
     }).send(res)
 }
 

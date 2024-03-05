@@ -1,7 +1,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('DepositsTransactions', {
+        await queryInterface.createTable('RentServiceTransactions', {
             transactionId: {
                 allowNull: false,
                 autoIncrement: true,
@@ -14,6 +14,16 @@ module.exports = {
                 references: {
                     model: 'Users',
                     key: 'userId'
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE'
+            },
+            serviceId: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+                references: {
+                    model: 'Services',
+                    key: 'serviceId'
                 },
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE'
@@ -43,6 +53,6 @@ module.exports = {
         })
     },
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('DepositsTransactions')
+        await queryInterface.dropTable('RentServiceTransactions')
     }
 }
