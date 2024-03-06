@@ -46,7 +46,7 @@ const paginatedData = ({ data, page, limit }) => {
     const { count: totalItems, rows } = data
     const totalPages = Math.ceil(totalItems / limit)
 
-    return { totalPages, currentPage: page, totalItems, data: rows }
+    return { totalPages, currentPage: Number(page), totalItems, data: rows }
 }
 
 const getExistingKeysInObject = (object, keys) => {

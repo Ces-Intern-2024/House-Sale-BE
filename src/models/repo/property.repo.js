@@ -171,8 +171,8 @@ const getAllProperties = async ({ validOptions, queries, userId, role = ROLE_NAM
         where,
         distinct: true,
         attributes: { exclude: COMMON_EXCLUDE_ATTRIBUTES.PROPERTY },
-        offset: (page - 1) * limit,
-        limit,
+        offset: (Number(page) - 1) * Number(limit),
+        limit: Number(limit),
         order
     })
 

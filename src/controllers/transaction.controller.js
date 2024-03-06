@@ -4,8 +4,7 @@ const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
 const getAllRentServiceTransactions = async (req, res) => {
     const userId = req.user?.userId
-    const { fromDateRange, toDateRange } = req.query
-    const transactions = await transactionService.getAllRentServiceTransactions({ userId, fromDateRange, toDateRange })
+    const transactions = await transactionService.getAllRentServiceTransactions({ userId, ...req.query })
     new OK({
         message: SUCCESS_MESSAGES.TRANSACTION.GET_ALL_RENT_SERVICE_TRANSACTIONS,
         metaData: transactions
@@ -25,8 +24,7 @@ const depositCredit = async (req, res) => {
 
 const getAllDepositTransactions = async (req, res) => {
     const userId = req.user?.userId
-    const { fromDateRange, toDateRange } = req.query
-    const transactions = await transactionService.getAllDepositTransactions({ userId, fromDateRange, toDateRange })
+    const transactions = await transactionService.getAllDepositTransactions({ userId, ...req.query })
     new OK({
         message: SUCCESS_MESSAGES.TRANSACTION.GET_ALL_DEPOSIT_TRANSACTIONS,
         metaData: transactions

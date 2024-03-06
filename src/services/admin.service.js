@@ -1,5 +1,24 @@
 const { ROLE_NAME } = require('../core/data.constant')
-const { userRepo, propertyRepo } = require('../models/repo')
+const { userRepo, propertyRepo, transactionRepo } = require('../models/repo')
+
+/**
+ * Get all rent service transactions by admin
+ * @param {Object} params
+ * @param {Object} query - the query from request contains userId, fromDateRange, toDateRange, page, limit, orderBy, sortBy
+ * @returns {Promise<RentServiceTransactions>} - the list of rent service transactions
+ */
+const getAllRentServiceTransactions = async (query) => {
+    return transactionRepo.getAllRentServiceTransactions(query)
+}
+
+/**
+ * Get all deposit transactions
+ * @param {Object} query - the query from request contains userId, fromDateRange, toDateRange, page, limit, orderBy, sortBy
+ * @returns {Promise<Transactions>} - the list of deposit transactions
+ */
+const getAllDepositTransactions = async (query) => {
+    return transactionRepo.getAllDepositTransactions(query)
+}
 
 /**
  * Permanently delete property by propertyId
@@ -100,6 +119,8 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    getAllRentServiceTransactions,
+    getAllDepositTransactions,
     deleteProperty,
     updatePropertyStatus,
     getProperty,
