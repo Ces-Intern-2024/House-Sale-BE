@@ -46,7 +46,8 @@ const COMMON_SCOPES = {
     images: {
         model: db.Images,
         as: 'images',
-        attributes: ['imageId', 'imageUrl']
+        attributes: ['imageId', 'imageUrl'],
+        required: true
     },
     seller: {
         model: db.Users,
@@ -59,14 +60,14 @@ const COMMON_SCOPES = {
 const SCOPES = {
     PROPERTY: {
         GET_ALL: {
-            User: ['feature', 'category', 'location', 'images', 'seller'],
+            User: ['feature', 'category', 'location', 'seller', 'images'],
             Seller: ['feature', 'category', 'location', 'images'],
-            Admin: ['feature', 'category', 'location', 'images', 'seller']
+            Admin: ['feature', 'category', 'location', 'seller', 'images']
         },
         GET: {
-            User: ['feature', 'category', 'location', 'images', 'seller'],
+            User: ['feature', 'category', 'location', 'seller', 'images'],
             Seller: ['feature', 'category', 'location', 'images'],
-            Admin: ['feature', 'category', 'location', 'images', 'seller']
+            Admin: ['feature', 'category', 'location', 'seller', 'images']
         }
     }
 }

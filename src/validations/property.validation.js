@@ -3,8 +3,8 @@ const Joi = require('joi')
 const getAllProperties = {
     query: Joi.object().keys({
         keyword: Joi.string(),
-        featureId: Joi.number(),
-        categoryId: Joi.number(),
+        featureId: Joi.string().pattern(/^\d+(,\d+)*$/),
+        categoryId: Joi.string().pattern(/^\d+(,\d+)*$/),
         provinceCode: Joi.string(),
         districtCode: Joi.string(),
         wardCode: Joi.string(),
@@ -22,7 +22,7 @@ const getAllProperties = {
         numberOfToiletTo: Joi.number(),
         page: Joi.number(),
         limit: Joi.number(),
-        orderBy: Joi.string().valid('price', 'createdAt', 'updatedAt'),
+        orderBy: Joi.string().valid('price', 'createdAt'),
         sortBy: Joi.string().valid('ASC', 'asc', 'DESC', 'desc')
     })
 }
