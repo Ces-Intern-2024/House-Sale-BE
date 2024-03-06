@@ -12,8 +12,8 @@ const TRANSACTION = {
         return `Create new property!. ID: ${message}`
     },
     DEFAULT_DATE_RANGE: {
-        FROM: new Date(new Date() - 7 * 24 * 60 * 60 * 1000),
-        TO: new Date()
+        FROM: () => new Date(new Date() - 7 * 24 * 60 * 60 * 1000),
+        TO: () => new Date()
     }
 }
 
@@ -133,6 +133,12 @@ const PAGINATION_DEFAULT = {
         SORT_BY: 'desc'
     },
     PROPERTY: {
+        LIMIT: 10,
+        PAGE: 1,
+        ORDER_BY: 'createdAt',
+        SORT_BY: 'desc'
+    },
+    TRANSACTION: {
         LIMIT: 10,
         PAGE: 1,
         ORDER_BY: 'createdAt',

@@ -2,6 +2,22 @@ const { adminService, emailService } = require('../services')
 const { OK } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const getAllRentServiceTransactions = async (req, res) => {
+    const transactions = await adminService.getAllRentServiceTransactions(req.query)
+    new OK({
+        message: SUCCESS_MESSAGES.TRANSACTION.GET_ALL_RENT_SERVICE_TRANSACTIONS,
+        metaData: transactions
+    }).send(res)
+}
+
+const getAllDepositTransactions = async (req, res) => {
+    const transactions = await adminService.getAllDepositTransactions(req.query)
+    new OK({
+        message: SUCCESS_MESSAGES.TRANSACTION.GET_ALL_DEPOSIT_TRANSACTIONS,
+        metaData: transactions
+    }).send(res)
+}
+
 const deleteProperty = async (req, res) => {
     const { propertyId } = req.params
     await adminService.deleteProperty({ propertyId })
@@ -91,6 +107,8 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    getAllRentServiceTransactions,
+    getAllDepositTransactions,
     deleteProperty,
     updatePropertyStatus,
     getProperty,

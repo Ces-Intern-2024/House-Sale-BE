@@ -1,5 +1,29 @@
 const Joi = require('joi')
 
+const getAllRentServiceTransactions = {
+    query: Joi.object().keys({
+        userId: Joi.number(),
+        fromDateRange: Joi.date().iso(),
+        toDateRange: Joi.date().iso(),
+        page: Joi.number(),
+        limit: Joi.number(),
+        orderBy: Joi.string().valid('createdAt'),
+        sortBy: Joi.string().valid('ASC', 'asc', 'DESC', 'desc')
+    })
+}
+
+const getAllDepositTransactions = {
+    query: Joi.object().keys({
+        userId: Joi.number(),
+        fromDateRange: Joi.date().iso(),
+        toDateRange: Joi.date().iso(),
+        page: Joi.number(),
+        limit: Joi.number(),
+        orderBy: Joi.string().valid('createdAt'),
+        sortBy: Joi.string().valid('ASC', 'asc', 'DESC', 'desc')
+    })
+}
+
 const deleteProperty = {
     params: Joi.object().required().keys({
         propertyId: Joi.number().required()
@@ -119,6 +143,8 @@ const getAllUsers = {
 }
 
 module.exports = {
+    getAllRentServiceTransactions,
+    getAllDepositTransactions,
     deleteProperty,
     updatePropertyStatus,
     getProperty,

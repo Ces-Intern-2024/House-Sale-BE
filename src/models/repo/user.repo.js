@@ -87,8 +87,8 @@ const getAllUsers = async ({ queries }) => {
         }
         const listUsers = await db.Users.findAndCountAll({
             where: conditions,
-            offset: (page - 1) * limit,
-            limit,
+            offset: (Number(page) - 1) * Number(limit),
+            limit: Number(limit),
             order: [[orderBy, sortBy]],
             attributes: { exclude: COMMON_EXCLUDE_ATTRIBUTES.USER }
         })

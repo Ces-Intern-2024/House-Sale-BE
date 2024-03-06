@@ -4,7 +4,7 @@ info:
     version: 1.0.0
 servers:
     -   url: http://localhost:3000/v1/api
-    -   url: https://housesale.tldev.id.vn/v1/api
+    -   url: https://house-sale-be.onrender.com/v1/api
 tags:
     -   name: Feature
     -   name: Category
@@ -19,6 +19,7 @@ tags:
     -   name: Conversion Rate
     -   name: Admin - Manage User
     -   name: Admin - Manage Property
+    -   name: Admin - Manage Transaction
 paths:
     /features:
         get:
@@ -2705,28 +2706,51 @@ paths:
         get:
             tags:
                 - Transaction
-            summary: Get all user deposit transactions (NEW 05/03)
-            description: Get all deposit transactions of user by queries (fromDate - toDate)
+            summary: Get all user deposit transactions (UPDATED 06/03)
+            description: Get all deposit transactions of user by queries (fromDate - toDate) (default in 7 days before today and ordered by createdAt in descending order, limit 10 items per page, page 1)
             operationId: getAllTransactions
             parameters:
                 -   name: fromDateRange
                     in: query
-                    description: The start date of the range to filter transactions.
+                    description: The start date of the range to filter transactions. (default 7 days before today)
                     required: false
                     schema:
                         type: string
                         format: date-time
-                        example: 2024-02-19
-                        default: 7 days before today
+
                 -   name: toDateRange
                     in: query
-                    description: The end date of the range to filter transactions.
+                    description: The end date of the range to filter transactions. (default is today)
                     required: false
                     schema:
                         type: string
                         format: date-time
-                        example: 2024-02-22
-                        default: today
+                -   name: page
+                    in: query
+                    description: The page number for pagination.
+                    required: false
+                    schema:
+                        type: number
+                -   name: limit
+                    in: query
+                    description: The maximum number of items per page.
+                    required: false
+                    schema:
+                        type: number
+                -   name: orderBy
+                    in: query
+                    description: The field to order results by.
+                    required: false
+                    schema:
+                        type: string
+                        enum: ['createdAt']
+                -   name: sortBy
+                    in: query
+                    description: The sort order ('ASC' for ascending, 'DESC' for descending).
+                    required: false
+                    schema:
+                        type: string
+                        enum: ['ASC', 'asc', 'DESC', 'desc']
             responses:
                 '200':
                     description: Get all deposit transactions successfully!
@@ -2744,9 +2768,15 @@ paths:
                                     metaData:
                                         type: object
                                         properties:
-                                            count:
+                                            totalPages:
                                                 type: number
-                                                example: 27
+                                                example: 1
+                                            currentPage:
+                                                type: number
+                                                example: 1
+                                            totalItems:
+                                                type: number
+                                                example: 5
                                             data:
                                                 type: array
                                                 items:
@@ -2927,28 +2957,50 @@ paths:
         get:
             tags:
                 - Transaction
-            summary: Get all user's rent service transactions (NEW 05/03)
-            description: Get all rent service transactions of user by queries (fromDate - toDate)
+            summary: Get all user's rent service transactions (UPDATED 06/03)
+            description: Get all rent service transactions of user by queries (fromDate - toDate) (default in 7 days before today and ordered by createdAt in descending order, limit 10 items per page, page 1)
             operationId: getAllRentServiceTransactions
             parameters:
                 -   name: fromDateRange
                     in: query
-                    description: The start date of the range to filter transactions.
+                    description: The start date of the range to filter transactions. (default 7 days before today)
                     required: false
                     schema:
                         type: string
                         format: date-time
-                        example: 2024-03-05
-                        default: 7 days before today
                 -   name: toDateRange
                     in: query
-                    description: The end date of the range to filter transactions.
+                    description: The end date of the range to filter transactions. (default is today)
                     required: false
                     schema:
                         type: string
                         format: date-time
-                        example: 2024-03-06
-                        default: today
+                -   name: page
+                    in: query
+                    description: The page number for pagination.
+                    required: false
+                    schema:
+                        type: number
+                -   name: limit
+                    in: query
+                    description: The maximum number of items per page.
+                    required: false
+                    schema:
+                        type: number
+                -   name: orderBy
+                    in: query
+                    description: The field to order results by.
+                    required: false
+                    schema:
+                        type: string
+                        enum: ['createdAt']
+                -   name: sortBy
+                    in: query
+                    description: The sort order ('ASC' for ascending, 'DESC' for descending).
+                    required: false
+                    schema:
+                        type: string
+                        enum: ['ASC', 'asc', 'DESC', 'desc']
             responses:
                 '200':
                     description: Get all rent service transactions successfully!
@@ -2966,9 +3018,15 @@ paths:
                                     metaData:
                                         type: object
                                         properties:
-                                            count:
+                                            totalPages:
                                                 type: number
                                                 example: 1
+                                            currentPage:
+                                                type: number
+                                                example: 1
+                                            totalItems:
+                                                type: number
+                                                example: 5
                                             data:
                                                 type: array
                                                 items:
@@ -4569,6 +4627,321 @@ paths:
                                             message:
                                                 type: string
                                                 example: Property not found!
+            security:
+                - bearerAuth: []
+    /admin/manage-transaction/deposit:
+        get:
+            tags:
+                - Admin - Manage Transaction
+            summary: Get list deposit transaction by admin (NEW)
+            description: Get the list of deposit transactions by queries (default in 7 days before today and ordered by createdAt in descending order, limit 10 items per page, page 1)
+            operationId: getAllDepositTransactionsByAdmin
+            parameters:
+            -   name: userId
+                in: query
+                description: The ID of user who made the deposit
+                required: false
+                schema:
+                    type: string
+                    example: 2
+            -   name: fromDateRange
+                in: query
+                description: The start date of the range to filter transactions. (default is 7 days before today)
+                required: false
+                schema:
+                    type: string
+                    format: date-time
+            -   name: toDateRange
+                in: query
+                description: The end date of the range to filter transactions. (default is today)
+                required: false
+                schema:
+                    type: string
+                    format: date-time
+            -   name: page
+                in: query
+                description: The page number for pagination.
+                required: false
+                schema:
+                    type: number
+            -   name: limit
+                in: query
+                description: The maximum number of items per page.
+                required: false
+                schema:
+                    type: number
+            -   name: orderBy
+                in: query
+                description: The field to order results by.
+                required: false
+                schema:
+                    type: string
+                    enum: ['createdAt']
+            -   name: sortBy
+                in: query
+                description: The sort order ('ASC' for ascending, 'DESC' for descending).
+                required: false
+                schema:
+                    type: string
+                    enum: ['ASC', 'asc', 'DESC', 'desc']
+            responses:
+                '200':
+                    description: Get all deposit transactions successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get all deposit transactions successfully!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            totalPages:
+                                                type: number
+                                                example: 1
+                                            currentPage:
+                                                type: number
+                                                example: 1
+                                            totalItems:
+                                                type: number
+                                                example: 5
+                                            data:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/DepositTransaction'
+                '400':
+                    description: Failed to get all deposit transactions!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Failed to get all deposit transactions!
+                                                    -   Invalid date range!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -  Please Authenticate!
+                                                    -  Unauthorized
+                                                    -  Invalid accessToken!
+                                                    - Please verify your email!
+                                                    - Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found
+            security:
+                - bearerAuth: []
+    /admin/manage-transaction/rent-service:
+        get:
+            tags:
+                - Admin - Manage Transaction
+            summary: Get list rent service transaction by admin (NEW)
+            description: Get the list of rent service transactions by queries (default in 7 days before today and ordered by createdAt in descending order, limit 10 items per page, page 1)
+            operationId: getAllRentServiceTransactionsByAdmin
+            parameters:
+            -   name: userId
+                in: query
+                description: The ID of user who made the deposit
+                required: false
+                schema:
+                    type: string
+                    example: 2
+            -   name: fromDateRange
+                in: query
+                description: The start date of the range to filter transactions. (default is 7 days before today)
+                required: false
+                schema:
+                    type: string
+                    format: date-time
+            -   name: toDateRange
+                in: query
+                description: The end date of the range to filter transactions. (default is today)
+                required: false
+                schema:
+                    type: string
+                    format: date-time
+            -   name: page
+                in: query
+                description: The page number for pagination.
+                required: false
+                schema:
+                    type: number
+            -   name: limit
+                in: query
+                description: The maximum number of items per page.
+                required: false
+                schema:
+                    type: number
+            -   name: orderBy
+                in: query
+                description: The field to order results by.
+                required: false
+                schema:
+                    type: string
+                    enum: ['createdAt']
+            -   name: sortBy
+                in: query
+                description: The sort order ('ASC' for ascending, 'DESC' for descending).
+                required: false
+                schema:
+                    type: string
+                    enum: ['ASC', 'asc', 'DESC', 'desc']
+            responses:
+                '200':
+                    description: Get all rent service transactions successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get all rent service transactions successfully!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            totalPages:
+                                                type: number
+                                                example: 1
+                                            currentPage:
+                                                type: number
+                                                example: 1
+                                            totalItems:
+                                                type: number
+                                                example: 5
+                                            data:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/RentServiceTransaction'
+                '400':
+                    description: Failed to get all rent service transactions!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Failed to get all rent service transactions!
+                                                    -   Invalid date range!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
             security:
                 - bearerAuth: []
 components:

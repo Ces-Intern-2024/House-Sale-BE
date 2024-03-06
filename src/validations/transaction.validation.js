@@ -10,14 +10,22 @@ const depositCredit = {
 const getAllDepositTransactions = {
     query: Joi.object().keys({
         fromDateRange: Joi.date().iso(),
-        toDateRange: Joi.date().iso()
+        toDateRange: Joi.date().iso(),
+        page: Joi.number(),
+        limit: Joi.number(),
+        orderBy: Joi.string().valid('createdAt'),
+        sortBy: Joi.string().valid('ASC', 'asc', 'DESC', 'desc')
     })
 }
 
 const getAllRentServiceTransactions = {
     query: Joi.object().keys({
         fromDateRange: Joi.date().iso(),
-        toDateRange: Joi.date().iso()
+        toDateRange: Joi.date().iso(),
+        page: Joi.number(),
+        limit: Joi.number(),
+        orderBy: Joi.string().valid('createdAt'),
+        sortBy: Joi.string().valid('ASC', 'asc', 'DESC', 'desc')
     })
 }
 
