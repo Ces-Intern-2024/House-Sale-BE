@@ -207,7 +207,9 @@ const ERROR_MESSAGES = {
         CREATE: 'Failed to create new property!',
         UPDATE: 'Failed to update property!',
         DELETE: 'Failed to delete property!',
-        UPDATE_STATUS: 'Failed to update property status!'
+        UPDATE_STATUS: 'Failed to update property status!',
+        VALIDATE_OPTIONS: 'Invalid options provided!',
+        BOTH_ORDER_BY_SORT_BY: 'Both orderBy and sortBy must be provided together!'
     },
 
     TRANSACTION: {

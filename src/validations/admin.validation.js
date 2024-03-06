@@ -13,7 +13,7 @@ const updatePropertyStatus = {
     body: Joi.object()
         .required()
         .keys({
-            status: Joi.string().valid('Available', 'Unavailable', 'Disabled', 'Deleted').required()
+            status: Joi.string().valid('Available', 'Unavailable', 'Disabled').required()
         })
 }
 
@@ -21,8 +21,8 @@ const getAllProperties = {
     query: Joi.object().keys({
         userId: Joi.number(),
         keyword: Joi.string(),
-        featureId: Joi.number(),
-        categoryId: Joi.number(),
+        featureId: Joi.string().pattern(/^\d+(,\d+)*$/),
+        categoryId: Joi.string().pattern(/^\d+(,\d+)*$/),
         provinceCode: Joi.string(),
         districtCode: Joi.string(),
         wardCode: Joi.string(),
@@ -40,7 +40,7 @@ const getAllProperties = {
         numberOfToiletTo: Joi.number(),
         page: Joi.number(),
         limit: Joi.number(),
-        orderBy: Joi.string().valid('price', 'createdAt', 'updatedAt'),
+        orderBy: Joi.string().valid('price', 'createdAt'),
         sortBy: Joi.string().valid('ASC', 'asc', 'DESC', 'desc')
     })
 }
@@ -113,8 +113,8 @@ const getAllUsers = {
         email: Joi.string(),
         limit: Joi.number().integer().min(1).message('Limit must be a number and greater than 0').default(10),
         page: Joi.number().integer().min(1).message('Page must be a number and greater than 0').default(1),
-        orderBy: Joi.string().valid('createdAt', 'updatedAt', 'email', 'fullName'),
-        sortBy: Joi.string().valid('asc', 'desc')
+        orderBy: Joi.string().valid('createdAt', 'email', 'fullName'),
+        sortBy: Joi.string().valid('ASC', 'asc', 'DESC', 'desc')
     })
 }
 

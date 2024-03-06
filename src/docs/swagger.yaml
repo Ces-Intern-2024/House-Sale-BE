@@ -120,8 +120,8 @@ paths:
         get:
             tags:
                 - Property
-            summary: Get all properties (UPDATED 04/03)
-            description: Get list properties with status "Available" by queries
+            summary: Get all properties (UPDATED 06/03)
+            description: Get list properties with status "Available" by queries (default data is sorted by createdAt in descending order, limit 10 items per page, page 1)
             operationId: getAllProperties
             parameters:
                 -   name: keyword
@@ -133,25 +133,20 @@ paths:
                         example: apart
                 -   name: featureId
                     in: query
-                    description: The ID of feature
+                    description: List Id of features, comma-separated
                     required: false
                     schema:
-                        type: number
-                        enum:
-                            - 1
-                            - 2
+                        type: string
+                        pattern: '^\d+(,\d+)*$'
+                        example: '1,2'
                 -   name: categoryId
                     in: query
-                    description: The ID of category
+                    description: List Id of categories, comma-separated
                     required: false
                     schema:
-                        type: number
-                        enum:
-                            - 1
-                            - 2
-                            - 3
-                            - 4
-                            - 5
+                        type: string
+                        pattern: '^\d+(,\d+)*$'
+                        example: '1,2,3,4,5'
                 -   name: provinceCode
                     in: query
                     description: The code of province
@@ -263,8 +258,7 @@ paths:
                     required: false
                     schema:
                         type: string
-                        enum: ['createdAt','updatedAt','price']
-                        default: 'createdAt'
+                        enum: ['createdAt','price']
                 -   name: sortBy
                     in: query
                     description: The sort order ('ASC' for ascending, 'DESC' for descending).
@@ -272,7 +266,6 @@ paths:
                     schema:
                         type: string
                         enum: ['ASC', 'asc', 'DESC', 'desc']
-                        default: 'desc'
             responses:
                 '200':
                     description: Get list properties successfully!
@@ -319,6 +312,8 @@ paths:
                                             message:
                                                 type: string
                                                 enum:
+                                                -   Invalid options provided!
+                                                -   Both orderBy and sortBy must be provided together!
                                                 -   Failed to get list properties!
                                                 -   Invalid Feature!
                                                 -   Invalid Category!
@@ -1657,8 +1652,8 @@ paths:
         get:
             tags:
                 - Seller
-            summary: Get all properties (UPDATED 04/03)
-            description: Return list property of seller has status "Available", "Unavailable" or "Disabled"
+            summary: Get all properties (UPDATED 06/03)
+            description: Return list property of seller has status "Available", "Unavailable" or "Disabled" (default data is sorted by createdAt in descending order, limit 10 items per page, page 1)
             operationId: getAllPropertiesBySeller
             parameters:
                 -   name: keyword
@@ -1670,25 +1665,20 @@ paths:
                         example: apart
                 -   name: featureId
                     in: query
-                    description: The ID of feature
+                    description: List Id of features, comma-separated
                     required: false
                     schema:
-                        type: number
-                        enum:
-                            - 1
-                            - 2
+                        type: string
+                        pattern: '^\d+(,\d+)*$'
+                        example: '1,2'
                 -   name: categoryId
                     in: query
-                    description: The ID of category
+                    description: List Id of categories, comma-separated
                     required: false
                     schema:
-                        type: number
-                        enum:
-                            - 1
-                            - 2
-                            - 3
-                            - 4
-                            - 5
+                        type: string
+                        pattern: '^\d+(,\d+)*$'
+                        example: '1,2,3,4,5'
                 -   name: priceFrom
                     in: query
                     description: The minimum price of a property
@@ -1779,7 +1769,7 @@ paths:
                     required: false
                     schema:
                         type: string
-                        enum: ['Price', 'price']
+                        enum: ['createdAt','price']
                 -   name: sortBy
                     in: query
                     description: The sort order ('ASC' for ascending, 'DESC' for descending).
@@ -1787,6 +1777,7 @@ paths:
                     schema:
                         type: string
                         enum: ['ASC', 'asc', 'DESC', 'desc']
+                        default: 'desc'
             responses:
                 '200':
                     description: Get list properties successfully!
@@ -1833,6 +1824,8 @@ paths:
                                             message:
                                                 type: string
                                                 enum:
+                                                -   Invalid options provided!
+                                                -   Both orderBy and sortBy must be provided together!
                                                 -   Failed to get list properties!
                                                 -   Invalid Feature!
                                                 -   Invalid Category!
@@ -2934,7 +2927,7 @@ paths:
         get:
             tags:
                 - Transaction
-            summary: Get all user rent service transactions (NEW 05/03)
+            summary: Get all user's rent service transactions (NEW 05/03)
             description: Get all rent service transactions of user by queries (fromDate - toDate)
             operationId: getAllRentServiceTransactions
             parameters:
@@ -3050,6 +3043,8 @@ paths:
                                             message:
                                                 type: string
                                                 example: User not found!
+            security:
+                - bearerAuth: []
     /services:
         get:
             tags:
@@ -3369,16 +3364,14 @@ paths:
                     required: false
                     schema:
                         type: string
-                        enum: ['createdAt', 'updatedAt','email', 'fullName']
-                        default: 'createdAt'
+                        enum: ['createdAt','email', 'fullName']
                 -   name: sortBy
                     in: query
                     description: The sort order ('ASC' for ascending, 'DESC' for descending).
                     required: false
                     schema:
                         type: string
-                        enum: ['asc', 'desc']
-                        default: 'desc'
+                        enum: ['ASC', 'asc', 'DESC', 'desc']
             responses:
                 '200':
                     description: Get list users success!
@@ -4015,8 +4008,8 @@ paths:
         get:
             tags:
                 - Admin - Manage Property
-            summary: Get all properties by ADMIN (NEW)
-            description: Get all properties by queries
+            summary: Get all properties by ADMIN (UPDATED 06/03)
+            description: Get all properties by queries (default data is sorted by createdAt in descending order, limit 10 items per page, page 1)
             operationId: getAllPropertiesByAdmin
             parameters:
                 -   name: userId
@@ -4035,25 +4028,20 @@ paths:
                         example: apart
                 -   name: featureId
                     in: query
-                    description: The ID of feature
+                    description: List Id of features, comma-separated
                     required: false
                     schema:
-                        type: number
-                        enum:
-                            - 1
-                            - 2
+                        type: string
+                        pattern: '^\d+(,\d+)*$'
+                        example: '1,2'
                 -   name: categoryId
                     in: query
-                    description: The ID of category
+                    description: List Id of categories, comma-separated
                     required: false
                     schema:
-                        type: number
-                        enum:
-                            - 1
-                            - 2
-                            - 3
-                            - 4
-                            - 5
+                        type: string
+                        pattern: '^\d+(,\d+)*$'
+                        example: '1,2,3,4,5'
                 -   name: provinceCode
                     in: query
                     description: The code of province
@@ -4165,8 +4153,7 @@ paths:
                     required: false
                     schema:
                         type: string
-                        enum: ['createdAt','updatedAt','price']
-                        default: 'createdAt'
+                        enum: ['createdAt','price']
                 -   name: sortBy
                     in: query
                     description: The sort order ('ASC' for ascending, 'DESC' for descending).
@@ -4174,7 +4161,6 @@ paths:
                     schema:
                         type: string
                         enum: ['ASC', 'asc', 'DESC', 'desc']
-                        default: 'desc'
             responses:
                 '200':
                     description: Get list properties successfully!
@@ -4220,7 +4206,10 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Failed to get all properties!
+                                                enum:
+                                                -   Invalid options provided!
+                                                -   Both orderBy and sortBy must be provided together!
+                                                -   Failed to get all properties!
                 '401':
                     description: Unauthorized!
                     content:
