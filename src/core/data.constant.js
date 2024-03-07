@@ -14,7 +14,8 @@ const TRANSACTION = {
     DEFAULT_DATE_RANGE: {
         FROM: () => new Date(new Date() - 7 * 24 * 60 * 60 * 1000),
         TO: () => new Date()
-    }
+    },
+    DEPOSIT_BY_ADMIN_DESC: 'Deposit credit by admin'
 }
 
 const SERVICES = {

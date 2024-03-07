@@ -18,7 +18,7 @@ const depositCredit = async (req, res) => {
         info: req.body
     })
     new OK({
-        message: `Your balance has been added ${newDeposit}$ Credit successfully! Your current balance is ${currentBalance}$ Credit!`
+        message: SUCCESS_MESSAGES.TRANSACTION.DEPOSIT_CREDIT({ newDeposit, currentBalance })
     }).send(res)
 }
 

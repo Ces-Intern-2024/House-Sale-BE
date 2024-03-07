@@ -57,7 +57,6 @@ const rentService = async ({ userId, serviceId, description }) => {
 
 /**
  * Get all rent service transactions by admin
- * @param {Object} params
  * @param {Object} query - the query from request contains userId, fromDateRange, toDateRange, page, limit, orderBy, sortBy
  * @returns {Promise<RentServiceTransactions>} - the list of rent service transactions
  */
