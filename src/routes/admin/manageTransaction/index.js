@@ -11,6 +11,11 @@ router.get(
     validate(adminValidation.getAllDepositTransactions),
     asyncHandler(adminController.getAllDepositTransactions)
 )
+router.post(
+    '/deposit/:userId',
+    validate(adminValidation.depositUserBalance),
+    asyncHandler(adminController.depositUserBalance)
+)
 
 router.get(
     '/rent-service',

@@ -81,7 +81,13 @@ const SUCCESS_MESSAGES = {
 
     TRANSACTION: {
         GET_ALL_DEPOSIT_TRANSACTIONS: 'Get all deposit transactions successfully!',
-        GET_ALL_RENT_SERVICE_TRANSACTIONS: 'Get all rent service transactions successfully!'
+        GET_ALL_RENT_SERVICE_TRANSACTIONS: 'Get all rent service transactions successfully!',
+        DEPOSIT_CREDIT: ({ newDeposit, currentBalance }) => {
+            return `Your balance has been added ${newDeposit} Credit successfully! Your current balance is ${currentBalance} Credit!`
+        },
+        DEPOSIT_TO_USER_BALANCE_BY_ADMIN: ({ userId, newDeposit, currentBalance }) => {
+            return `Successfully added ${newDeposit} Credit to the balance of user ID:${userId}. The current balance is now ${currentBalance} Credit!`
+        }
     }
 }
 

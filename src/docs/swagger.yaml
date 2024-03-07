@@ -2951,6 +2951,22 @@ paths:
                                             message:
                                                 type: string
                                                 example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
             security:
                 - bearerAuth: []
     /transaction/rent-service:
@@ -4785,6 +4801,126 @@ paths:
                                             message:
                                                 type: string
                                                 example: User not found
+            security:
+                - bearerAuth: []
+    /admin/manage-transaction/deposit/{userId}:
+        post:
+            tags:
+                - Admin - Manage Transaction
+            summary: Deposit credit to user by admin (NEW)
+            description: Deposit credit to user by admin
+            operationId: depositCreditToUserByAdmin
+            parameters:
+                -   name: userId
+                    in: path
+                    description: Id of user to deposit credit
+                    required: true
+                    schema:
+                        type: number
+                        example: 2
+            requestBody:
+                content:
+                  application/json:
+                    schema:
+                        type: object
+                        properties:
+                            amount:
+                                type: number
+                                format: decimal(10,2)
+                                example: 100.0
+                        required:
+                          - "amount"
+            responses:
+                '200':
+                    description: Deposit credit to user successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: "Successfully added 100 Credit to the balance of user ID:2. The current balance is now 1120.00 Credit!"
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Failed to deposit credit!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Invalid amount
+                                                    -   userId is required!
+                                                    -   Invalid description!
+                                                    -   Failed to deposit credit!
+                                                    -   Failed to update user balance!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -  Please Authenticate!
+                                                    -  Unauthorized
+                                                    -  Invalid accessToken!
+                                                    - Please verify your email!
+                                                    - Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
             security:
                 - bearerAuth: []
     /admin/manage-transaction/rent-service:

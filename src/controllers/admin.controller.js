@@ -2,6 +2,15 @@ const { adminService, emailService } = require('../services')
 const { OK } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const depositUserBalance = async (req, res) => {
+    const { userId } = req.params
+    const { amount } = req.body
+    const { newDeposit, currentBalance } = await adminService.depositUserBalance({ userId, amount })
+    new OK({
+        message: SUCCESS_MESSAGES.TRANSACTION.DEPOSIT_TO_USER_BALANCE_BY_ADMIN({ userId, newDeposit, currentBalance })
+    }).send(res)
+}
+
 const getAllRentServiceTransactions = async (req, res) => {
     const transactions = await adminService.getAllRentServiceTransactions(req.query)
     new OK({
@@ -107,6 +116,7 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    depositUserBalance,
     getAllRentServiceTransactions,
     getAllDepositTransactions,
     deleteProperty,

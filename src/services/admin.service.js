@@ -1,9 +1,19 @@
-const { ROLE_NAME } = require('../core/data.constant')
+const { ROLE_NAME, TRANSACTION } = require('../core/data.constant')
 const { userRepo, propertyRepo, transactionRepo } = require('../models/repo')
 
 /**
- * Get all rent service transactions by admin
+ * Deposit credit to user balance by admin
  * @param {Object} params
+ * @param {id} params.userId - the id of user to deposit
+ * @param {number} params.amount - the amount of deposit
+ * @returns {Promise<Object>} - the new deposit and current balance of user
+ */
+const depositUserBalance = async ({ userId, amount }) => {
+    return transactionRepo.depositCredit({ userId, info: { amount, description: TRANSACTION.DEPOSIT_BY_ADMIN_DESC } })
+}
+
+/**
+ * Get all rent service transactions by admin
  * @param {Object} query - the query from request contains userId, fromDateRange, toDateRange, page, limit, orderBy, sortBy
  * @returns {Promise<RentServiceTransactions>} - the list of rent service transactions
  */
@@ -119,6 +129,7 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    depositUserBalance,
     getAllRentServiceTransactions,
     getAllDepositTransactions,
     deleteProperty,

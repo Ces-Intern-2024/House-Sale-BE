@@ -1,5 +1,14 @@
 const Joi = require('joi')
 
+const depositUserBalance = {
+    params: Joi.object().required().keys({
+        userId: Joi.number().required()
+    }),
+    body: Joi.object().required().keys({
+        amount: Joi.number().required()
+    })
+}
+
 const getAllRentServiceTransactions = {
     query: Joi.object().keys({
         userId: Joi.number(),
@@ -143,6 +152,7 @@ const getAllUsers = {
 }
 
 module.exports = {
+    depositUserBalance,
     getAllRentServiceTransactions,
     getAllDepositTransactions,
     deleteProperty,
