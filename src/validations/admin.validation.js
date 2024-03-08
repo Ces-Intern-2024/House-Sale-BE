@@ -1,5 +1,26 @@
 const Joi = require('joi')
 
+const deleteCategory = {
+    params: Joi.object().required().keys({
+        categoryId: Joi.number().required()
+    })
+}
+
+const updateCategory = {
+    params: Joi.object().required().keys({
+        categoryId: Joi.number().required()
+    }),
+    body: Joi.object().required().keys({
+        categoryName: Joi.string().required()
+    })
+}
+
+const createCategory = {
+    body: Joi.object().required().keys({
+        categoryName: Joi.string().required()
+    })
+}
+
 const depositUserBalance = {
     params: Joi.object().required().keys({
         userId: Joi.number().required()
@@ -152,6 +173,9 @@ const getAllUsers = {
 }
 
 module.exports = {
+    deleteCategory,
+    updateCategory,
+    createCategory,
     depositUserBalance,
     getAllRentServiceTransactions,
     getAllDepositTransactions,

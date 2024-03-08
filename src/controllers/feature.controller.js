@@ -3,10 +3,10 @@ const { OK } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
 const getAllFeatures = async (req, res) => {
-    const listCategories = await featureService.getAllFeatures()
+    const listFeatures = await featureService.getAllFeatures()
     new OK({
         message: SUCCESS_MESSAGES.FEATURE.GET_FEATURES,
-        metaData: listCategories
+        metaData: listFeatures
     }).send(res)
 }
 

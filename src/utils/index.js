@@ -4,13 +4,14 @@ const { v4: uuidv4 } = require('uuid')
 const { BadRequestError } = require('../core/error.response')
 const { ERROR_MESSAGES } = require('../core/message.constant')
 const { GOOGLE_API_URL, ROUNDS_SALT } = require('../core/data.constant')
+const moment = require('moment-timezone')
 
 const setStartAndEndDates = (fromDateRange, toDateRange) => {
-    const fromDate = new Date(fromDateRange)
-    fromDate.setHours(0, 0, 0, 0)
-    const toDate = new Date(toDateRange)
-    toDate.setHours(23, 59, 59, 999)
-    return { fromDate, toDate }
+    const fromDate = moment.tz(fromDateRange, 'Asia/Ho_Chi_Minh')
+    fromDate.startOf('day')
+    const toDate = moment.tz(toDateRange, 'Asia/Ho_Chi_Minh')
+    toDate.endOf('day')
+    return { fromDate: fromDate.toDate(), toDate: toDate.toDate() }
 }
 
 const verifyGoogleToken = async (accessToken) => {

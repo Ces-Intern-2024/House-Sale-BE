@@ -24,7 +24,7 @@ const createProperty = async ({ propertyBody, userId }) => {
             throw new BadRequestError(ERROR_MESSAGES.SERVICE.SERVICE_NOT_FOUND)
         }
         const { price } = service
-        if (balance < price) {
+        if (Number(balance) < Number(price)) {
             throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.NOT_ENOUGH_CREDIT)
         }
 
