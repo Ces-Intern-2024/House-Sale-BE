@@ -5,6 +5,14 @@ const { BadRequestError } = require('../core/error.response')
 const { ERROR_MESSAGES } = require('../core/message.constant')
 const { GOOGLE_API_URL, ROUNDS_SALT } = require('../core/data.constant')
 
+const setStartAndEndDates = (fromDateRange, toDateRange) => {
+    const fromDate = new Date(fromDateRange)
+    fromDate.setHours(0, 0, 0, 0)
+    const toDate = new Date(toDateRange)
+    toDate.setHours(23, 59, 59, 999)
+    return { fromDate, toDate }
+}
+
 const verifyGoogleToken = async (accessToken) => {
     try {
         const response = await axios.get(`${GOOGLE_API_URL}/v3/tokeninfo?access_token=${accessToken}`)
@@ -60,6 +68,7 @@ const getExistingKeysInObject = (object, keys) => {
 }
 
 module.exports = {
+    setStartAndEndDates,
     verifyGoogleToken,
     generateVerifyEmailCode,
     hashPassword,
