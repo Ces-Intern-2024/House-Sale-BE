@@ -1,5 +1,42 @@
 const { ROLE_NAME, TRANSACTION } = require('../core/data.constant')
-const { userRepo, propertyRepo, transactionRepo } = require('../models/repo')
+const { userRepo, propertyRepo, transactionRepo, categoryRepo } = require('../models/repo')
+
+/**
+ * Delete category by categoryId
+ * @param {id} categoryId
+ * @returns {Promise<boolean>} - the result of delete category
+ */
+const deleteCategory = async (categoryId) => {
+    return categoryRepo.deleteCategory(categoryId)
+}
+
+/**
+ * Update category by categoryId
+ * @param {Object} params
+ * @param {id} params.categoryId - the id of category
+ * @param {string} params.categoryName - the name of category
+ * @returns {Promise<Category>} - the updated category
+ */
+const updateCategory = async ({ categoryId, categoryName }) => {
+    return categoryRepo.updateCategory({ categoryId, categoryName })
+}
+
+/**
+ * Create new category
+ * @param {string} categoryName
+ * @returns {Promise<boolean>} - the new category
+ */
+const createCategory = async (categoryName) => {
+    return categoryRepo.createCategory(categoryName)
+}
+
+/**
+ * Get all categories
+ * @returns {Promise<Category[]>} - the list of categories
+ */
+const getAllCategories = async () => {
+    return categoryRepo.getAllCategories()
+}
 
 /**
  * Deposit credit to user balance by admin
@@ -15,7 +52,7 @@ const depositUserBalance = async ({ userId, amount }) => {
 /**
  * Get all rent service transactions by admin
  * @param {Object} query - the query from request contains userId, fromDateRange, toDateRange, page, limit, orderBy, sortBy
- * @returns {Promise<RentServiceTransactions>} - the list of rent service transactions
+ * @returns {Promise<RentServiceTransaction[]>} - the list of rent service transactions
  */
 const getAllRentServiceTransactions = async (query) => {
     return transactionRepo.getAllRentServiceTransactions(query)
@@ -24,7 +61,7 @@ const getAllRentServiceTransactions = async (query) => {
 /**
  * Get all deposit transactions
  * @param {Object} query - the query from request contains userId, fromDateRange, toDateRange, page, limit, orderBy, sortBy
- * @returns {Promise<Transactions>} - the list of deposit transactions
+ * @returns {Promise<DepositTransaction[]>} - the list of deposit transactions
  */
 const getAllDepositTransactions = async (query) => {
     return transactionRepo.getAllDepositTransactions(query)
@@ -129,6 +166,10 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    deleteCategory,
+    updateCategory,
+    createCategory,
+    getAllCategories,
     depositUserBalance,
     getAllRentServiceTransactions,
     getAllDepositTransactions,

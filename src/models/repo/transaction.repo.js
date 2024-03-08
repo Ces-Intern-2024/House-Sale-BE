@@ -28,7 +28,7 @@ const rentService = async ({ userId, serviceId, description }) => {
         throw new BadRequestError(ERROR_MESSAGES.SERVICE.SERVICE_NOT_FOUND)
     }
     const { price } = service
-    if (balance < price) {
+    if (Number(balance) < Number(price)) {
         throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.NOT_ENOUGH_CREDIT)
     }
 
@@ -58,7 +58,7 @@ const rentService = async ({ userId, serviceId, description }) => {
 /**
  * Get all rent service transactions by admin
  * @param {Object} query - the query from request contains userId, fromDateRange, toDateRange, page, limit, orderBy, sortBy
- * @returns {Promise<RentServiceTransactions>} - the list of rent service transactions
+ * @returns {Promise<RentServiceTransaction[]>} - the list of rent service transactions
  */
 const getAllRentServiceTransactions = async (query) => {
     try {
@@ -158,7 +158,7 @@ const depositCredit = async ({ userId, info }) => {
 /**
  * Get all deposit transactions
  * @param {Object} query - the query from request contains userId, fromDateRange, toDateRange, page, limit, orderBy, sortBy
- * @returns {Promise<DepositTransactions>} - the list of deposit transactions
+ * @returns {Promise<DepositTransaction[]>} - the list of deposit transactions
  */
 const getAllDepositTransactions = async (query) => {
     try {

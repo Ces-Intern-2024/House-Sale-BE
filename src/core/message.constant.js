@@ -36,7 +36,10 @@ const SUCCESS_MESSAGES = {
     },
 
     CATEGORY: {
-        GET_CATEGORIES: 'Get list categories successfully!'
+        GET_CATEGORIES: 'Get list categories successfully!',
+        CREATE: 'Create new category successfully!',
+        UPDATE: 'Update category successfully!',
+        DELETE: 'Delete category successfully!'
     },
 
     LOCATION: {
@@ -203,7 +206,14 @@ const ERROR_MESSAGES = {
 
     CATEGORY: {
         GET_CATEGORIES: 'Failed to get list categories!',
-        INVALID: 'Invalid Category!'
+        INVALID: 'Invalid Category!',
+        CREATE: 'Failed to create new category!',
+        EXISTED_CATEGORY: 'Category already exists!',
+        UPDATE: 'Failed to update category!',
+        DUPLICATE_NAME: 'Category name already exists!',
+        SAME_NAME: 'Category name is the same!',
+        DELETE: 'Failed to delete category!',
+        NOT_FOUND: 'Category not found!'
     },
 
     PROPERTY: {

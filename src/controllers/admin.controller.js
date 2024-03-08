@@ -2,6 +2,40 @@ const { adminService, emailService } = require('../services')
 const { OK } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const deleteCategory = async (req, res) => {
+    const { categoryId } = req.params
+    await adminService.deleteCategory(categoryId)
+    new OK({
+        message: SUCCESS_MESSAGES.CATEGORY.DELETE
+    }).send(res)
+}
+
+const updateCategory = async (req, res) => {
+    const { categoryId } = req.params
+    const { categoryName } = req.body
+    await adminService.updateCategory({ categoryId, categoryName })
+    new OK({
+        message: SUCCESS_MESSAGES.CATEGORY.UPDATE
+    }).send(res)
+}
+
+const createCategory = async (req, res) => {
+    const { categoryName } = req.body
+    const newCategory = await adminService.createCategory(categoryName)
+    new OK({
+        message: SUCCESS_MESSAGES.CATEGORY.CREATE,
+        metaData: newCategory
+    }).send(res)
+}
+
+const getAllCategories = async (req, res) => {
+    const categories = await adminService.getAllCategories()
+    new OK({
+        message: SUCCESS_MESSAGES.CATEGORY.GET_CATEGORIES,
+        metaData: categories
+    }).send(res)
+}
+
 const depositUserBalance = async (req, res) => {
     const { userId } = req.params
     const { amount } = req.body
@@ -116,6 +150,10 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    deleteCategory,
+    updateCategory,
+    createCategory,
+    getAllCategories,
     depositUserBalance,
     getAllRentServiceTransactions,
     getAllDepositTransactions,
