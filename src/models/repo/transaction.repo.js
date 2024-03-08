@@ -4,7 +4,7 @@ const { TRANSACTION, PAGINATION_DEFAULT } = require('../../core/data.constant')
 const { NotFoundError, BadRequestError } = require('../../core/error.response')
 const { ERROR_MESSAGES } = require('../../core/message.constant')
 const { validateUserId } = require('./user.repo')
-const { paginatedData } = require('../../utils')
+const { paginatedData, setStartAndEndDates } = require('../../utils')
 
 /**
  * Rent service and update user balance
@@ -75,8 +75,7 @@ const getAllRentServiceTransactions = async (query) => {
             throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
         }
 
-        const fromDate = new Date(fromDateRange)
-        const toDate = new Date(toDateRange)
+        const { fromDate, toDate } = setStartAndEndDates(fromDateRange, toDateRange)
         if (fromDate > toDate) {
             throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_DATE_RANGE)
         }
@@ -85,8 +84,8 @@ const getAllRentServiceTransactions = async (query) => {
             where: {
                 ...(userId && { userId }),
                 createdAt: {
-                    [Op.lt]: toDate,
-                    [Op.gt]: fromDate
+                    [Op.lte]: toDate,
+                    [Op.gte]: fromDate
                 }
             },
             distinct: true,
@@ -176,8 +175,7 @@ const getAllDepositTransactions = async (query) => {
             throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
         }
 
-        const fromDate = new Date(fromDateRange)
-        const toDate = new Date(toDateRange)
+        const { fromDate, toDate } = setStartAndEndDates(fromDateRange, toDateRange)
         if (fromDate > toDate) {
             throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_DATE_RANGE)
         }
@@ -186,8 +184,8 @@ const getAllDepositTransactions = async (query) => {
             where: {
                 ...(userId && { userId }),
                 createdAt: {
-                    [Op.lt]: toDate,
-                    [Op.gt]: fromDate
+                    [Op.lte]: toDate,
+                    [Op.gte]: fromDate
                 }
             },
             distinct: true,

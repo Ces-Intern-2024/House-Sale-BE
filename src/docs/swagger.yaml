@@ -5,6 +5,7 @@ info:
 servers:
     -   url: http://localhost:3000/v1/api
     -   url: https://house-sale-be.onrender.com/v1/api
+    -   url: https://housesale.tldev.id.vn/v1/api
 tags:
     -   name: Feature
     -   name: Category
