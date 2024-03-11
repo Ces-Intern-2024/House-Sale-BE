@@ -14,11 +14,7 @@ const { ERROR_MESSAGES } = require('../core/message.constant')
  * @returns {Promise<User>}
  */
 const fulFillSellerInformation = async ({ userId, information }) => {
-    const user = await userRepo.getUserById(userId)
-    if (!user) {
-        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-    }
-
+    await userRepo.findUserById(userId)
     await locationRepo.checkLocation(information)
 
     const updatedUser = await db.Users.update({ ...information, roleId: rolesId.Seller }, { where: { userId } })

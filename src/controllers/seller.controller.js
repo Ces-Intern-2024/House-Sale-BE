@@ -40,7 +40,8 @@ const updateProperty = async (req, res) => {
 
 const createNewProperty = async (req, res) => {
     const userId = req.user?.userId
-    await sellerService.createProperty({ userId, propertyBody: req.body })
+    const { option, propertyData } = req.body
+    await sellerService.createProperty({ userId, propertyData, option })
     new Created({
         message: SUCCESS_MESSAGES.SELLER.CREATE_NEW_PROPERTY
     }).send(res)

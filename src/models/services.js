@@ -19,14 +19,14 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 unique: true
             },
+            duration: {
+                type: DataTypes.INTEGER,
+                enum: [15, 30, 60],
+                allowNull: false
+            },
             price: {
                 type: DataTypes.DECIMAL(10, 2),
                 allowNull: false
-            },
-            isActive: {
-                type: DataTypes.BOOLEAN,
-                allowNull: false,
-                defaultValue: true
             }
         },
         {

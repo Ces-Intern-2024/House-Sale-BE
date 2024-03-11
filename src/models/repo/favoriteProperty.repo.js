@@ -3,6 +3,7 @@ const { SCOPES, PROPERTY_STATUS } = require('../../core/data.constant')
 const { BadRequestError, NotFoundError } = require('../../core/error.response')
 const { ERROR_MESSAGES } = require('../../core/message.constant')
 const { getScopesArray } = require('./property.repo')
+const { findUserById } = require('./user.repo')
 
 const getFavoritesList = async (userId) => {
     try {
@@ -29,10 +30,7 @@ const getFavoritesList = async (userId) => {
 
 const updateFavoriteProperty = async ({ userId, propertyId }) => {
     try {
-        const user = await db.Users.findByPk(userId)
-        if (!user) {
-            throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-        }
+        await findUserById(userId)
 
         const property = await db.Properties.findOne({
             where: { propertyId, status: PROPERTY_STATUS.AVAILABLE }

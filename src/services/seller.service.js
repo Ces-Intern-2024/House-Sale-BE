@@ -1,97 +1,49 @@
-const { ROLE_NAME, SERVICES, TRANSACTION } = require('../core/data.constant')
+const { ROLE_NAME, TRANSACTION } = require('../core/data.constant')
 const { BadRequestError, NotFoundError } = require('../core/error.response')
 const { ERROR_MESSAGES } = require('../core/message.constant')
 const db = require('../models')
-const { propertyRepo, locationRepo } = require('../models/repo')
+const { propertyRepo, locationRepo, userRepo, serviceRepo, imageRepo, transactionRepo } = require('../models/repo')
+const { checkBalance } = require('../models/repo/transaction.repo')
+const { calculateExpiresDate } = require('../utils')
 
-const createProperty = async ({ propertyBody, userId }) => {
+/**
+ *  Create property of seller by sellerId
+ * @param {Object} params
+ * @param {Object} params.propertyData - property information
+ * @param {id} params.userId - sellerId
+ * @param {Object} params.option - option to rent service (serviceId, amount)
+ * @returns {Promise<boolean>}
+ */
+const createProperty = async ({ propertyData, userId, option }) => {
     const transaction = await db.sequelize.transaction()
     try {
-        const user = await db.Users.findOne({ where: { userId } })
-        if (!user) {
-            throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-        }
-
-        const { provinceCode, districtCode, wardCode, street, address, images, ...propertyOptions } = propertyBody
-        // check balance
+        const { provinceCode, districtCode, wardCode, street, address, images, ...propertyOptions } = propertyData
+        const user = await userRepo.findUserById(userId)
+        const { serviceId } = option
         const { balance } = user
-        const serviceId = SERVICES.CREATE_NEW_PROPERTY.ID
+        const { price, duration } = await serviceRepo.findService(serviceId)
+        checkBalance(balance, price)
+        const expiresAt = calculateExpiresDate(duration)
 
-        const service = await db.Services.findOne({
-            where: { serviceId }
-        })
-        if (!service) {
-            throw new BadRequestError(ERROR_MESSAGES.SERVICE.SERVICE_NOT_FOUND)
-        }
-        const { price } = service
-        if (Number(balance) < Number(price)) {
-            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.NOT_ENOUGH_CREDIT)
-        }
-
-        // create location
-        await locationRepo.checkLocation({ provinceCode, districtCode, wardCode })
-        const newLocation = await db.Locations.create(
-            {
-                provinceCode,
-                districtCode,
-                wardCode,
-                address,
-                street
-            },
-            { transaction }
+        const newLocation = await locationRepo.createLocation(
+            { provinceCode, districtCode, wardCode, street, address },
+            transaction
         )
-        if (!newLocation) {
-            throw new BadRequestError(ERROR_MESSAGES.LOCATION.CREATE_NEW_LOCATION)
-        }
-
-        // create property
-        const newProperty = await db.Properties.create(
-            {
-                ...propertyOptions,
-                locationId: newLocation.locationId,
-                userId
-            },
-            { transaction }
+        const newProperty = await propertyRepo.createProperty(
+            { propertyOptions, locationId: newLocation.locationId, userId, expiresAt },
+            transaction
         )
-        if (!newProperty) {
-            throw new BadRequestError(ERROR_MESSAGES.PROPERTY.CREATE)
-        }
-
-        // save property images
-        const savedPropertyImages = await Promise.all(
-            images.map((imageUrl) => {
-                return db.Images.create(
-                    {
-                        propertyId: newProperty.propertyId,
-                        imageUrl
-                    },
-                    { transaction }
-                )
-            })
-        )
-        if (!savedPropertyImages) {
-            throw new BadRequestError(ERROR_MESSAGES.IMAGE.SAVING_IMAGE_FAILED)
-        }
-
-        // create rent service transaction and update user balance
-        const newRentServiceTransaction = await db.RentServiceTransactions.create(
+        await imageRepo.savedPropertyImages({ images, propertyId: newProperty.propertyId }, transaction)
+        await transactionRepo.createRentServiceTransactionAndUpdateUserBalance(
             {
                 userId,
                 amount: price,
-                balance: Number(balance) - Number(price),
+                balance,
                 serviceId,
                 description: TRANSACTION.EXPENSE_DESC(newProperty.propertyId)
             },
-            { transaction }
+            transaction
         )
-        if (!newRentServiceTransaction) {
-            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.FAILED_TO_PROCESS_RENT_SERVICE_TRANSACTION)
-        }
-
-        const updatedUser = await user.decrement({ balance: price }, { transaction })
-        if (!updatedUser) {
-            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.FAILED_TO_UPDATE_USER_BALANCE)
-        }
 
         await transaction.commit()
     } catch (error) {

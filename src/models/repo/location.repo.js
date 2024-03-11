@@ -102,7 +102,20 @@ const getAllWardsByDistrictCode = async (districtCode) => {
     }
 }
 
+const createLocation = async ({ provinceCode, districtCode, wardCode, address, street }, transaction) => {
+    await checkLocation({ provinceCode, districtCode, wardCode })
+    const newLocation = await db.Locations.create(
+        { provinceCode, districtCode, wardCode, address, street },
+        { transaction }
+    )
+    if (!newLocation) {
+        throw new BadRequestError(ERROR_MESSAGES.LOCATION.CREATE_NEW_LOCATION)
+    }
+    return newLocation
+}
+
 module.exports = {
+    createLocation,
     getAllWardsByDistrictCode,
     getAllDistrictsByProvinceCode,
     getAllProvinces,

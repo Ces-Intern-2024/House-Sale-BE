@@ -113,6 +113,25 @@ module.exports = (sequelize, DataTypes) => {
             description: {
                 type: DataTypes.TEXT,
                 allowNull: true
+            },
+            expiresAt: {
+                type: DataTypes.DATE,
+                allowNull: true
+            },
+            savedRemainingRentalTime: {
+                type: DataTypes.BIGINT,
+                defaultValue: 0
+            },
+            remainingTime: {
+                type: DataTypes.VIRTUAL,
+                get() {
+                    if (this.expiresAt) {
+                        const now = new Date()
+                        const remainingTime = this.expiresAt - now
+                        return remainingTime > 0 ? remainingTime : 0
+                    }
+                    return 0
+                }
             }
         },
         {
@@ -122,9 +141,6 @@ module.exports = (sequelize, DataTypes) => {
                 {
                     unique: true,
                     fields: ['name']
-                },
-                {
-                    fields: ['locationId']
                 }
             ]
         }

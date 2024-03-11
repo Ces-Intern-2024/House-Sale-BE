@@ -239,7 +239,7 @@ const ERROR_MESSAGES = {
         FAILED_TO_UPDATE_USER_BALANCE: 'Failed to update user balance!',
         INVALID_DESCRIPTION: 'Invalid description!',
         FAILED_TO_RENT_SERVICE: 'Failed to rent service!',
-        FAILED_TO_PROCESS_RENT_SERVICE_TRANSACTION: 'Failed to process rent service transaction!'
+        FAILED_TO_CREATE_RENT_SERVICE_TRANSACTION: 'Failed to create rent service transaction!'
     },
 
     IMAGE: {
@@ -261,7 +261,11 @@ const ERROR_MESSAGES = {
         CREATE_SERVICE: 'Failed to create new service!',
         FAILED_TO_GET_SERVICE_PRICE: 'Failed to get service price!',
         CAN_NOT_RENT_SERVICE: 'You can not rent this service!',
-        SERVICE_NOT_FOUND: 'Service not found!'
+        SERVICE_NOT_FOUND: 'Service not found!',
+        SERVICE_ID_IS_REQUIRED: 'Service ID is required!',
+        GET_SERVICE_BY_ID: 'Failed to get service by serviceId!',
+        MINIMUM_SERVICE_RENTAL_PERIOD: 'Minimum rental period is 15 day!',
+        INVALID_SERVICE_RENTAL_PERIOD: 'Invalid rental period!'
     },
 
     CONVERSION_RATE: {

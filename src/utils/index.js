@@ -1,15 +1,28 @@
 const axios = require('axios')
 const bcrypt = require('bcrypt')
 const { v4: uuidv4 } = require('uuid')
+const moment = require('moment-timezone')
 const { BadRequestError } = require('../core/error.response')
 const { ERROR_MESSAGES } = require('../core/message.constant')
-const { GOOGLE_API_URL, ROUNDS_SALT } = require('../core/data.constant')
-const moment = require('moment-timezone')
+const { GOOGLE_API_URL, ROUNDS_SALT, TIMEZONE, SERVICES } = require('../core/data.constant')
+
+const calculateSavedRemainingRentalTime = (expiresAt) => {
+    const remainingTime = new Date(expiresAt) - new Date()
+    return remainingTime
+}
+
+const calculateExpiresDate = (duration) => {
+    if (!SERVICES.RENTAL_DAY_ENUM.includes(duration)) {
+        throw new BadRequestError(ERROR_MESSAGES.SERVICE.INVALID_SERVICE_RENTAL_PERIOD)
+    }
+    const expiresDate = moment().tz(TIMEZONE).add(duration, 'days')
+    return expiresDate.toDate()
+}
 
 const setStartAndEndDates = (fromDateRange, toDateRange) => {
-    const fromDate = moment.tz(fromDateRange, 'Asia/Ho_Chi_Minh')
+    const fromDate = moment.tz(fromDateRange, TIMEZONE)
     fromDate.startOf('day')
-    const toDate = moment.tz(toDateRange, 'Asia/Ho_Chi_Minh')
+    const toDate = moment.tz(toDateRange, TIMEZONE)
     toDate.endOf('day')
     return { fromDate: fromDate.toDate(), toDate: toDate.toDate() }
 }
@@ -69,6 +82,8 @@ const getExistingKeysInObject = (object, keys) => {
 }
 
 module.exports = {
+    calculateSavedRemainingRentalTime,
+    calculateExpiresDate,
     setStartAndEndDates,
     verifyGoogleToken,
     generateVerifyEmailCode,

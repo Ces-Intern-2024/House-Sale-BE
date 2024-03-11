@@ -11,7 +11,7 @@ const {
     ROLE_NAME
 } = require('../../core/data.constant')
 const { ERROR_MESSAGES } = require('../../core/message.constant')
-const { getUserById } = require('./user.repo')
+const { findUserById } = require('./user.repo')
 
 const getScopesArray = (scopes) => scopes.map((scope) => COMMON_SCOPES[scope])
 
@@ -67,10 +67,7 @@ const validatePropertyOptions = async ({ propertyOptions, role = ROLE_NAME.USER 
         }
 
         if (userId) {
-            const user = await getUserById(userId)
-            if (!user) {
-                throw new BadRequestError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-            }
+            await findUserById(userId)
             options.userId = userId
         }
 
@@ -244,7 +241,19 @@ const updatePropertyStatus = async ({ propertyId, status, userId, role = ROLE_NA
     if (!updated[0]) throw new BadRequestError(ERROR_MESSAGES.PROPERTY.UPDATE_STATUS)
 }
 
+const createProperty = async ({ propertyOptions, locationId, userId, expiresAt }, transaction) => {
+    const newProperty = await db.Properties.create(
+        { ...propertyOptions, locationId, userId, expiresAt },
+        { transaction }
+    )
+    if (!newProperty) {
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.CREATE)
+    }
+    return newProperty
+}
+
 module.exports = {
+    createProperty,
     getScopesArray,
     deleteProperty,
     updateProperty,

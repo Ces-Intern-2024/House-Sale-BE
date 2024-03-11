@@ -6,7 +6,7 @@ const { jwtConfig } = require('../../config/jwt.config')
 const { tokenTypes } = require('../../config/tokens.config')
 const { BadRequestError, AuthFailureError, NotFoundError } = require('../../core/error.response')
 const { ERROR_MESSAGES } = require('../../core/message.constant')
-const { getUserById } = require('./user.repo')
+const { findUserById } = require('./user.repo')
 
 /**
  * check if accessToken exists in database and not expired
@@ -156,10 +156,7 @@ const refreshTokens = async (refreshToken) => {
     }
 
     const { tokenId, userId } = tokens
-    const user = await getUserById(userId)
-    if (!user) {
-        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-    }
+    await findUserById(userId)
 
     const removedTokens = await removeTokensByTokenId(tokenId)
     if (!removedTokens) {

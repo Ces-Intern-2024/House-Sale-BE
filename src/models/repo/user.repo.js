@@ -19,6 +19,36 @@ const validateEmail = (email) => {
 }
 
 /**
+ * Get user by userId
+ * @param {id} userId
+ * @returns {Promise<User>}
+ */
+const getUserById = async (userId) => {
+    validateUserId(userId)
+
+    try {
+        const user = await db.Users.findByPk(userId)
+        return user ? user.get({ plain: true }) : null
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.USER.GET_USER_BY_ID)
+    }
+}
+
+/**
+ * Find user by userId
+ * @param {id} userId - the id of user
+ * @returns {Promise<User>} - the user object if found
+ * @throws {NotFoundError} - if user not found
+ */
+const findUserById = async (userId) => {
+    const user = await getUserById(userId)
+    if (!user) {
+        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+    }
+    return user
+}
+
+/**
  *  Update user active status
  * @param {id} userId  - the id of user
  * @returns {Promise<Boolean>}
@@ -27,16 +57,15 @@ const updateUserActiveStatus = async (userId) => {
     validateUserId(userId)
 
     try {
-        const user = await db.Users.findByPk(userId)
-        if (!user) {
-            throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-        }
+        const user = await findUserById(userId)
         const updatedActiveStatus = !user.isActive
-        await user.update({ isActive: updatedActiveStatus })
+
+        const [updatedUser] = await db.Users.update({ isActive: updatedActiveStatus }, { where: { userId } })
+        if (!updatedUser) throw new BadRequestError(ERROR_MESSAGES.USER.UPDATE_USER_ACTIVE_STATUS)
 
         return updatedActiveStatus
     } catch (error) {
-        if (error instanceof NotFoundError) {
+        if (error instanceof NotFoundError || error instanceof BadRequestError) {
             throw error
         }
         throw new BadRequestError(ERROR_MESSAGES.USER.UPDATE_USER_ACTIVE_STATUS)
@@ -126,22 +155,6 @@ const getUserProfileById = async (userId) => {
 }
 
 /**
- * Get user by userId
- * @param {id} userId
- * @returns {Promise<User>}
- */
-const getUserById = async (userId) => {
-    validateUserId(userId)
-
-    try {
-        const user = await db.Users.findByPk(userId)
-        return user ? user.get({ plain: true }) : null
-    } catch (error) {
-        throw new BadRequestError(ERROR_MESSAGES.USER.GET_USER_BY_ID)
-    }
-}
-
-/**
  * Get user by email
  * @param {*} email
  * @returns {Promise<User>}
@@ -186,10 +199,7 @@ const generateEmailVerificationCode = async (userId) => {
 }
 
 const validateUserBody = async ({ userId, userBody }) => {
-    const user = await getUserById(userId)
-    if (!user) {
-        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-    }
+    const user = await findUserById(userId)
 
     if (!userBody || Object.keys(userBody).length === 0) {
         throw new BadRequestError(ERROR_MESSAGES.COMMON.NOTHING_TO_UPDATE)
@@ -210,11 +220,7 @@ const validateUserBody = async ({ userId, userBody }) => {
 }
 
 const updateUserById = async ({ userId, userBody }) => {
-    validateUserId(userId)
-    const user = await getUserById(userId)
-    if (!user) {
-        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-    }
+    await findUserById(userId)
 
     await validateUserBody({ userId, userBody })
     try {
@@ -228,11 +234,7 @@ const updateUserById = async ({ userId, userBody }) => {
 }
 
 const updateAvatar = async ({ userId, imageUrl }) => {
-    validateUserId(userId)
-    const user = await getUserById(userId)
-    if (!user) {
-        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-    }
+    await findUserById(userId)
 
     try {
         const [affectedRows] = await db.Users.update({ avatar: imageUrl }, { where: { userId } })
@@ -245,12 +247,7 @@ const updateAvatar = async ({ userId, imageUrl }) => {
 }
 
 const changePassword = async ({ userId, currentPassword, newPassword }) => {
-    validateUserId(userId)
-    const user = await getUserById(userId)
-    if (!user) {
-        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-    }
-
+    const user = await findUserById(userId)
     const isMatchPassword = await bcrypt.compare(currentPassword, user.password)
     if (!isMatchPassword) {
         throw new AuthFailureError(ERROR_MESSAGES.USER.INCORRECT_CURRENT_PASSWORD)
@@ -278,12 +275,7 @@ const changePassword = async ({ userId, currentPassword, newPassword }) => {
  * @returns {Promise<boolean>}
  */
 const verifyEmail = async ({ userId, code }) => {
-    validateUserId(userId)
-    const user = await getUserById(userId)
-    if (!user) {
-        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-    }
-
+    const user = await findUserById(userId)
     if (user.isEmailVerified) {
         throw new BadRequestError(ERROR_MESSAGES.USER.EMAIL_ALREADY_VERIFIED)
     }
@@ -303,12 +295,7 @@ const verifyEmail = async ({ userId, code }) => {
 }
 
 const resetUserPassword = async (userId) => {
-    validateUserId(userId)
-    const user = await getUserById(userId)
-    if (!user) {
-        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-    }
-
+    const user = await findUserById(userId)
     const newPassword = Math.random().toString(36).slice(-8)
     const hashedPassword = await hashPassword(newPassword)
     try {
@@ -320,6 +307,7 @@ const resetUserPassword = async (userId) => {
 }
 
 module.exports = {
+    findUserById,
     validateUserId,
     resetUserPassword,
     verifyEmail,
