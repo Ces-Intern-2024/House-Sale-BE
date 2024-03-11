@@ -9,6 +9,8 @@ const handleError = require('./middlewares/handleError')
 const app = express()
 
 require('./dbs/mysql.init')
+require('./core/autoUpdatePropertyStatus.cron')
+require('./core/autoRemoveExpiresToken.cron')
 
 app.use(morgan('dev'))
 

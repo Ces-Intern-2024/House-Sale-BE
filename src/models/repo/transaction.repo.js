@@ -3,7 +3,7 @@ const db = require('..')
 const { TRANSACTION, PAGINATION_DEFAULT } = require('../../core/data.constant')
 const { NotFoundError, BadRequestError } = require('../../core/error.response')
 const { ERROR_MESSAGES } = require('../../core/message.constant')
-const { validateUserId } = require('./user.repo')
+const { findUserById } = require('./user.repo')
 const { paginatedData, setStartAndEndDates } = require('../../utils')
 
 /**
@@ -105,6 +105,7 @@ const getAllRentServiceTransactions = async (query) => {
         throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.GET_ALL_RENT_SERVICE_TRANSACTIONS)
     }
 }
+
 /**
  * Deposit credit to user balance
  * @param {object} params
@@ -113,11 +114,7 @@ const getAllRentServiceTransactions = async (query) => {
  * @returns {Promise<Object>}
  */
 const depositCredit = async ({ userId, info }) => {
-    validateUserId(userId)
-    const user = await db.Users.findOne({ where: { userId } })
-    if (!user) {
-        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-    }
+    const user = await findUserById(userId)
     const { balance } = user
 
     const { amount, description } = info
@@ -206,7 +203,42 @@ const getAllDepositTransactions = async (query) => {
     }
 }
 
+const checkBalance = (balance, price) => {
+    if (Number(balance) < Number(price)) {
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.NOT_ENOUGH_CREDIT)
+    }
+}
+
+const createRentServiceTransactionAndUpdateUserBalance = async (
+    { userId, amount, balance, serviceId, description },
+    transaction
+) => {
+    const newRentServiceTransaction = await db.RentServiceTransactions.create(
+        {
+            userId,
+            amount,
+            balance: Number(balance) - Number(amount),
+            serviceId,
+            description
+        },
+        { transaction }
+    )
+    if (!newRentServiceTransaction) {
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.FAILED_TO_CREATE_RENT_SERVICE_TRANSACTION)
+    }
+
+    const [updatedUser] = await db.Users.update(
+        { balance: Number(balance) - Number(amount) },
+        { where: { userId }, transaction }
+    )
+    if (!updatedUser) {
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.FAILED_TO_UPDATE_USER_BALANCE)
+    }
+}
+
 module.exports = {
+    checkBalance,
+    createRentServiceTransactionAndUpdateUserBalance,
     rentService,
     getAllRentServiceTransactions,
     depositCredit,

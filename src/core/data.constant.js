@@ -1,6 +1,8 @@
 const { Op } = require('sequelize')
 const db = require('../models')
 
+const TIMEZONE = 'Asia/Ho_Chi_Minh'
+
 const ROLE_NAME = {
     USER: 'User',
     SELLER: 'Seller',
@@ -22,7 +24,8 @@ const SERVICES = {
     CREATE_NEW_PROPERTY: {
         NAME: 'Create New Property',
         ID: 1
-    }
+    },
+    RENTAL_DAY_ENUM: [15, 30, 60]
 }
 
 const COMMON_SCOPES = {
@@ -279,6 +282,7 @@ const EMAIL_TEMPLATE = {
 }
 
 module.exports = {
+    TIMEZONE,
     SERVICES,
     PROPERTY_STATUS,
     ROLE_NAME,

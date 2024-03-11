@@ -1883,7 +1883,17 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/NewPropertyBody'
+                            type: object
+                            properties:
+                                propertyData:
+                                    $ref: '#/components/schemas/NewPropertyBody'
+                                option:
+                                    type: object
+                                    properties:
+                                        serviceId:
+                                            type: number
+                                            example: 1
+                                            description: The serviceId of the create property service
             responses:
                 '201':
                     description: New property had been created successfully!
@@ -1929,7 +1939,11 @@ paths:
                                                     -   Failed to init expense transaction!
                                                     -   Failed to update user balance!
                                                     -   Failed to save image!
-                                                    -   Failed to process rent service transaction!
+                                                    -   Failed to create rent service transaction!
+                                                    -   userId is required!
+                                                    -   Failed to get user by userId!
+                                                    -   Service ID is required!
+                                                    -   Failed to get service by serviceId!
                 '401':
                     description: Unauthorized!
                     content:
@@ -3165,7 +3179,7 @@ paths:
         post:
             tags:
                 -   Service
-            summary: Create new service by ADMIN (NEW 05/03)
+            summary: Create new service by ADMIN (UPDATED 11/03)
             description: Create new service by ADMIN
             operationId: createNewService
             requestBody:
@@ -3177,11 +3191,18 @@ paths:
                                 serviceName:
                                     type: string
                                     enum:
-                                        -   Create New Property
+                                        -   For Sale - 60 Days
+                                duration:
+                                    type: number
+
+                                    enum:
+                                        - 15
+                                        - 30
+                                        - 60
                                 price:
                                     type: number
                                     format: decimal(10,2)
-                                    example: 20
+                                    example: 50
             responses:
                 '201':
                     description: Create new service successfully!
@@ -5482,6 +5503,11 @@ components:
         Property:
             type: object
             properties:
+                remainingTime:
+                        type: number
+                        format: bigint
+                        example: 1295244036
+                        description: Remaining time to expire the property in milliseconds
                 propertyId:
                     type: number
                     example: 17
@@ -5535,6 +5561,15 @@ components:
                     example: West
                 description:
                     type: string
+                expiresAt:
+                    type: string
+                    format: date-time
+                    example: 2024-01-24T05:52:44.000Z
+                savedRemainingRentalTime:
+                    type: number
+                    format: bigint
+                    default: 0
+                    description: Saved remaining rental time in milliseconds
                 createdAt:
                     type: string
                     format: date-time
@@ -5546,6 +5581,11 @@ components:
         PropertyJoinedAllTable:
             type: object
             properties:
+                remainingTime:
+                    type: number
+                    format: bigint
+                    example: 1295244036
+                    description: Remaining time to expire the property in milliseconds
                 propertyId:
                     type: number
                     example: 1
@@ -5591,6 +5631,15 @@ components:
                     example: West
                 description:
                     type: string
+                expiresAt:
+                    type: string
+                    format: date-time
+                    example: 2024-01-24T05:52:44.000Z
+                savedRemainingRentalTime:
+                    type: number
+                    format: bigint
+                    default: 0
+                    description: Saved remaining rental time in milliseconds
                 createdAt:
                     type: string
                     format: date-time
@@ -5964,6 +6013,11 @@ components:
         PropertyOfSeller:
             type: object
             properties:
+                remainingTime:
+                    type: number
+                    format: bigint
+                    example: 1295244036
+                    description: Remaining time to expire the property in milliseconds
                 propertyId:
                     type: number
                     example: 1
@@ -6009,6 +6063,15 @@ components:
                     example: West
                 description:
                     type: string
+                expiresAt:
+                    type: string
+                    format: date-time
+                    example: 2024-01-24T05:52:44.000Z
+                savedRemainingRentalTime:
+                    type: number
+                    format: bigint
+                    default: 0
+                    description: Saved remaining rental time in milliseconds
                 createdAt:
                     type: string
                     format: date-time
@@ -6140,6 +6203,7 @@ components:
                         type: string
                         description: Link to images of the Boutique Hotel
             required:
+                - "amount"
                 - "name"
                 - "code"
                 - "featureId"
@@ -6333,14 +6397,14 @@ components:
                     example: 1
                 serviceName:
                     type: string
-                    example: Create New Property
+                    example: 15-Day Rental Service
+                duration:
+                    type: number
+                    example: 15
                 price:
                     type: number
                     format: decimal(10,2)
-                    example: 20.00
-                isActive:
-                    type: boolean
-                    example: true
+                    example: "15.00"
                 createdAt:
                     type: string
                     format: date-time

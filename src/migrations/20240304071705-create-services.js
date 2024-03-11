@@ -13,14 +13,14 @@ module.exports = {
                 allowNull: false,
                 unique: true
             },
+            duration: {
+                type: Sequelize.INTEGER,
+                enum: [15, 30, 60],
+                allowNull: false
+            },
             price: {
                 type: Sequelize.DECIMAL(10, 2),
                 allowNull: false
-            },
-            isActive: {
-                type: Sequelize.BOOLEAN,
-                allowNull: false,
-                defaultValue: true
             },
             createdAt: {
                 allowNull: false,

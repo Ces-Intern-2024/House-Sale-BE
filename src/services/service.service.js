@@ -1,40 +1,17 @@
 const { BadRequestError } = require('../core/error.response')
 const { ERROR_MESSAGES } = require('../core/message.constant')
 const db = require('../models')
-const { userRepo } = require('../models/repo')
 
-const canRentService = async ({ userId, serviceId }) => {
+/**
+ * Create a new service
+ * @param {Object} params
+ * @param {string} params.serviceName - Name of the service
+ * @param {number} params.price - Price of the service
+ * @returns {Promise<boolean>}
+ */
+const createService = async (serviceBody) => {
     try {
-        const user = await userRepo.getUserById(userId)
-        if (!user) {
-            throw new BadRequestError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-        }
-        const { balance } = user
-
-        const service = await db.Services.findOne({
-            where: { serviceId }
-        })
-        if (!service) {
-            throw new BadRequestError(ERROR_MESSAGES.SERVICE.SERVICE_NOT_FOUND)
-        }
-        const { price } = service
-        if (Number(balance) < Number(price)) {
-            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.NOT_ENOUGH_CREDIT)
-        }
-    } catch (error) {
-        if (error instanceof BadRequestError) {
-            throw error
-        }
-        throw new BadRequestError(ERROR_MESSAGES.SERVICE.CAN_NOT_RENT_SERVICE)
-    }
-}
-
-const createService = async ({ serviceName, price }) => {
-    try {
-        await db.Services.create({
-            serviceName,
-            price
-        })
+        await db.Services.create(serviceBody)
     } catch (error) {
         throw new BadRequestError(ERROR_MESSAGES.SERVICE.CREATE_SERVICE)
     }
@@ -54,7 +31,6 @@ const getAllServices = async () => {
 }
 
 module.exports = {
-    canRentService,
     createService,
     getAllServices
 }

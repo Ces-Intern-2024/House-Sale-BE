@@ -102,6 +102,14 @@ module.exports = {
                     type: Sequelize.TEXT,
                     allowNull: true
                 },
+                expiresAt: {
+                    type: Sequelize.DATE,
+                    allowNull: true
+                },
+                savedRemainingRentalTime: {
+                    type: Sequelize.BIGINT,
+                    defaultValue: 0
+                },
                 createdAt: {
                     allowNull: false,
                     type: 'TIMESTAMP',
@@ -118,9 +126,6 @@ module.exports = {
                     {
                         unique: true,
                         fields: ['name']
-                    },
-                    {
-                        fields: ['locationId']
                     }
                 ]
             }

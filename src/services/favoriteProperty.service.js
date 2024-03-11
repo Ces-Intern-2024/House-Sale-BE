@@ -1,5 +1,3 @@
-const { NotFoundError } = require('../core/error.response')
-const { ERROR_MESSAGES } = require('../core/message.constant')
 const { userRepo, favoritePropertiesRepo } = require('../models/repo')
 
 /**
@@ -8,10 +6,7 @@ const { userRepo, favoritePropertiesRepo } = require('../models/repo')
  * @returns {Promise<[Properties]>}
  */
 const getFavoritesList = async (userId) => {
-    const user = await userRepo.getUserById(userId)
-    if (!user) {
-        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-    }
+    await userRepo.findUserById(userId)
 
     return favoritePropertiesRepo.getFavoritesList(userId)
 }
