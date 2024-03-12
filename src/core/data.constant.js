@@ -10,8 +10,13 @@ const ROLE_NAME = {
 }
 
 const TRANSACTION = {
-    EXPENSE_DESC: (message) => {
-        return `Create new property!. ID: ${message}`
+    EXPENSE_DESC: {
+        CREATE_NEW_PROPERTY: (message) => {
+            return `Create new property!. ID: ${message}`
+        },
+        UPDATE_STATUS: (message) => {
+            return `Update status property to Available!. ID: ${message}`
+        }
     },
     DEFAULT_DATE_RANGE: {
         FROM: () => new Date(new Date() - 7 * 24 * 60 * 60 * 1000),
@@ -105,7 +110,7 @@ const PROPERTY_STATUS_PERMISSION = {
 
     UPDATE: {
         Seller: {
-            [Op.or]: ['Available', 'Unavailable']
+            [Op.or]: ['Available']
         },
         Admin: {
             [Op.or]: ['Available', 'Unavailable', 'Disabled']
@@ -117,8 +122,12 @@ const PROPERTY_STATUS_PERMISSION = {
             [Op.or]: ['Available', 'Unavailable']
         },
         Admin: {
-            [Op.or]: ['Available', 'Unavailable', 'Disabled']
+            [Op.or]: ['Available', 'Unavailable']
         }
+    },
+
+    DISABLED: {
+        [Op.or]: ['Available', 'Unavailable']
     }
 }
 

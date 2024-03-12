@@ -60,15 +60,12 @@ const deleteProperty = {
     })
 }
 
-const updatePropertyStatus = {
-    params: Joi.object().required().keys({
-        propertyId: Joi.number().required()
-    }),
-    body: Joi.object()
-        .required()
-        .keys({
-            status: Joi.string().valid('Available', 'Unavailable', 'Disabled').required()
-        })
+const disableListProperties = {
+    query: Joi.object().keys({
+        propertyId: Joi.string()
+            .pattern(/^\d+(,\d+)*$/)
+            .message('propertyId must be a comma-separated list of numbers')
+    })
 }
 
 const getAllProperties = {
@@ -180,7 +177,7 @@ module.exports = {
     getAllRentServiceTransactions,
     getAllDepositTransactions,
     deleteProperty,
-    updatePropertyStatus,
+    disableListProperties,
     getProperty,
     getAllProperties,
     resetUserPassword,

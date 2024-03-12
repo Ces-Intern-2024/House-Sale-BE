@@ -40,7 +40,7 @@ const createProperty = async ({ propertyData, userId, option }) => {
                 amount: price,
                 balance,
                 serviceId,
-                description: TRANSACTION.EXPENSE_DESC(newProperty.propertyId)
+                description: TRANSACTION.EXPENSE_DESC.CREATE_NEW_PROPERTY(newProperty.propertyId)
             },
             transaction
         )
@@ -74,8 +74,8 @@ const deleteProperty = async ({ propertyId, userId }) => {
  * @param {string} status - status of property
  * @returns {Promise<boolean>}
  */
-const updatePropertyStatus = async ({ propertyId, status, userId }) => {
-    return propertyRepo.updatePropertyStatus({ propertyId, status, userId, role: ROLE_NAME.SELLER })
+const updatePropertyStatus = async ({ propertyId, status, userId, serviceId }) => {
+    return propertyRepo.updatePropertyStatus({ propertyId, status, userId, serviceId })
 }
 
 /**

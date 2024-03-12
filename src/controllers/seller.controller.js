@@ -14,8 +14,8 @@ const deleteProperty = async (req, res) => {
 const updatePropertyStatus = async (req, res) => {
     const userId = req.user?.userId
     const { propertyId } = req.params
-    const { status } = req.body
-    await sellerService.updatePropertyStatus({ propertyId, status, userId })
+    const { status, serviceId } = req.body
+    await sellerService.updatePropertyStatus({ propertyId, status, userId, serviceId })
     new OK({
         message: SUCCESS_MESSAGES.SELLER.UPDATE_PROPERTY_STATUS
     }).send(res)

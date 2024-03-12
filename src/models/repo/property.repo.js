@@ -1,17 +1,23 @@
+const moment = require('moment-timezone')
 const { Op } = require('sequelize')
 const db = require('..')
 const { BadRequestError, NotFoundError } = require('../../core/error.response')
-const { paginatedData, isValidKeyOfModel } = require('../../utils')
+const { paginatedData, isValidKeyOfModel, calculateSavedRemainingRentalTime } = require('../../utils')
 const {
     SCOPES,
     COMMON_EXCLUDE_ATTRIBUTES,
     PAGINATION_DEFAULT,
     COMMON_SCOPES,
     PROPERTY_STATUS_PERMISSION,
-    ROLE_NAME
+    ROLE_NAME,
+    PROPERTY_STATUS,
+    TRANSACTION,
+    TIMEZONE
 } = require('../../core/data.constant')
 const { ERROR_MESSAGES } = require('../../core/message.constant')
 const { findUserById } = require('./user.repo')
+const { findService } = require('./service.repo')
+const { checkBalance, createRentServiceTransactionAndUpdateUserBalance } = require('./transaction.repo')
 
 const getScopesArray = (scopes) => scopes.map((scope) => COMMON_SCOPES[scope])
 
@@ -207,10 +213,10 @@ const updateProperty = async ({ propertyId, userId, updatedData, role = ROLE_NAM
         throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
     }
 
-    const updatedProperty = await db.Properties.update(updatedData, {
+    const [updatedProperty] = await db.Properties.update(updatedData, {
         where: { ...where, status: PROPERTY_STATUS_PERMISSION.UPDATE[role] }
     })
-    if (!updatedProperty[0]) {
+    if (!updatedProperty) {
         throw new BadRequestError(ERROR_MESSAGES.PROPERTY.UPDATE)
     }
 }
@@ -224,21 +230,113 @@ const deleteProperty = async ({ propertyId, userId }) => {
     if (!deleted) throw new BadRequestError(ERROR_MESSAGES.PROPERTY.DELETE)
 }
 
-const updatePropertyStatus = async ({ propertyId, status, userId, role = ROLE_NAME.SELLER }) => {
-    const where = userId ? { propertyId, userId } : { propertyId }
-    const property = await db.Properties.findOne({ where: { ...where, status: PROPERTY_STATUS_PERMISSION.GET[role] } })
-    if (!property) throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
-
-    const updated = await db.Properties.update(
-        { status },
+const updatePropertyStatusFromAvailableToUnavailable = async ({ propertyId, expiresAt }, transaction) => {
+    const savedRemainingRentalTime = calculateSavedRemainingRentalTime(expiresAt)
+    const [updated] = await db.Properties.update(
+        { status: PROPERTY_STATUS.UNAVAILABLE, savedRemainingRentalTime, expiresAt: null },
         {
             where: {
-                ...where,
-                status: PROPERTY_STATUS_PERMISSION.UPDATE_STATUS[role]
-            }
+                propertyId,
+                status: PROPERTY_STATUS.AVAILABLE
+            },
+            transaction
         }
     )
-    if (!updated[0]) throw new BadRequestError(ERROR_MESSAGES.PROPERTY.UPDATE_STATUS)
+    if (!updated) throw new BadRequestError(ERROR_MESSAGES.PROPERTY.UPDATE_STATUS)
+}
+
+const updatePropertyStatusFromUnavailableToAvailable = async (
+    { propertyId, userId, balance, serviceId, savedRemainingRentalTime },
+    transaction
+) => {
+    let price = 0
+    let duration = 0
+
+    if (savedRemainingRentalTime <= 0 && !serviceId) {
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.NEED_CHOOSE_SERVICE_UPDATE_STATUS)
+    }
+
+    if (serviceId) {
+        const service = await findService(serviceId)
+        price = service.price
+        duration = service.duration
+        checkBalance(balance, price)
+    }
+
+    const expiresAt = moment().tz(TIMEZONE).add(duration, 'days').add(savedRemainingRentalTime, 'ms').toDate()
+    await db.Properties.update(
+        { status: PROPERTY_STATUS.AVAILABLE, expiresAt, savedRemainingRentalTime: 0 },
+        {
+            where: {
+                propertyId,
+                status: PROPERTY_STATUS.UNAVAILABLE
+            },
+            transaction
+        }
+    )
+
+    if (serviceId) {
+        await createRentServiceTransactionAndUpdateUserBalance(
+            {
+                userId,
+                amount: price,
+                balance,
+                serviceId,
+                description: TRANSACTION.EXPENSE_DESC.UPDATE_STATUS(propertyId)
+            },
+            transaction
+        )
+    }
+}
+
+const updatePropertyStatus = async ({ userId, propertyId, status, serviceId }) => {
+    const { balance } = await findUserById(userId)
+    const property = await db.Properties.findOne({
+        where: {
+            propertyId,
+            userId
+        }
+    })
+    if (!property) throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
+
+    if (property.status === PROPERTY_STATUS.DISABLED) {
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.CANNOT_UPDATE_STATUS_DISABLED)
+    }
+
+    if (property.status === status) {
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.UPDATE_STATUS_SAME)
+    }
+
+    const transaction = await db.sequelize.transaction()
+    try {
+        if (status === PROPERTY_STATUS.UNAVAILABLE) {
+            await updatePropertyStatusFromAvailableToUnavailable(
+                { propertyId, expiresAt: property.expiresAt },
+                transaction
+            )
+        }
+
+        if (status === PROPERTY_STATUS.AVAILABLE) {
+            await updatePropertyStatusFromUnavailableToAvailable(
+                {
+                    userId,
+                    propertyId,
+                    balance,
+                    serviceId,
+                    savedRemainingRentalTime: property.savedRemainingRentalTime
+                },
+                transaction
+            )
+        }
+
+        await transaction.commit()
+    } catch (error) {
+        await transaction.rollback()
+        if (error instanceof BadRequestError || error instanceof NotFoundError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.UPDATE_STATUS)
+    }
 }
 
 const createProperty = async ({ propertyOptions, locationId, userId, expiresAt }, transaction) => {
@@ -252,7 +350,40 @@ const createProperty = async ({ propertyOptions, locationId, userId, expiresAt }
     return newProperty
 }
 
+const disableProperty = async (propertyId, transaction) => {
+    const property = await db.Properties.findOne({ where: { propertyId } })
+    if (!property) throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
+    if (property.status === PROPERTY_STATUS.DISABLED)
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.CANNOT_UPDATE_STATUS_DISABLED)
+    const [updated] = await db.Properties.update(
+        { status: PROPERTY_STATUS.DISABLED },
+        {
+            where: {
+                propertyId,
+                status: PROPERTY_STATUS_PERMISSION.DISABLED
+            },
+            transaction
+        }
+    )
+    if (!updated) throw new BadRequestError(ERROR_MESSAGES.PROPERTY.FAILED_TO_DISABLED_PROPERTY)
+}
+
+const disableListProperties = async (propertyIds) => {
+    const transaction = await db.sequelize.transaction()
+    try {
+        await Promise.all(propertyIds.map((propertyId) => disableProperty(propertyId, transaction)))
+        await transaction.commit()
+    } catch (error) {
+        await transaction.rollback()
+        if (error instanceof BadRequestError || error instanceof NotFoundError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.FAILED_TO_DISABLED_LIST_PROPERTIES)
+    }
+}
+
 module.exports = {
+    disableListProperties,
     createProperty,
     getScopesArray,
     deleteProperty,

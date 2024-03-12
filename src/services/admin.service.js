@@ -77,14 +77,13 @@ const deleteProperty = async ({ propertyId }) => {
 }
 
 /**
- * Update property status by propertyId
- * @param {Object} params
+ * Disabled property by propertyId
  * @param {id} propertyId - id of property
- * @param {string} status - status of property
  * @returns {Promise<boolean>}
  */
-const updatePropertyStatus = async ({ propertyId, status }) => {
-    return propertyRepo.updatePropertyStatus({ propertyId, status, role: ROLE_NAME.ADMIN })
+const disableListProperties = async (propertyId) => {
+    const propertyIds = propertyId.split(',')
+    return propertyRepo.disableListProperties(propertyIds)
 }
 
 /** Get property by propertyId
@@ -174,7 +173,7 @@ module.exports = {
     getAllRentServiceTransactions,
     getAllDepositTransactions,
     deleteProperty,
-    updatePropertyStatus,
+    disableListProperties,
     getProperty,
     getAllProperties,
     resetUserPassword,

@@ -3,7 +3,6 @@ const db = require('..')
 const { TRANSACTION, PAGINATION_DEFAULT } = require('../../core/data.constant')
 const { NotFoundError, BadRequestError } = require('../../core/error.response')
 const { ERROR_MESSAGES } = require('../../core/message.constant')
-const { findUserById } = require('./user.repo')
 const { paginatedData, setStartAndEndDates } = require('../../utils')
 
 /**
@@ -114,7 +113,10 @@ const getAllRentServiceTransactions = async (query) => {
  * @returns {Promise<Object>}
  */
 const depositCredit = async ({ userId, info }) => {
-    const user = await findUserById(userId)
+    const user = await db.Users.findOne({ where: { userId } })
+    if (!user) {
+        throw new BadRequestError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+    }
     const { balance } = user
 
     const { amount, description } = info

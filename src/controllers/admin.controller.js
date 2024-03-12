@@ -69,12 +69,11 @@ const deleteProperty = async (req, res) => {
     }).send(res)
 }
 
-const updatePropertyStatus = async (req, res) => {
-    const { propertyId } = req.params
-    const { status } = req.body
-    await adminService.updatePropertyStatus({ propertyId, status })
+const disableListProperties = async (req, res) => {
+    const { propertyId } = req.query
+    await adminService.disableListProperties(propertyId)
     new OK({
-        message: SUCCESS_MESSAGES.ADMIN.UPDATE_PROPERTY_STATUS
+        message: SUCCESS_MESSAGES.ADMIN.DISABLED_LIST_PROPERTIES
     }).send(res)
 }
 
@@ -158,7 +157,7 @@ module.exports = {
     getAllRentServiceTransactions,
     getAllDepositTransactions,
     deleteProperty,
-    updatePropertyStatus,
+    disableListProperties,
     getProperty,
     getAllProperties,
     resetUserPassword,

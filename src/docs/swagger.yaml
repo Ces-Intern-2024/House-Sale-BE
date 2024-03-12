@@ -2104,8 +2104,8 @@ paths:
         patch:
             tags:
             -   Seller
-            summary: Update property by Id (UPDATED 04/03)
-            description: Update a property (Only property status Available or Unavailable can be updated by seller!)
+            summary: Update property by Id (UPDATED 12/03)
+            description: Update a property (Only property status Available can be updated by seller!)
             operationId: updateProperty
             parameters:
             -   name: propertyId
@@ -2316,7 +2316,7 @@ paths:
         patch:
             tags:
             -   Seller
-            summary: Update property status by Id (UPDATED 04/03)
+            summary: Update property status by Id (UPDATED 12/03)
             description: Update property status (Only property status Available or Unavailable can be updated status by seller!)
             operationId: updatePropertyStatusBySeller
             parameters:
@@ -2339,6 +2339,9 @@ paths:
                                     -   Available
                                     -   Unavailable
                                 example: Unavailable
+                            serviceId:
+                                type: number
+                                example: 1
                         required:
                           - "status"
             responses:
@@ -2373,7 +2376,17 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Failed to update property status!
+                                                enum:
+                                                    -   Failed to update property status!
+                                                    -   userId is required!
+                                                    -   Failed to get user by userId!
+                                                    -   You can not update status of disabled property!
+                                                    -   The property status is the same!
+                                                    -   You need to choose a service to update property status because you do not have available saved time!
+                                                    -   Service ID is required!
+                                                    -   Failed to get service by serviceId!
+                                                    -   Service not found!
+                                                    -   Your balance is not enough to use this service. Please refill your balance!
                 '401':
                     description: Unauthorized!
                     content:
@@ -4547,40 +4560,25 @@ paths:
                                                 example: Property not found!
             security:
                 - bearerAuth: []
-    /admin/manage-property/{propertyId}/status:
+    /admin/manage-property/disable:
         patch:
             tags:
             -   Admin - Manage Property
-            summary: Update property status by ADMIN (NEW)
-            description: Update property status by Id
+            summary: Disable list property by Id (UPDATED 12/03)
+            description: Disable list property by Id
             operationId: updatePropertyStatusByAdmin
             parameters:
-            -   name: propertyId
-                in: path
-                description: Id of property to update status
-                required: true
-                schema:
-                    type: number
-                    example: 5
-            requestBody:
-                content:
-                  application/json:
+                -   name: propertyId
+                    in: query
+                    description: List Id of property, comma-separated
+                    required: true
                     schema:
-                        type: object
-                        properties:
-                            status:
-                                type: string
-                                enum:
-                                    -   Available
-                                    -   Unavailable
-                                    -   Disabled
-                                    -   Deleted
-                                example: Unavailable
-                        required:
-                          - "status"
+                        type: string
+                        pattern: '^\d+(,\d+)*$'
+                        example: 69,70
             responses:
                 '200':
-                    description: Update property status successfully!
+                    description: List properties had been disabled successfully!
                     content:
                         application/json:
                             schema:
@@ -4591,14 +4589,12 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        enum:
-                                            - Property has been successfully activated!
-                                            - Property has been successfully deactivated!
+                                        example: List properties had been disabled successfully!
                                     metaData:
                                         type: object
                                         example: {}
                 '400':
-                    description: Failed to update property status!
+                    description: Failed to disabled property!
                     content:
                         application/json:
                             schema:
@@ -4613,7 +4609,9 @@ paths:
                                             message:
                                                 type: string
                                                 enum:
-                                                    -   Failed to update property status!
+                                                    -   You can not update status of disabled property!
+                                                    -   Failed to disabled property!
+                                                    -   Failed to disabled list properties!
                 '401':
                     description: Unauthorized!
                     content:
