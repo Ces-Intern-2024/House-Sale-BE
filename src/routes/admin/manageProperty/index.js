@@ -7,8 +7,8 @@ const { adminValidation } = require('../../../validations')
 const router = express.Router()
 
 router.get('', validate(adminValidation.getAllProperties), asyncHandler(adminController.getAllProperties))
+router.delete('', validate(adminValidation.deleteListProperties), asyncHandler(adminController.deleteListProperties))
 router.get('/:propertyId', validate(adminValidation.getProperty), asyncHandler(adminController.getProperty))
-router.delete('/:propertyId', validate(adminValidation.deleteProperty), asyncHandler(adminController.deleteProperty))
 router.patch(
     '/disable',
     validate(adminValidation.disableListProperties),

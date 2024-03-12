@@ -74,27 +74,36 @@ const updateUserActiveStatus = async (userId) => {
 
 /**
  * Delete user by id
- * @param {id} userId - the id of user
+ * @param {Id} userId - the id of user
  * @returns {Promise<Boolean>}
  */
 
-const deleteUserById = async (userId) => {
-    validateUserId(userId)
+const deleteUserById = async (userId, transaction) => {
+    const user = await db.Users.findByPk(userId)
+    if (!user) {
+        throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
+    }
+    await user.destroy({ transaction })
+}
 
+/**
+ * Delete list of users by admin
+ * @param {Array<Id>} userIds  - the list of user id
+ * @returns {Promise<Boolean>}
+ */
+const deleteListUsers = async (userIds) => {
+    const transaction = await db.sequelize.transaction()
     try {
-        const user = await db.Users.findByPk(userId)
-        if (!user) {
-            throw new NotFoundError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
-        }
-        await user.destroy()
+        await Promise.all(userIds.map((userId) => deleteUserById(userId, transaction)))
+        await transaction.commit()
     } catch (error) {
+        await transaction.rollback()
         if (error instanceof NotFoundError) {
             throw error
         }
-        throw new BadRequestError(ERROR_MESSAGES.USER.DELETE_USER)
+        throw new BadRequestError(ERROR_MESSAGES.USER.DELETE_LIST_USERS)
     }
 }
-
 /**
  * Get all users by admin
  * @param {object} queries - the queries from request contains limit, page, orderBy, sortBy, email, roleId, email-keyword
@@ -316,6 +325,7 @@ module.exports = {
     updateUserById,
     updateUserActiveStatus,
     deleteUserById,
+    deleteListUsers,
     getAllUsers,
     generateEmailVerificationCode,
     getUserProfileById,

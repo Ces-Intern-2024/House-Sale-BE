@@ -72,8 +72,9 @@ const getAllDepositTransactions = async (query) => {
  * @param {id} propertyId - id of property
  * @returns {Promise<boolean>}
  */
-const deleteProperty = async ({ propertyId }) => {
-    return propertyRepo.deleteProperty({ propertyId })
+const deleteListProperties = async (propertyId) => {
+    const propertyIds = propertyId.split(',')
+    return propertyRepo.deleteListProperties({ propertyIds })
 }
 
 /**
@@ -142,8 +143,9 @@ const updateUserActiveStatus = async (userId) => {
  * @param {id} userId - the id of user
  * @returns {Promise<Boolean>}
  */
-const deleteUserById = async (userId) => {
-    return userRepo.deleteUserById(userId)
+const deleteListUsers = async (userId) => {
+    const userIds = userId.split(',')
+    return userRepo.deleteListUsers(userIds)
 }
 
 /**
@@ -172,14 +174,14 @@ module.exports = {
     depositUserBalance,
     getAllRentServiceTransactions,
     getAllDepositTransactions,
-    deleteProperty,
+    deleteListProperties,
     disableListProperties,
     getProperty,
     getAllProperties,
     resetUserPassword,
     updateUserById,
     updateUserActiveStatus,
-    deleteUserById,
+    deleteListUsers,
     getUserById,
     getAllUsers
 }

@@ -2000,6 +2000,111 @@ paths:
                                                     -   Service not found!
             security:
               - bearerAuth: []
+        delete:
+            tags:
+            -   Seller
+            summary: Delete list property by propertyId (UPDATED 12-03)
+            description: Delete list property by propertyId
+            operationId: deletePropertyBySeller
+            parameters:
+                -   name: propertyId
+                    in: query
+                    description: List Id of property, comma-separated
+                    required: true
+                    schema:
+                        type: string
+                        pattern: '^\d+(,\d+)*$'
+                        example: 69,70
+            responses:
+                '200':
+                    description: Delete list properties successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Delete list properties successfully!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Failed to delete property!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Failed to delete property!
+                                                    -   Failed to delete list properties!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Unauthorized
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: Property not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: Property not found!
+            security:
+              - bearerAuth: []
     /seller/properties/{propertyId}:
         get:
             tags:
@@ -2155,108 +2260,6 @@ paths:
                                             message:
                                                 type: string
                                                 example: Failed to update property!
-                '401':
-                    description: Unauthorized!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 401
-                                            message:
-                                                type: string
-                                                enum:
-                                                    -   Please Authenticate!
-                                                    -   Unauthorized
-                                                    -   Invalid accessToken!
-                                                    -   Please verify your email!
-                                                    -   Permission denied!
-                '403':
-                    description: Your account is not active!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 403
-                                            message:
-                                                type: string
-                                                example: Your account is not active!
-                '404':
-                    description: Property not found!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 404
-                                            message:
-                                                type: string
-                                                example: Property not found!
-            security:
-              - bearerAuth: []
-        delete:
-            tags:
-            -   Seller
-            summary: Delete property by propertyId (UPDATED 04-03)
-            description: Delete a property by propertyId
-            operationId: deletePropertyBySeller
-            parameters:
-            -   name: propertyId
-                in: path
-                description: ID of property to delete
-                required: true
-                schema:
-                    type: number
-                    example: 31
-            responses:
-                '200':
-                    description: Delete property success!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    status:
-                                        type: number
-                                        example: 200
-                                    message:
-                                        type: string
-                                        example: Your property had been deleted successfully!
-                                    metaData:
-                                        type: object
-                                        example: {}
-                '400':
-                    description: Failed to delete property!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 400
-                                            message:
-                                                type: string
-                                                example: Failed to delete property!
                 '401':
                     description: Unauthorized!
                     content:
@@ -3566,6 +3569,109 @@ paths:
                                                 example: Your account is not active!
             security:
                 - bearerAuth: []
+        delete:
+            tags:
+            -   Admin - Manage User
+            summary: Delete list user by Id (UPDATED 12/03)
+            description: Delete list user by Id
+            operationId: deleteListUsersByAdmin
+            parameters:
+            -   name: userId
+                in: query
+                description: List id of user, comma-separated
+                required: true
+                schema:
+                    type: string
+                    pattern: '^\d+(,\d+)*$'
+                    example: 100,101
+
+            responses:
+                '200':
+                    description: Delete list properties successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example:  Delete list properties successfully!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Failed to delete list users!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to delete list users!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
+            security:
+                - bearerAuth: []
     /admin/manage-user/{userId}:
         get:
             tags:
@@ -3636,109 +3742,6 @@ paths:
                                                     -  Invalid accessToken!
                                                     - Please verify your email!
                                                     - Permission denied!
-                '403':
-                    description: Your account is not active!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 403
-                                            message:
-                                                type: string
-                                                example: Your account is not active!
-                '404':
-                    description: User not found!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 404
-                                            message:
-                                                type: string
-                                                example: User not found!
-            security:
-                - bearerAuth: []
-        delete:
-            tags:
-            -   Admin - Manage User
-            summary: Delete user by Id (NEW)
-            description: Delete a user by Id
-            operationId: deleteUserById
-            parameters:
-            -   name: userId
-                in: path
-                description: Id of user to delete
-                required: true
-                schema:
-                    type: number
-                    example: 5
-            responses:
-                '200':
-                    description: Delete user successfully!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    status:
-                                        type: number
-                                        example: 200
-                                    message:
-                                        type: string
-                                        example:  Delete user successfully!
-                                    metaData:
-                                        type: object
-                                        example: {}
-                '400':
-                    description: Failed to delete user!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 400
-                                            message:
-                                                type: string
-                                                enum:
-                                                    -   Failed to delete user!
-                                                    -   userId is required!
-                '401':
-                    description: Unauthorized!
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    error:
-                                        type: object
-                                        properties:
-                                            status:
-                                                type: number
-                                                example: 401
-                                            message:
-                                                type: string
-                                                enum:
-                                                    -   Please Authenticate!
-                                                    -   Invalid accessToken!
-                                                    -   Please verify your email!
-                                                    -   Permission denied!
                 '403':
                     description: Your account is not active!
                     content:
@@ -4374,16 +4377,24 @@ paths:
                                                 example: User not found!
             security:
                 - bearerAuth: []
-    /admin/manage-property/{propertyId}:
-        get:
+        delete:
             tags:
-            -   Admin - Manage Property
-            summary: Get property by ADMIN (NEW)
-            description: Returns a property by Id
-            operationId: getPropertyById
+                - Admin - Manage Property
+            summary: Delete list property by propertyId (UPDATED 12-03)
+            description: Delete list property by propertyId
+            operationId: deletePropertyBySeller
+            parameters:
+                -   name: propertyId
+                    in: query
+                    description: List Id of property, comma-separated
+                    required: true
+                    schema:
+                        type: string
+                        pattern: '^\d+(,\d+)*$'
+                        example: 69,70
             responses:
                 '200':
-                    description: Get property successfully!
+                    description: Delete list properties successfully!
                     content:
                         application/json:
                             schema:
@@ -4394,11 +4405,12 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example:  Get property successfully!
+                                        example: Delete list properties successfully!
                                     metaData:
-                                        $ref: '#/components/schemas/PropertyJoinedAllTable'
+                                        type: object
+                                        example: {}
                 '400':
-                    description: Failed to get property!
+                    description: Failed to delete property!
                     content:
                         application/json:
                             schema:
@@ -4412,7 +4424,9 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Failed to get property!
+                                                enum:
+                                                    -   Failed to delete property!
+                                                    -   Failed to delete list properties!
                 '401':
                     description: Unauthorized!
                     content:
@@ -4429,8 +4443,9 @@ paths:
                                             message:
                                                 type: string
                                                 enum:
-                                                    -  Please Authenticate!
-                                                    -  Invalid accessToken!
+                                                    -   Please Authenticate!
+                                                    -   Unauthorized
+                                                    -   Invalid accessToken!
                                                     -   Please verify your email!
                                                     -   Permission denied!
                 '403':
@@ -4466,16 +4481,17 @@ paths:
                                                 type: string
                                                 example: Property not found!
             security:
-                - bearerAuth: []
-        delete:
+              - bearerAuth: []
+    /admin/manage-property/{propertyId}:
+        get:
             tags:
             -   Admin - Manage Property
-            summary: Delete property by ADMIN (NEW)
-            description: Delete a property by Id
-            operationId: deletePropertyById
+            summary: Get property by ADMIN (NEW)
+            description: Returns a property by Id
+            operationId: getPropertyById
             responses:
                 '200':
-                    description: Delete property successfully!
+                    description: Get property successfully!
                     content:
                         application/json:
                             schema:
@@ -4486,10 +4502,9 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example: Delete property successfully!
+                                        example:  Get property successfully!
                                     metaData:
-                                        type: object
-                                        example: {}
+                                        $ref: '#/components/schemas/PropertyJoinedAllTable'
                 '400':
                     description: Failed to get property!
                     content:
