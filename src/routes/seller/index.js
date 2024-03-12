@@ -19,6 +19,11 @@ router.get(
     validate(propertyValidation.getAllProperties),
     asyncHandler(sellerController.getAllProperties)
 )
+router.delete(
+    '/properties',
+    validate(propertyValidation.deleteListProperties),
+    asyncHandler(sellerController.deleteListProperties)
+)
 router.get(
     '/properties/:propertyId',
     validate(propertyValidation.getProperty),
@@ -33,11 +38,6 @@ router.patch(
     '/properties/:propertyId/status',
     validate(propertyValidation.updatePropertyStatus),
     asyncHandler(sellerController.updatePropertyStatus)
-)
-router.delete(
-    '/properties/:propertyId',
-    validate(propertyValidation.deleteProperty),
-    asyncHandler(sellerController.deleteProperty)
 )
 
 module.exports = router

@@ -62,8 +62,9 @@ const createProperty = async ({ propertyData, userId, option }) => {
  * @param {id} userId - id of seller
  * @returns {Promise<boolean>}
  */
-const deleteProperty = async ({ propertyId, userId }) => {
-    return propertyRepo.deleteProperty({ propertyId, userId })
+const deleteListProperties = async ({ propertyId, userId }) => {
+    const propertyIds = propertyId.split(',')
+    return propertyRepo.deleteListProperties({ propertyIds, userId })
 }
 
 /**
@@ -117,7 +118,7 @@ const getAllProperties = async ({ options, userId }) => {
 
 module.exports = {
     createProperty,
-    deleteProperty,
+    deleteListProperties,
     updatePropertyStatus,
     updateProperty,
     getProperty,

@@ -54,9 +54,11 @@ const getAllDepositTransactions = {
     })
 }
 
-const deleteProperty = {
-    params: Joi.object().required().keys({
-        propertyId: Joi.number().required()
+const deleteListProperties = {
+    query: Joi.object().keys({
+        propertyId: Joi.string()
+            .pattern(/^\d+(,\d+)*$/)
+            .message('propertyId must be a comma-separated list of numbers')
     })
 }
 
@@ -143,10 +145,14 @@ const updateUserActiveStatus = {
         userId: Joi.number().required()
     })
 }
-const deleteUserById = {
-    params: Joi.object().required().keys({
-        userId: Joi.number().required()
-    })
+const deleteListUsers = {
+    query: Joi.object()
+        .required()
+        .keys({
+            userId: Joi.string()
+                .pattern(/^\d+(,\d+)*$/)
+                .message('userId must be a comma-separated list of numbers')
+        })
 }
 
 const getUserById = {
@@ -176,14 +182,14 @@ module.exports = {
     depositUserBalance,
     getAllRentServiceTransactions,
     getAllDepositTransactions,
-    deleteProperty,
+    deleteListProperties,
     disableListProperties,
     getProperty,
     getAllProperties,
     resetUserPassword,
     updateUserById,
     updateUserActiveStatus,
-    deleteUserById,
+    deleteListUsers,
     getUserById,
     getAllUsers
 }

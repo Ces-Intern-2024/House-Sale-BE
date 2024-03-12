@@ -61,11 +61,11 @@ const getAllDepositTransactions = async (req, res) => {
     }).send(res)
 }
 
-const deleteProperty = async (req, res) => {
-    const { propertyId } = req.params
-    await adminService.deleteProperty({ propertyId })
+const deleteListProperties = async (req, res) => {
+    const { propertyId } = req.query
+    await adminService.deleteListProperties(propertyId)
     new OK({
-        message: SUCCESS_MESSAGES.PROPERTY.DELETE
+        message: SUCCESS_MESSAGES.PROPERTY.DELETE_LIST_PROPERTIES
     }).send(res)
 }
 
@@ -123,11 +123,11 @@ const updateUserActiveStatus = async (req, res) => {
     }).send(res)
 }
 
-const deleteUserById = async (req, res) => {
-    const { userId } = req.params
-    await adminService.deleteUserById(userId)
+const deleteListUsers = async (req, res) => {
+    const { userId } = req.query
+    await adminService.deleteListUsers(userId)
     new OK({
-        message: SUCCESS_MESSAGES.ADMIN.DELETE_USER
+        message: SUCCESS_MESSAGES.ADMIN.DELETE_LIST_PROPERTIES
     }).send(res)
 }
 
@@ -156,14 +156,14 @@ module.exports = {
     depositUserBalance,
     getAllRentServiceTransactions,
     getAllDepositTransactions,
-    deleteProperty,
+    deleteListProperties,
     disableListProperties,
     getProperty,
     getAllProperties,
     resetUserPassword,
     updateUserById,
     updateUserActiveStatus,
-    deleteUserById,
+    deleteListUsers,
     getUserById,
     getAllUsers
 }

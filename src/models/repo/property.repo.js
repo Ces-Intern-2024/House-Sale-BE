@@ -221,13 +221,27 @@ const updateProperty = async ({ propertyId, userId, updatedData, role = ROLE_NAM
     }
 }
 
-const deleteProperty = async ({ propertyId, userId }) => {
+const deleteProperty = async ({ propertyId, userId }, transaction) => {
     const where = userId ? { propertyId, userId } : { propertyId }
     const property = await db.Properties.findOne({ where })
     if (!property) throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
 
-    const deleted = await db.Locations.destroy({ where: { locationId: property.locationId } })
-    if (!deleted) throw new BadRequestError(ERROR_MESSAGES.PROPERTY.DELETE)
+    const deleted = await db.Locations.destroy({ where: { locationId: property.locationId }, transaction })
+    if (!deleted) throw new BadRequestError(ERROR_MESSAGES.PROPERTY.DELETE_PROPERTY)
+}
+
+const deleteListProperties = async ({ propertyIds, userId }) => {
+    const transaction = await db.sequelize.transaction()
+    try {
+        await Promise.all(propertyIds.map((propertyId) => deleteProperty({ propertyId, userId }, transaction)))
+        await transaction.commit()
+    } catch (error) {
+        await transaction.rollback()
+        if (error instanceof BadRequestError || error instanceof NotFoundError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.DELETE_LIST_PROPERTIES)
+    }
 }
 
 const updatePropertyStatusFromAvailableToUnavailable = async ({ propertyId, expiresAt }, transaction) => {
@@ -383,6 +397,7 @@ const disableListProperties = async (propertyIds) => {
 }
 
 module.exports = {
+    deleteListProperties,
     disableListProperties,
     createProperty,
     getScopesArray,

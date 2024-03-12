@@ -2,12 +2,12 @@ const { sellerService } = require('../services')
 const { OK, Created } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
-const deleteProperty = async (req, res) => {
+const deleteListProperties = async (req, res) => {
     const userId = req.user?.userId
-    const { propertyId } = req.params
-    await sellerService.deleteProperty({ propertyId, userId })
+    const { propertyId } = req.query
+    await sellerService.deleteListProperties({ propertyId, userId })
     new OK({
-        message: SUCCESS_MESSAGES.SELLER.DELETE_PROPERTY
+        message: SUCCESS_MESSAGES.SELLER.DELETE_LIST_PROPERTY
     }).send(res)
 }
 
@@ -68,7 +68,7 @@ const getAllProperties = async (req, res) => {
 }
 
 module.exports = {
-    deleteProperty,
+    deleteListProperties,
     updatePropertyStatus,
     updateProperty,
     createNewProperty,

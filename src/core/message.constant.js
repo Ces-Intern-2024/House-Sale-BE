@@ -22,6 +22,7 @@ const SUCCESS_MESSAGES = {
         GET_USER: 'Get user successfully!',
         GET_ALL_USERS: 'Get list users successfully!',
         DELETE_USER: 'Delete user successfully!',
+        DELETE_LIST_PROPERTIES: 'Delete list properties successfully!',
         UPDATE_USER_ACTIVE_STATUS: {
             ACTIVE: 'User has been successfully activated!',
             INACTIVE: 'User has been successfully deactivated!'
@@ -52,7 +53,7 @@ const SUCCESS_MESSAGES = {
     PROPERTY: {
         GET_ALL: 'Get list properties successfully!',
         GET: 'Get property successfully!',
-        DELETE: 'Delete property successfully!'
+        DELETE_LIST_PROPERTIES: 'Delete list property successfully!'
     },
 
     SELLER: {
@@ -60,7 +61,7 @@ const SUCCESS_MESSAGES = {
         GET_PROPERTY: 'Get property successfully!',
         GET_ALL_PROPERTIES: 'Get list properties successfully!',
         UPDATE_PROPERTY: 'Your property had been updated successfully!',
-        DELETE_PROPERTY: 'Your property had been deleted successfully!',
+        DELETE_LIST_PROPERTY: 'Delete list properties successfully!',
         UPDATE_PROPERTY_STATUS: 'Your property status had been updated successfully!'
     },
 
@@ -131,6 +132,7 @@ const ERROR_MESSAGES = {
         GENERATE_EMAIL_VERIFICATION_CODE: 'Failed to generate email verification code!',
         GET_ALL_USERS: 'Failed to get all users!',
         DELETE_USER: 'Failed to delete user!',
+        DELETE_LIST_USERS: 'Failed to delete list users!',
         UPDATE_USER_ACTIVE_STATUS: 'Failed to update user active status!',
         FAILED_TO_UPDATE_USER: 'Failed to update user!',
         CAN_NOT_SAME_PHONE:
@@ -223,7 +225,8 @@ const ERROR_MESSAGES = {
         NOT_FOUND: 'Property not found!',
         CREATE: 'Failed to create new property!',
         UPDATE: 'Failed to update property!',
-        DELETE: 'Failed to delete property!',
+        DELETE_PROPERTY: 'Failed to delete property!',
+        DELETE_LIST_PROPERTIES: 'Failed to delete list properties!',
         UPDATE_STATUS: 'Failed to update property status!',
         VALIDATE_OPTIONS: 'Invalid options provided!',
         BOTH_ORDER_BY_SORT_BY: 'Both orderBy and sortBy must be provided together!',

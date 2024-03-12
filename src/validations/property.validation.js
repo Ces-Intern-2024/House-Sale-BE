@@ -91,15 +91,17 @@ const updatePropertyStatus = {
     })
 }
 
-const deleteProperty = {
-    params: Joi.object().required().keys({
-        propertyId: Joi.number().required()
+const deleteListProperties = {
+    query: Joi.object().keys({
+        propertyId: Joi.string()
+            .pattern(/^\d+(,\d+)*$/)
+            .message('propertyId must be a comma-separated list of numbers')
     })
 }
 
 module.exports = {
     updatePropertyStatus,
-    deleteProperty,
+    deleteListProperties,
     updateProperty,
     createNewProperty,
     getProperty,
