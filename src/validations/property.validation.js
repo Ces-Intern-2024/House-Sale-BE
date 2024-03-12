@@ -86,7 +86,8 @@ const updatePropertyStatus = {
         propertyId: Joi.number().required()
     }),
     body: Joi.object().keys({
-        status: Joi.string().valid('Available', 'Unavailable').required()
+        status: Joi.string().valid('Available', 'Unavailable').required(),
+        serviceId: Joi.number()
     })
 }
 

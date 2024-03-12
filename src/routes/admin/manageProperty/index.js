@@ -10,9 +10,9 @@ router.get('', validate(adminValidation.getAllProperties), asyncHandler(adminCon
 router.get('/:propertyId', validate(adminValidation.getProperty), asyncHandler(adminController.getProperty))
 router.delete('/:propertyId', validate(adminValidation.deleteProperty), asyncHandler(adminController.deleteProperty))
 router.patch(
-    '/:propertyId/status',
-    validate(adminValidation.updatePropertyStatus),
-    asyncHandler(adminController.updatePropertyStatus)
+    '/disable',
+    validate(adminValidation.disableListProperties),
+    asyncHandler(adminController.disableListProperties)
 )
 
 module.exports = router

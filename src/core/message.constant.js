@@ -28,7 +28,8 @@ const SUCCESS_MESSAGES = {
         },
         UPDATE_USER: 'Update user successfully!',
         RESET_USER_PASSWORD: `Reset user password successfully! New password has been sent to user's email!`,
-        UPDATE_PROPERTY_STATUS: 'Property status had been updated successfully!'
+        UPDATE_PROPERTY_STATUS: 'Property status had been updated successfully!',
+        DISABLED_LIST_PROPERTIES: 'List properties had been disabled successfully!'
     },
 
     FEATURE: {
@@ -225,7 +226,13 @@ const ERROR_MESSAGES = {
         DELETE: 'Failed to delete property!',
         UPDATE_STATUS: 'Failed to update property status!',
         VALIDATE_OPTIONS: 'Invalid options provided!',
-        BOTH_ORDER_BY_SORT_BY: 'Both orderBy and sortBy must be provided together!'
+        BOTH_ORDER_BY_SORT_BY: 'Both orderBy and sortBy must be provided together!',
+        UPDATE_STATUS_SAME: 'The property status is the same!',
+        CANNOT_UPDATE_STATUS_DISABLED: 'You can not update status of disabled property!',
+        NEED_CHOOSE_SERVICE_UPDATE_STATUS:
+            'You need to choose a service to update property status because you do not have available saved time!',
+        FAILED_TO_DISABLED_PROPERTY: 'Failed to disabled property!',
+        FAILED_TO_DISABLED_LIST_PROPERTIES: 'Failed to disabled list properties!'
     },
 
     TRANSACTION: {
