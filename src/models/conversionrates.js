@@ -14,10 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     ConversionRates.init(
         {
             conversionRateId: {
-                type: DataTypes.INTEGER,
-                primaryKey: true,
                 allowNull: false,
-                autoIncrement: true
+                unique: true,
+                defaultValue: 1,
+                primaryKey: true,
+                type: DataTypes.INTEGER
             },
             currencyFrom: {
                 type: DataTypes.STRING,
@@ -29,10 +30,6 @@ module.exports = (sequelize, DataTypes) => {
             },
             exchangeRate: {
                 type: DataTypes.DECIMAL(10, 2),
-                allowNull: false
-            },
-            effectiveDate: {
-                type: DataTypes.DATE,
                 allowNull: false
             }
         },

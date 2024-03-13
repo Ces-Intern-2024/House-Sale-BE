@@ -1,5 +1,87 @@
 const { ROLE_NAME, TRANSACTION } = require('../core/data.constant')
-const { userRepo, propertyRepo, transactionRepo, categoryRepo } = require('../models/repo')
+const {
+    userRepo,
+    propertyRepo,
+    transactionRepo,
+    categoryRepo,
+    conversionRateRepo,
+    serviceRepo
+} = require('../models/repo')
+
+/**
+ * Delete service by list of serviceId
+ * @param {Array<id>} serviceId - the list id of service to delete
+ * @returns {Promise<boolean>}
+ */
+const deleteListServices = async (serviceIdList) => {
+    const serviceIds = serviceIdList.split(',')
+    return serviceRepo.deleteListServices(serviceIds)
+}
+
+/**
+ * Update service by serviceId
+ * @param {id} serviceId
+ * @param {Object} updateBody
+ * @returns {Promise<boolean>}
+ */
+const updateService = async (serviceId, updateBody) => {
+    return serviceRepo.updateService(serviceId, updateBody)
+}
+
+/**
+ * Create a new service
+ * @param {Object} params
+ * @param {string} params.serviceName - Name of the service
+ * @param {number} params.price - Price of the service
+ * @returns {Promise<boolean>}
+ */
+const createService = async (serviceBody) => {
+    return serviceRepo.createService(serviceBody)
+}
+
+/**
+ * Get all services
+ * @returns {Promise<Service>}
+ */
+const getAllServices = async () => {
+    return serviceRepo.getAllServices()
+}
+
+/**
+ * Delete conversion rate by conversionRateId
+ * @param {id} conversionRateId - conversion rate id
+ * @returns {Promise<boolean>}
+ */
+const deleteConversionRate = async (conversionRateId) => {
+    return conversionRateRepo.deleteConversionRate(conversionRateId)
+}
+
+/**
+ * Update conversion rate
+ * @param {id} conversionRateId - conversion rate id
+ * @param {id} newExchangeRate - new exchange rate
+ * @returns {Promise<boolean>}
+ */
+const updateConversionRate = async (conversionRateId, newExchangeRate) => {
+    return conversionRateRepo.updateConversionRate(conversionRateId, newExchangeRate)
+}
+
+/**
+ * Create new conversion rate
+ * @param {Object} conversionRateBody
+ * @returns {Promise<boolean>}
+ */
+const createConversionRate = async (conversionRateBody) => {
+    return conversionRateRepo.createConversionRate(conversionRateBody)
+}
+
+/**
+ * Get all services
+ * @returns {Promise<ConversionRate[]>}
+ */
+const getAllConversionRates = async () => {
+    return conversionRateRepo.getAllConversionRates()
+}
 
 /**
  * Delete category by categoryId
@@ -167,6 +249,14 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    deleteListServices,
+    updateService,
+    createService,
+    getAllServices,
+    deleteConversionRate,
+    updateConversionRate,
+    createConversionRate,
+    getAllConversionRates,
     deleteCategory,
     updateCategory,
     createCategory,

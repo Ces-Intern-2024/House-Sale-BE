@@ -76,12 +76,17 @@ const SUCCESS_MESSAGES = {
 
     SERVICE: {
         GET_ALL_SERVICES: 'Get list services successfully!',
-        CREATE_SERVICE: 'Create new service successfully!'
+        CREATE_SERVICE: 'Create new service successfully!',
+        UPDATE_SERVICE: 'Update service successfully!',
+        DELETE_SERVICE: 'Delete service successfully!',
+        DELETE_LIST_SERVICE: 'Delete list services successfully!'
     },
 
     CONVERSION_RATE: {
         GET_ALL_CONVERSION_RATES: 'Get list conversion rates successfully!',
-        CREATE_CONVERSION_RATE: 'Create new conversion rate successfully!'
+        CREATE_CONVERSION_RATE: 'Create new conversion rate successfully!',
+        UPDATE_CONVERSION_RATE: 'Update conversion rate successfully!',
+        DELETE_CONVERSION_RATE: 'Delete conversion rate successfully!'
     },
 
     TRANSACTION: {
@@ -275,12 +280,22 @@ const ERROR_MESSAGES = {
         SERVICE_ID_IS_REQUIRED: 'Service ID is required!',
         GET_SERVICE_BY_ID: 'Failed to get service by serviceId!',
         MINIMUM_SERVICE_RENTAL_PERIOD: 'Minimum rental period is 15 day!',
-        INVALID_SERVICE_RENTAL_PERIOD: 'Invalid rental period!'
+        INVALID_SERVICE_RENTAL_PERIOD: 'Invalid rental period!',
+        SAME_PRICE: 'New price must be different from the current price!',
+        SAME_SERVICE_NAME: 'New service name must be different from the current service name!',
+        SAME_DURATION: 'New duration must be different from the current duration!',
+        UPDATE_SERVICE: 'Failed to update service!',
+        DELETE_SERVICE: 'Failed to delete service!',
+        DELETE_LIST_SERVICE: 'Failed to delete list services!'
     },
 
     CONVERSION_RATE: {
         GET_ALL_CONVERSION_RATES: 'Failed to get list conversion rates!',
-        CREATE_CONVERSION_RATE: 'Failed to create new conversion rate!'
+        CREATE_CONVERSION_RATE: 'Failed to create new conversion rate!',
+        UPDATE_CONVERSION_RATE: 'Failed to update conversion rate!',
+        CONVERSION_RATE_NOT_FOUND: 'Conversion rate not found!',
+        SAME_EXCHANGE_RATE: 'New exchange rate must be different from the current exchange rate!',
+        DELETE_CONVERSION_RATE: 'Failed to delete conversion rate!'
     }
 }
 

@@ -15,7 +15,8 @@ module.exports = {
             },
             duration: {
                 type: Sequelize.INTEGER,
-                enum: [15, 30, 60],
+                enum: [15, 30, 60, 90, 120],
+                unique: true,
                 allowNull: false
             },
             price: {
