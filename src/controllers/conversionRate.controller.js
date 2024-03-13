@@ -1,13 +1,6 @@
 const { conversionRateService } = require('../services')
-const { OK, Created } = require('../core/success.response')
+const { OK } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
-
-const createConversionRate = async (req, res) => {
-    await conversionRateService.createConversionRate(req.body)
-    new Created({
-        message: SUCCESS_MESSAGES.CONVERSION_RATE.CREATE_CONVERSION_RATE
-    }).send(res)
-}
 
 const getAllConversionRates = async (req, res) => {
     const listConversionRates = await conversionRateService.getAllConversionRates()
@@ -18,6 +11,5 @@ const getAllConversionRates = async (req, res) => {
 }
 
 module.exports = {
-    createConversionRate,
     getAllConversionRates
 }

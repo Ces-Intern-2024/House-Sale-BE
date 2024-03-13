@@ -1,7 +1,70 @@
 const { adminService, emailService } = require('../services')
-const { OK } = require('../core/success.response')
+const { OK, Created } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const deleteService = async (req, res) => {
+    const { serviceId: serviceIdList } = req.query
+    await adminService.deleteListServices(serviceIdList)
+    new OK({
+        message: SUCCESS_MESSAGES.SERVICE.DELETE_LIST_SERVICE
+    }).send(res)
+}
+
+const updateService = async (req, res) => {
+    const { serviceId } = req.params
+    const updateBody = req.body
+    await adminService.updateService(serviceId, updateBody)
+    new OK({
+        message: SUCCESS_MESSAGES.SERVICE.UPDATE_SERVICE
+    }).send(res)
+}
+
+const createService = async (req, res) => {
+    await adminService.createService(req.body)
+    new Created({
+        message: SUCCESS_MESSAGES.SERVICE.CREATE_SERVICE
+    }).send(res)
+}
+
+const getAllServices = async (req, res) => {
+    const listServices = await adminService.getAllServices()
+    new OK({
+        message: SUCCESS_MESSAGES.SERVICE.GET_ALL_SERVICES,
+        metaData: listServices
+    }).send(res)
+}
+
+const deleteConversionRate = async (req, res) => {
+    const { conversionRateId } = req.params
+    await adminService.deleteConversionRate(conversionRateId)
+    new OK({
+        message: SUCCESS_MESSAGES.CONVERSION_RATE.DELETE_CONVERSION_RATE
+    }).send(res)
+}
+
+const updateConversionRate = async (req, res) => {
+    const { conversionRateId } = req.params
+    const { newExchangeRate } = req.body
+    await adminService.updateConversionRate(conversionRateId, newExchangeRate)
+    new OK({
+        message: SUCCESS_MESSAGES.CONVERSION_RATE.UPDATE_CONVERSION_RATE
+    }).send(res)
+}
+
+const createConversionRate = async (req, res) => {
+    await adminService.createConversionRate(req.body)
+    new Created({
+        message: SUCCESS_MESSAGES.CONVERSION_RATE.CREATE_CONVERSION_RATE
+    }).send(res)
+}
+
+const getAllConversionRates = async (req, res) => {
+    const listConversionRates = await adminService.getAllConversionRates()
+    new OK({
+        message: SUCCESS_MESSAGES.CONVERSION_RATE.GET_ALL_CONVERSION_RATES,
+        metaData: listConversionRates
+    }).send(res)
+}
 const deleteCategory = async (req, res) => {
     const { categoryId } = req.params
     await adminService.deleteCategory(categoryId)
@@ -149,6 +212,14 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    deleteService,
+    updateService,
+    createService,
+    getAllServices,
+    deleteConversionRate,
+    updateConversionRate,
+    createConversionRate,
+    getAllConversionRates,
     deleteCategory,
     updateCategory,
     createCategory,

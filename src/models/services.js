@@ -21,7 +21,8 @@ module.exports = (sequelize, DataTypes) => {
             },
             duration: {
                 type: DataTypes.INTEGER,
-                enum: [15, 30, 60],
+                enum: [15, 30, 60, 90, 120],
+                unique: true,
                 allowNull: false
             },
             price: {

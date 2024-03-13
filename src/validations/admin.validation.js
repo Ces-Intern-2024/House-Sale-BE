@@ -1,5 +1,69 @@
 const Joi = require('joi')
 
+const manageService = {
+    deleteService: {
+        query: Joi.object().keys({
+            serviceId: Joi.string()
+                .pattern(/^\d+(,\d+)*$/)
+                .message('serviceId must be a comma-separated list of numbers')
+        })
+    },
+    updateService: {
+        params: Joi.object().required().keys({
+            serviceId: Joi.number().required()
+        }),
+        body: Joi.object()
+            .required()
+            .keys({
+                serviceName: Joi.string(),
+                duration: Joi.number().valid(15, 30, 60, 90, 120),
+                price: Joi.number()
+            })
+    },
+    createService: {
+        body: Joi.object()
+            .required()
+            .keys({
+                serviceName: Joi.string().required(),
+                duration: Joi.number().required().valid(15, 30, 60, 90, 120),
+                price: Joi.number().required()
+            })
+    }
+}
+
+const manageConversionRate = {
+    deleteConversionRate: {
+        params: Joi.object().required().keys({
+            conversionRateId: Joi.number().required()
+        })
+    },
+
+    updateConversionRate: {
+        params: Joi.object().required().keys({
+            conversionRateId: Joi.number().required()
+        }),
+        body: Joi.object()
+            .required()
+            .keys({
+                newExchangeRate: Joi.number().greater(0).required()
+            })
+    },
+
+    createConversionRate: {
+        body: Joi.object()
+            .required()
+            .keys({
+                currencyFrom: Joi.string().required().valid('USD').messages({
+                    'any.only': 'Currency from must be USD'
+                }),
+                currencyTo: Joi.string().required().valid('Credit').messages({
+                    'any.only': 'Currency to must be Credit'
+                }),
+                exchangeRate: Joi.number().greater(0).required()
+            })
+    }
+}
+
 const deleteCategory = {
     params: Joi.object().required().keys({
         categoryId: Joi.number().required()
@@ -176,6 +240,8 @@ const getAllUsers = {
 }
 
 module.exports = {
+    manageService,
+    manageConversionRate,
     deleteCategory,
     updateCategory,
     createCategory,

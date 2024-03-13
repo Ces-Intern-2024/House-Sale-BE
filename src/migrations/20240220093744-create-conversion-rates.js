@@ -4,7 +4,8 @@ module.exports = {
         await queryInterface.createTable('ConversionRates', {
             conversionRateId: {
                 allowNull: false,
-                autoIncrement: true,
+                unique: true,
+                defaultValue: 1,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
@@ -19,15 +20,6 @@ module.exports = {
             exchangeRate: {
                 type: Sequelize.DECIMAL(10, 2),
                 allowNull: false
-            },
-            effectiveDate: {
-                type: Sequelize.DATE,
-                allowNull: false
-            },
-            isActive: {
-                type: Sequelize.BOOLEAN,
-                allowNull: false,
-                defaultValue: true
             },
             createdAt: {
                 allowNull: false,
