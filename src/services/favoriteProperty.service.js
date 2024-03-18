@@ -7,7 +7,6 @@ const { userRepo, favoritePropertiesRepo } = require('../models/repo')
  */
 const getFavoritesList = async (userId) => {
     await userRepo.findUserById(userId)
-
     return favoritePropertiesRepo.getFavoritesList(userId)
 }
 
@@ -19,6 +18,7 @@ const getFavoritesList = async (userId) => {
  * @returns {Promise<Boolean>}
  */
 const updateFavoriteProperty = async ({ userId, propertyId }) => {
+    await userRepo.findUserById(userId)
     return favoritePropertiesRepo.updateFavoriteProperty({ userId, propertyId })
 }
 

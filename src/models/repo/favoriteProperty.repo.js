@@ -3,7 +3,6 @@ const { SCOPES, PROPERTY_STATUS } = require('../../core/data.constant')
 const { BadRequestError, NotFoundError } = require('../../core/error.response')
 const { ERROR_MESSAGES } = require('../../core/message.constant')
 const { getScopesArray } = require('./property.repo')
-const { findUserById } = require('./user.repo')
 
 const getFavoritesList = async (userId) => {
     try {
@@ -13,8 +12,7 @@ const getFavoritesList = async (userId) => {
                 {
                     model: db.Properties,
                     as: 'propertyInfo',
-                    include: getScopesArray(SCOPES.PROPERTY.GET.User),
-                    where: { status: PROPERTY_STATUS.AVAILABLE }
+                    include: getScopesArray(SCOPES.PROPERTY.GET.User)
                 }
             ],
             distinct: true,
@@ -29,26 +27,35 @@ const getFavoritesList = async (userId) => {
 }
 
 const updateFavoriteProperty = async ({ userId, propertyId }) => {
-    try {
-        await findUserById(userId)
+    const transaction = await db.sequelize.transaction()
 
+    try {
         const property = await db.Properties.findOne({
-            where: { propertyId, status: PROPERTY_STATUS.AVAILABLE }
+            where: { propertyId }
         })
         if (!property) {
             throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
         }
 
         const [newFavoriteProperty, created] = await db.FavoriteProperties.findOrCreate({
-            where: { userId, propertyId }
+            where: { userId, propertyId },
+            transaction
         })
-        if (!created) {
+        if (created) {
+            if (property.status !== PROPERTY_STATUS.AVAILABLE) {
+                throw new BadRequestError(ERROR_MESSAGES.FAVORITES_LIST.PROPERTY_NOT_AVAILABLE)
+            }
+        } else {
             return db.FavoriteProperties.destroy({ where: { userId, propertyId } })
         }
+
         if (!newFavoriteProperty) {
             throw new BadRequestError(ERROR_MESSAGES.FAVORITES_LIST.FAILED_TO_ADD_TO_FAVORITES_LIST)
         }
+
+        await transaction.commit()
     } catch (error) {
+        await transaction.rollback()
         if (error instanceof BadRequestError || error instanceof NotFoundError) {
             throw error
         }

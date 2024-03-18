@@ -15,8 +15,8 @@ tags:
     -   name: Service
     -   name: Conversion Rate
     -   name: User
-    -   name: Seller
     -   name: Favorite Property
+    -   name: Seller
     -   name: Transaction
     -   name: Admin - Manage Category
     -   name: Admin - Manage User
@@ -1878,7 +1878,7 @@ paths:
         post:
             tags:
                 - Seller
-            summary: Create new property by seller (UPDATED 05/03)
+            summary: Create new property by seller (UPDATED 18/03)
             description: Create new property by seller
             operationId: createNewProperty
             requestBody:
@@ -2530,8 +2530,8 @@ paths:
         get:
             tags:
               - "Favorite Property"
-            summary: Get all properties in user's favorites list (UPDATED 04/03)
-            description: Get all properties has status "Available" in user's favorites list
+            summary: Get all properties in user's favorites list (UPDATED 18/03)
+            description: Get all properties in user's favorites list
             operationId: getFavoritesProperty
             responses:
                 '200':
@@ -2631,7 +2631,7 @@ paths:
             tags:
                 - "Favorite Property"
             summary: Update user's favorites list (UPDATED 04/03)
-            description: Add property (only property has status "Available") to favorites list or remove property from favorites list if it already exists.
+            description: Add property (only property has status "Available") to favorites list or remove property (all status) from favorites list if it already exists.
             operationId: updateFavoritesProperty
             requestBody:
                 content:
@@ -2677,6 +2677,7 @@ paths:
                                             message:
                                                 type: string
                                                 enum:
+                                                    -   This property is not available!
                                                     -   Failed to add to favorites list!
                                                     -   Failed to update favorite property!
                 '401':
@@ -6148,9 +6149,6 @@ components:
                 name:
                     type: string
                     example: Apartment for sale at Alphanam Luxury Apartment Danang
-                code:
-                    type: string
-                    example: A1293
                 featureId:
                     type: number
                     example: 1
@@ -6223,9 +6221,6 @@ components:
                 name:
                     type: string
                     example: Apartment for sale at Alphanam Luxury Apartment Danang
-                code:
-                    type: string
-                    example: A1293
                 price:
                     type: number
                     format: decimal(10,2)
@@ -6655,9 +6650,6 @@ components:
                 name:
                     type: string
                     example: Apartment for sale at Alphanam Luxury Apartment Danang
-                code:
-                    type: string
-                    example: A1293
                 price:
                     type: number
                     format: decimal(10,2)
@@ -6766,9 +6758,6 @@ components:
                 name:
                     type: string
                     example: "Boutique Hotel For Sale - 7 Suite Room in Son Tra District, Beach Area"
-                code:
-                    type: string
-                    example: KS04
                 featureId:
                     type: number
                     enum:
@@ -6836,7 +6825,6 @@ components:
             required:
                 - "amount"
                 - "name"
-                - "code"
                 - "featureId"
                 - "categoryId"
                 - "provinceCode"
@@ -6855,9 +6843,6 @@ components:
                 name:
                     type: string
                     example: "Boutique Hotel For Sale - 7 Suite Room in Son Tra District, Beach Area"
-                code:
-                    type: string
-                    example: CODE99
                 landArea:
                     type: number
                     format: decimal(10,2)

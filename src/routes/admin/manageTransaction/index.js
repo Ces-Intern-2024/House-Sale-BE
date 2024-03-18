@@ -8,18 +8,18 @@ const router = express.Router()
 
 router.get(
     '/deposit',
-    validate(adminValidation.getAllDepositTransactions),
+    validate(adminValidation.manageTransaction.getAllDepositTransactions),
     asyncHandler(adminController.getAllDepositTransactions)
 )
 router.post(
     '/deposit/:userId',
-    validate(adminValidation.depositUserBalance),
+    validate(adminValidation.manageTransaction.depositUserBalance),
     asyncHandler(adminController.depositUserBalance)
 )
 
 router.get(
     '/rent-service',
-    validate(adminValidation.getAllRentServiceTransactions),
+    validate(adminValidation.manageTransaction.getAllRentServiceTransactions),
     asyncHandler(adminController.getAllRentServiceTransactions)
 )
 
