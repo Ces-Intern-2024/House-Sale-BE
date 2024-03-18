@@ -267,6 +267,7 @@ const ERROR_MESSAGES = {
 
     FAVORITES_LIST: {
         GET_FAVORITES_LIST: 'Failed to get favorites list!',
+        PROPERTY_NOT_AVAILABLE: 'This property is not available!',
         UPDATE_FAVORITE_PROPERTY: 'Failed to update favorite property!',
         FAILED_TO_ADD_TO_FAVORITES_LIST: 'Failed to add to favorites list!'
     },

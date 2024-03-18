@@ -41,14 +41,13 @@ const createNewProperty = {
                 .required()
                 .keys({
                     name: Joi.string().required(),
-                    code: Joi.string().required(),
                     featureId: Joi.number().required(),
                     categoryId: Joi.number().required(),
                     provinceCode: Joi.string().required(),
                     districtCode: Joi.string().required(),
                     wardCode: Joi.string().required(),
                     street: Joi.string().required(),
-                    address: Joi.string().required(),
+                    address: Joi.string(),
                     landArea: Joi.number().required(),
                     areaOfUse: Joi.number().required(),
                     numberOfFloor: Joi.number().required(),
@@ -72,7 +71,6 @@ const updateProperty = {
     }),
     body: Joi.object().keys({
         name: Joi.string(),
-        code: Joi.string(),
         landArea: Joi.number(),
         areaOfUse: Joi.number(),
         price: Joi.number(),

@@ -7,8 +7,16 @@ const { adminValidation } = require('../../../validations')
 const router = express.Router()
 
 router.get('', asyncHandler(adminController.getAllCategories))
-router.post('', validate(adminValidation.createCategory), asyncHandler(adminController.createCategory))
-router.patch('/:categoryId', validate(adminValidation.updateCategory), asyncHandler(adminController.updateCategory))
-router.delete('/:categoryId', validate(adminValidation.deleteCategory), asyncHandler(adminController.deleteCategory))
+router.post('', validate(adminValidation.manageCategory.createCategory), asyncHandler(adminController.createCategory))
+router.patch(
+    '/:categoryId',
+    validate(adminValidation.manageCategory.updateCategory),
+    asyncHandler(adminController.updateCategory)
+)
+router.delete(
+    '/:categoryId',
+    validate(adminValidation.manageCategory.deleteCategory),
+    asyncHandler(adminController.deleteCategory)
+)
 
 module.exports = router

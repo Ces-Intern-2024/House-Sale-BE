@@ -25,11 +25,6 @@ module.exports = {
                     allowNull: false,
                     unique: true
                 },
-                code: {
-                    type: Sequelize.STRING,
-                    allowNull: true,
-                    unique: true
-                },
                 featureId: {
                     type: Sequelize.INTEGER,
                     references: {
