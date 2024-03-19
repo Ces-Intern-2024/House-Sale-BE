@@ -396,7 +396,33 @@ const disableListProperties = async (propertyIds) => {
     }
 }
 
+const countPropertiesByFeature = async (userId) => {
+    try {
+        const featureList = await db.Features.findAll({
+            attributes: ['featureId', 'name'],
+            raw: true
+        })
+
+        const data = await db.Properties.findAll({
+            attributes: ['featureId', [db.sequelize.fn('COUNT', db.sequelize.col('featureId')), 'count']],
+            where: { ...(userId ? { userId } : {}) },
+            group: ['featureId'],
+            raw: true
+        })
+
+        const featureWithCount = featureList.map((feature) => {
+            const count = data.find((item) => item.featureId === feature.featureId)?.count || 0
+            return { ...feature, count }
+        })
+
+        return featureWithCount
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.REPORT.COUNT_PROPERTIES_BY_FEATURE)
+    }
+}
+
 module.exports = {
+    countPropertiesByFeature,
     deleteListProperties,
     disableListProperties,
     createProperty,

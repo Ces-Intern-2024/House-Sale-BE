@@ -17,6 +17,7 @@ tags:
     -   name: User
     -   name: Favorite Property
     -   name: Seller
+    -   name: Seller - Report
     -   name: Transaction
     -   name: Admin - Manage Category
     -   name: Admin - Manage User
@@ -24,6 +25,7 @@ tags:
     -   name: Admin - Manage Transaction
     -   name: Admin - Manage Conversion Rate
     -   name: Admin - Manage Service
+    -   name: Admin - Report
 paths:
     /features:
         get:
@@ -2446,6 +2448,112 @@ paths:
                                                 example: Property not found!
             security:
                 - bearerAuth: []
+    /seller/report/count-properties-by-feature:
+        get:
+            tags:
+            -   Seller - Report
+            summary: Count properties by feature (NEW 19/03)
+            description: Return list count properties by feature
+            operationId: countPropertiesByFeatureOfSeller
+            responses:
+                '200':
+                    description: Counting properties by feature successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Counting properties by feature successfully!
+                                    metaData:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/CountPropertiesByFeature'
+                                        example:
+                                            -   featureId: 1
+                                                name: Sale
+                                                count: 0
+                                            -   featureId: 2
+                                                name: Rent
+                                                count: 8
+                '400':
+                    description: Failed to get count properties by feature!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Failed to get count properties by feature!
+                                                    -   userId is required!
+                                                    -   Failed to get user by userId!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
+            security:
+              - bearerAuth: []
+
     /contact:
         post:
             tags:
@@ -6129,6 +6237,93 @@ paths:
                                                 example: Service not found!
             security:
                 - bearerAuth: []
+    /admin/report/count-properties-by-feature:
+        get:
+            tags:
+            -   Admin - Report
+            summary: Count properties by feature (NEW 19/03)
+            description: Return count properties by feature
+            operationId: countPropertiesByFeature
+            responses:
+                '200':
+                    description: Counting properties by feature successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Counting properties by feature successfully!
+                                    metaData:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/CountPropertiesByFeature'
+                                        example:
+                                            -   featureId: 1
+                                                name: Sale
+                                                count: 6
+                                            -   featureId: 2
+                                                name: Rent
+                                                count: 17
+                '400':
+                    description: Failed to get count properties by feature!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Failed to count properties by feature!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+            security:
+              - bearerAuth: []
 
 components:
     schemas:
@@ -7055,6 +7250,19 @@ components:
                     type: string
                     format: date-time
                     example: 2024-03-04T08:52:53.000Z
+        CountPropertiesByFeature:
+            type: object
+            properties:
+                featureId:
+                    type: number
+                    example: 1
+                name:
+                    type: string
+                    example: Sale
+                count:
+                    type: number
+                    example: 5
+                    default: 0
     securitySchemes:
         bearerAuth:
             type: http

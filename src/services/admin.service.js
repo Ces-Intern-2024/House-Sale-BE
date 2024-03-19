@@ -9,6 +9,14 @@ const {
 } = require('../models/repo')
 
 /**
+ * Count properties by feature
+ * @returns {Promise<Object>} - List number of properties by feature
+ */
+const countPropertiesByFeature = async () => {
+    return propertyRepo.countPropertiesByFeature()
+}
+
+/**
  * Delete service by list of serviceId
  * @param {Array<id>} serviceId - the list id of service to delete
  * @returns {Promise<boolean>}
@@ -249,6 +257,7 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    countPropertiesByFeature,
     deleteListServices,
     updateService,
     createService,

@@ -10,5 +10,6 @@ router.use('/manage-property', require('./manageProperty'))
 router.use('/manage-transaction', require('./manageTransaction'))
 router.use('/manage-conversion-rate', require('./manageConversionRate'))
 router.use('/manage-service', require('./manageService'))
+router.use('/report', require('./report'))
 
 module.exports = router
