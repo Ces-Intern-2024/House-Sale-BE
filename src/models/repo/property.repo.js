@@ -421,7 +421,33 @@ const countPropertiesByFeature = async (userId) => {
     }
 }
 
+const countPropertiesByCategory = async (userId) => {
+    try {
+        const categoryList = await db.Categories.findAll({
+            attributes: ['categoryId', 'name'],
+            raw: true
+        })
+
+        const data = await db.Properties.findAll({
+            attributes: ['categoryId', [db.sequelize.fn('COUNT', db.sequelize.col('categoryId')), 'count']],
+            where: { ...(userId ? { userId } : {}) },
+            group: ['categoryId'],
+            raw: true
+        })
+
+        const categoryWithCount = categoryList.map((category) => {
+            const count = data.find((item) => item.categoryId === category.categoryId)?.count || 0
+            return { ...category, count }
+        })
+
+        return categoryWithCount
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.REPORT.COUNT_PROPERTIES_BY_CATEGORY)
+    }
+}
+
 module.exports = {
+    countPropertiesByCategory,
     countPropertiesByFeature,
     deleteListProperties,
     disableListProperties,

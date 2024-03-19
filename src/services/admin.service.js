@@ -9,6 +9,14 @@ const {
 } = require('../models/repo')
 
 /**
+ * Count properties by category
+ * @returns {Promise<Object>} - List number of properties by category
+ */
+const countPropertiesByCategory = async () => {
+    return propertyRepo.countPropertiesByCategory()
+}
+
+/**
  * Count properties by feature
  * @returns {Promise<Object>} - List number of properties by feature
  */
@@ -257,6 +265,7 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    countPropertiesByCategory,
     countPropertiesByFeature,
     deleteListServices,
     updateService,

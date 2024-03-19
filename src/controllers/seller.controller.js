@@ -2,6 +2,15 @@ const { sellerService } = require('../services')
 const { OK, Created } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const countPropertiesByCategory = async (req, res) => {
+    const userId = req.user?.userId
+    const countList = await sellerService.countPropertiesByCategory(userId)
+    new OK({
+        message: SUCCESS_MESSAGES.SELLER.REPORT.COUNT_PROPERTIES_BY_CATEGORY,
+        metaData: countList
+    }).send(res)
+}
+
 const countPropertiesByFeature = async (req, res) => {
     const userId = req.user?.userId
     const countList = await sellerService.countPropertiesByFeature(userId)
@@ -77,6 +86,7 @@ const getAllProperties = async (req, res) => {
 }
 
 module.exports = {
+    countPropertiesByCategory,
     countPropertiesByFeature,
     deleteListProperties,
     updatePropertyStatus,
