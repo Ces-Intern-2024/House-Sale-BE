@@ -2,6 +2,14 @@ const { adminService, emailService } = require('../services')
 const { OK, Created } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const countPropertiesByFeature = async (req, res) => {
+    const countList = await adminService.countPropertiesByFeature()
+    new OK({
+        message: SUCCESS_MESSAGES.ADMIN.REPORT.COUNT_PROPERTIES_BY_FEATURE,
+        metaData: countList
+    }).send(res)
+}
+
 const deleteService = async (req, res) => {
     const { serviceId: serviceIdList } = req.query
     await adminService.deleteListServices(serviceIdList)
@@ -212,6 +220,7 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    countPropertiesByFeature,
     deleteService,
     updateService,
     createService,

@@ -7,6 +7,16 @@ const { checkBalance } = require('../models/repo/transaction.repo')
 const { calculateExpiresDate } = require('../utils')
 
 /**
+ * Count properties of seller by feature
+ * @param {id} userId
+ * @returns {Promise<Object>} - List number of properties by feature
+ */
+const countPropertiesByFeature = async (userId) => {
+    await userRepo.findUserById(userId)
+    return propertyRepo.countPropertiesByFeature(userId)
+}
+
+/**
  *  Create property of seller by sellerId
  * @param {Object} params
  * @param {Object} params.propertyData - property information
@@ -117,6 +127,7 @@ const getAllProperties = async ({ options, userId }) => {
 }
 
 module.exports = {
+    countPropertiesByFeature,
     createProperty,
     deleteListProperties,
     updatePropertyStatus,
