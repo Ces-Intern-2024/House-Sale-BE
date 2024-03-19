@@ -32,7 +32,8 @@ const SUCCESS_MESSAGES = {
         UPDATE_PROPERTY_STATUS: 'Property status had been updated successfully!',
         DISABLED_LIST_PROPERTIES: 'List properties had been disabled successfully!',
         REPORT: {
-            COUNT_PROPERTIES_BY_FEATURE: 'Counting properties by feature successfully!'
+            COUNT_PROPERTIES_BY_FEATURE: 'Counting properties by feature successfully!',
+            COUNT_PROPERTIES_BY_CATEGORY: 'Counting properties by category successfully!'
         }
     },
 
@@ -67,7 +68,8 @@ const SUCCESS_MESSAGES = {
         DELETE_LIST_PROPERTY: 'Delete list properties successfully!',
         UPDATE_PROPERTY_STATUS: 'Your property status had been updated successfully!',
         REPORT: {
-            COUNT_PROPERTIES_BY_FEATURE: 'Counting properties by feature successfully!'
+            COUNT_PROPERTIES_BY_FEATURE: 'Counting properties by feature successfully!',
+            COUNT_PROPERTIES_BY_CATEGORY: 'Counting properties by category successfully!'
         }
     },
 
@@ -248,7 +250,8 @@ const ERROR_MESSAGES = {
         FAILED_TO_DISABLED_PROPERTY: 'Failed to disabled property!',
         FAILED_TO_DISABLED_LIST_PROPERTIES: 'Failed to disabled list properties!',
         REPORT: {
-            COUNT_PROPERTIES_BY_FEATURE: 'Failed to count properties by feature!'
+            COUNT_PROPERTIES_BY_FEATURE: 'Failed to count properties by feature!',
+            COUNT_PROPERTIES_BY_CATEGORY: 'Failed to count properties by category!'
         }
     },
 
