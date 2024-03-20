@@ -1,10 +1,25 @@
-const { ROLE_NAME, TRANSACTION } = require('../core/data.constant')
+const { ROLE_NAME, TRANSACTION, REPORT } = require('../core/data.constant')
 const { BadRequestError, NotFoundError } = require('../core/error.response')
 const { ERROR_MESSAGES } = require('../core/message.constant')
 const db = require('../models')
 const { propertyRepo, locationRepo, userRepo, serviceRepo, imageRepo, transactionRepo } = require('../models/repo')
 const { checkBalance } = require('../models/repo/transaction.repo')
 const { calculateExpiresDate } = require('../utils')
+
+/**
+ * Count properties created by date of seller
+ * @param {Object} query  - query object contains userId, fromDateRange, toDateRange
+ * @returns {Promise<Object>} - List number of properties created by date and total number of properties
+ */
+const countPropertiesCreatedByDate = async (query) => {
+    const {
+        userId,
+        fromDateRange = REPORT.DEFAULT_DATE_RANGE.FROM(),
+        toDateRange = REPORT.DEFAULT_DATE_RANGE.TO()
+    } = query
+    await userRepo.findUserById(userId)
+    return propertyRepo.countPropertiesCreatedByDate({ userId, fromDateRange, toDateRange })
+}
 
 /**
  * Count properties of seller by category
@@ -137,6 +152,7 @@ const getAllProperties = async ({ options, userId }) => {
 }
 
 module.exports = {
+    countPropertiesCreatedByDate,
     countPropertiesByCategory,
     countPropertiesByFeature,
     createProperty,

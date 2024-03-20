@@ -33,7 +33,8 @@ const SUCCESS_MESSAGES = {
         DISABLED_LIST_PROPERTIES: 'List properties had been disabled successfully!',
         REPORT: {
             COUNT_PROPERTIES_BY_FEATURE: 'Counting properties by feature successfully!',
-            COUNT_PROPERTIES_BY_CATEGORY: 'Counting properties by category successfully!'
+            COUNT_PROPERTIES_BY_CATEGORY: 'Counting properties by category successfully!',
+            COUNT_PROPERTIES_CREATED_BY_DATE: 'Counting properties created by date successfully!'
         }
     },
 
@@ -69,7 +70,8 @@ const SUCCESS_MESSAGES = {
         UPDATE_PROPERTY_STATUS: 'Your property status had been updated successfully!',
         REPORT: {
             COUNT_PROPERTIES_BY_FEATURE: 'Counting properties by feature successfully!',
-            COUNT_PROPERTIES_BY_CATEGORY: 'Counting properties by category successfully!'
+            COUNT_PROPERTIES_BY_CATEGORY: 'Counting properties by category successfully!',
+            COUNT_PROPERTIES_CREATED_BY_DATE: 'Counting properties created by date successfully!'
         }
     },
 
@@ -251,7 +253,9 @@ const ERROR_MESSAGES = {
         FAILED_TO_DISABLED_LIST_PROPERTIES: 'Failed to disabled list properties!',
         REPORT: {
             COUNT_PROPERTIES_BY_FEATURE: 'Failed to count properties by feature!',
-            COUNT_PROPERTIES_BY_CATEGORY: 'Failed to count properties by category!'
+            COUNT_PROPERTIES_BY_CATEGORY: 'Failed to count properties by category!',
+            GET_PROPERTIES_CREATION_DATA_BY_DATE_RANGE: 'Failed to get properties creation data by date range!',
+            COUNT_PROPERTIES_CREATED_BY_DATE: 'Failed to count properties created by date!'
         }
     },
 

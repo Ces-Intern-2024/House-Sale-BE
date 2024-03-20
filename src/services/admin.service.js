@@ -1,4 +1,4 @@
-const { ROLE_NAME, TRANSACTION } = require('../core/data.constant')
+const { ROLE_NAME, TRANSACTION, REPORT } = require('../core/data.constant')
 const {
     userRepo,
     propertyRepo,
@@ -7,6 +7,16 @@ const {
     conversionRateRepo,
     serviceRepo
 } = require('../models/repo')
+
+/**
+ * Count properties created by date
+ * @param {Object} query  - query object contains fromDateRange, toDateRange
+ * @returns {Promise<Object>} - List number of properties created by date and total number of properties
+ */
+const countPropertiesCreatedByDate = async (query) => {
+    const { fromDateRange = REPORT.DEFAULT_DATE_RANGE.FROM(), toDateRange = REPORT.DEFAULT_DATE_RANGE.TO() } = query
+    return propertyRepo.countPropertiesCreatedByDate({ fromDateRange, toDateRange })
+}
 
 /**
  * Count properties by category
@@ -265,6 +275,7 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    countPropertiesCreatedByDate,
     countPropertiesByCategory,
     countPropertiesByFeature,
     deleteListServices,
