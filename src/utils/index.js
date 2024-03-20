@@ -6,6 +6,28 @@ const { BadRequestError } = require('../core/error.response')
 const { ERROR_MESSAGES } = require('../core/message.constant')
 const { GOOGLE_API_URL, ROUNDS_SALT, TIMEZONE, SERVICES } = require('../core/data.constant')
 
+const calculateDailyCountsAndTotalCount = (dateRange, dataByDate) => {
+    const dailyCounts = new Map(dateRange.map((date) => [moment(date).format('YYYY-MM-DD'), 0]))
+    const totalCount = dataByDate.reduce((total, item) => {
+        if (item.date) {
+            dailyCounts.set(item.date, item.count)
+            return total + item.count
+        }
+        return total
+    }, 0)
+    return { totalCount, dailyCounts }
+}
+
+const createDateRange = (fromDate, toDate) => {
+    const dateRange = []
+    let currentDate = fromDate
+    while (moment(currentDate) <= moment(toDate)) {
+        dateRange.push(moment(currentDate).format('YYYY-MM-DD'))
+        currentDate = moment(currentDate).add(1, 'days')
+    }
+    return dateRange
+}
+
 const calculateSavedRemainingRentalTime = (expiresAt) => {
     const remainingTime = new Date(expiresAt) - new Date()
     return remainingTime
@@ -82,6 +104,8 @@ const getExistingKeysInObject = (object, keys) => {
 }
 
 module.exports = {
+    calculateDailyCountsAndTotalCount,
+    createDateRange,
     calculateSavedRemainingRentalTime,
     calculateExpiresDate,
     setStartAndEndDates,

@@ -1,5 +1,14 @@
 const Joi = require('joi')
 
+const report = {
+    countPropertiesCreatedByDate: {
+        query: Joi.object().required().keys({
+            fromDateRange: Joi.date().iso().required(),
+            toDateRange: Joi.date().iso().required()
+        })
+    }
+}
+
 const manageService = {
     deleteService: {
         query: Joi.object().keys({
@@ -249,6 +258,7 @@ const manageUser = {
 }
 
 module.exports = {
+    report,
     manageService,
     manageConversionRate,
     manageCategory,

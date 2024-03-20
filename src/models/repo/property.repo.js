@@ -2,7 +2,14 @@ const moment = require('moment-timezone')
 const { Op } = require('sequelize')
 const db = require('..')
 const { BadRequestError, NotFoundError } = require('../../core/error.response')
-const { paginatedData, isValidKeyOfModel, calculateSavedRemainingRentalTime } = require('../../utils')
+const {
+    paginatedData,
+    isValidKeyOfModel,
+    calculateSavedRemainingRentalTime,
+    setStartAndEndDates,
+    createDateRange,
+    calculateDailyCountsAndTotalCount
+} = require('../../utils')
 const {
     SCOPES,
     COMMON_EXCLUDE_ATTRIBUTES,
@@ -446,7 +453,62 @@ const countPropertiesByCategory = async (userId) => {
     }
 }
 
+const getPropertiesCreatedByDateRange = async ({ userId, fromDateRange, toDateRange }) => {
+    try {
+        const { fromDate, toDate } = setStartAndEndDates(fromDateRange, toDateRange)
+        if (fromDate > toDate) {
+            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_DATE_RANGE)
+        }
+        const condition = {
+            ...(userId ? { userId } : {}),
+            createdAt: {
+                [Op.between]: [fromDate, toDate]
+            }
+        }
+        const propertyDataByDate = await db.Properties.findAll({
+            attributes: [
+                [db.sequelize.fn('DATE', db.sequelize.col('createdAt')), 'date'],
+                [db.sequelize.fn('COUNT', db.sequelize.col('propertyId')), 'count']
+            ],
+            where: condition,
+            group: [db.sequelize.fn('DATE', db.sequelize.col('createdAt'))],
+            raw: true
+        })
+
+        return propertyDataByDate
+    } catch (error) {
+        if (error instanceof BadRequestError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.REPORT.GET_PROPERTIES_CREATION_DATA_BY_DATE_RANGE)
+    }
+}
+
+const countPropertiesCreatedByDate = async ({ userId, fromDateRange, toDateRange }) => {
+    try {
+        const propertyDataByDateRange = await getPropertiesCreatedByDateRange({
+            userId,
+            fromDateRange,
+            toDateRange
+        })
+        const dateRangeArray = createDateRange(fromDateRange, toDateRange)
+        const { totalCount, dailyCounts } = calculateDailyCountsAndTotalCount(dateRangeArray, propertyDataByDateRange)
+        const countPropertiesCreatedData = Array.from(dailyCounts).map(([dateReport, count]) => ({
+            dateReport,
+            count
+        }))
+
+        return { totalCount, data: countPropertiesCreatedData }
+    } catch (error) {
+        if (error instanceof BadRequestError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.REPORT.COUNT_PROPERTIES_CREATED_BY_DATE)
+    }
+}
+
 module.exports = {
+    countPropertiesCreatedByDate,
     countPropertiesByCategory,
     countPropertiesByFeature,
     deleteListProperties,

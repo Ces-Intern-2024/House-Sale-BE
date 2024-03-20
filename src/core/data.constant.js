@@ -9,6 +9,13 @@ const ROLE_NAME = {
     ADMIN: 'Admin'
 }
 
+const REPORT = {
+    DEFAULT_DATE_RANGE: {
+        FROM: () => new Date(new Date() - 30 * 24 * 60 * 60 * 1000),
+        TO: () => new Date()
+    }
+}
+
 const TRANSACTION = {
     EXPENSE_DESC: {
         CREATE_NEW_PROPERTY: (message) => {
@@ -291,6 +298,7 @@ const EMAIL_TEMPLATE = {
 }
 
 module.exports = {
+    REPORT,
     TIMEZONE,
     SERVICES,
     PROPERTY_STATUS,

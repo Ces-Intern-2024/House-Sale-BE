@@ -6,3 +6,4 @@ module.exports.favoritePropertyValidation = require('./favoriteProperty.validati
 module.exports.transactionValidation = require('./transaction.validation')
 module.exports.adminValidation = require('./admin.validation')
 module.exports.conversionRateValidation = require('./conversionRate.validation')
+module.exports.sellerValidation = require('./seller.validation')
