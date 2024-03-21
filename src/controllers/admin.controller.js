@@ -2,6 +2,14 @@ const { adminService, emailService } = require('../services')
 const { OK, Created } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const countContactsByDate = async (req, res) => {
+    const countList = await adminService.countContactsByDate(req.query)
+    new OK({
+        message: SUCCESS_MESSAGES.ADMIN.REPORT.COUNT_CONTACTS_BY_DATE,
+        metaData: countList
+    }).send(res)
+}
+
 const countPropertiesCreatedByDate = async (req, res) => {
     const countList = await adminService.countPropertiesCreatedByDate(req.query)
     new OK({
@@ -236,6 +244,7 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    countContactsByDate,
     countPropertiesCreatedByDate,
     countPropertiesByCategory,
     countPropertiesByFeature,

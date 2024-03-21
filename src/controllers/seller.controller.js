@@ -2,6 +2,15 @@ const { sellerService } = require('../services')
 const { OK, Created } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const countContactsByDate = async (req, res) => {
+    const userId = req.user?.userId
+    const countList = await sellerService.countContactsByDate({ userId, ...req.query })
+    new OK({
+        message: SUCCESS_MESSAGES.SELLER.REPORT.COUNT_CONTACTS_BY_DATE,
+        metaData: countList
+    }).send(res)
+}
+
 const countPropertiesCreatedByDate = async (req, res) => {
     const userId = req.user?.userId
     const countList = await sellerService.countPropertiesCreatedByDate({ userId, ...req.query })
@@ -95,6 +104,7 @@ const getAllProperties = async (req, res) => {
 }
 
 module.exports = {
+    countContactsByDate,
     countPropertiesCreatedByDate,
     countPropertiesByCategory,
     countPropertiesByFeature,

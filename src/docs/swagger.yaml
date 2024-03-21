@@ -2935,6 +2935,194 @@ paths:
                                                 example: User not found!
             security:
                 - bearerAuth: []
+    /seller/report/count-contacts-by-date:
+        get:
+            tags:
+            -   Seller - Report
+            summary: Count contacts by date (NEW 21/03)
+            description: Return list count contacts of seller by date
+            operationId: countContactsByDateOfSeller
+            parameters:
+                -   name: fromDateRange
+                    in: query
+                    description: The start date to count contacts by date
+                    required: true
+                    schema:
+                        type: string
+                        format: date
+                        example: 2024-01-23
+                -   name: toDateRange
+                    in: query
+                    description: The end date to count contacts by date
+                    required: true
+                    schema:
+                        type: string
+                        format: date
+                        example: 2024-02-23
+            responses:
+                '200':
+                    description: Counting contacts by date successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Counting contacts by date successfully!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            totalCount:
+                                                type: number
+                                                example: 7
+                                            data:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/CountContactsByDate'
+                                                example:
+                                                    -   dateReport: 2024-01-23
+                                                        count: 0
+                                                    -   dateReport: 2024-01-24
+                                                        count: 0
+                                                    -   dateReport: 2024-01-25
+                                                        count: 0
+                                                    -   dateReport: 2024-01-26
+                                                        count: 0
+                                                    -   dateReport: 2024-01-27
+                                                        count: 0
+                                                    -   dateReport: 2024-01-28
+                                                        count: 0
+                                                    -   dateReport: 2024-01-29
+                                                        count: 0
+                                                    -   dateReport: 2024-01-30
+                                                        count: 0
+                                                    -   dateReport: 2024-01-31
+                                                        count: 0
+                                                    -   dateReport: 2024-02-01
+                                                        count: 0
+                                                    -   dateReport: 2024-02-02
+                                                        count: 0
+                                                    -   dateReport: 2024-02-03
+                                                        count: 0
+                                                    -   dateReport: 2024-02-04
+                                                        count: 1
+                                                    -   dateReport: 2024-02-05
+                                                        count: 5
+                                                    -   dateReport: 2024-02-06
+                                                        count: 0
+                                                    -   dateReport: 2024-02-07
+                                                        count: 0
+                                                    -   dateReport: 2024-02-08
+                                                        count: 0
+                                                    -   dateReport: 2024-02-09
+                                                        count: 0
+                                                    -   dateReport: 2024-02-10
+                                                        count: 0
+                                                    -   dateReport: 2024-02-11
+                                                        count: 0
+                                                    -   dateReport: 2024-02-12
+                                                        count: 0
+                                                    -   dateReport: 2024-02-13
+                                                        count: 0
+                                                    -   dateReport: 2024-02-14
+                                                        count: 0
+                                                    -   dateReport: 2024-02-15
+                                                        count: 0
+                                                    -   dateReport: 2024-02-16
+                                                        count: 0
+                                                    -   dateReport: 2024-02-17
+                                                        count: 0
+                                                    -   dateReport: 2024-02-18
+                                                        count: 0
+                                                    -   dateReport: 2024-02-19
+                                                        count: 0
+                                                    -   dateReport: 2024-02-20
+                                                        count: 1
+                                                    -   dateReport: 2024-02-21
+                                                        count: 0
+                                                    -   dateReport: 2024-02-22
+                                                        count: 0
+                                                    -   dateReport: 2024-02-23
+                                                        count: 0
+                '400':
+                    description: Failed to count contacts by date!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Invalid date range!
+                                                    -   userId is required!
+                                                    -   Failed to get user by userId!
+                                                    -   Failed to get contacts count by date range!
+                                                    -   Failed to count contacts by date range!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
+            security:
+                - bearerAuth: []
     /contact:
         post:
             tags:
@@ -6971,6 +7159,176 @@ paths:
                                                 example: Your account is not active!
             security:
                 - bearerAuth: []
+    /admin/report/count-contacts-by-date:
+        get:
+            tags:
+            -   Admin - Report
+            summary: Count contacts by date (NEW 21/03)
+            description: Return list count contacts by date
+            operationId: countContactsByDate
+            parameters:
+                -   name: fromDateRange
+                    in: query
+                    description: The start date to count contacts by date
+                    required: true
+                    schema:
+                        type: string
+                        format: date
+                        example: 2024-01-23
+                -   name: toDateRange
+                    in: query
+                    description: The end date to count contacts by date
+                    required: true
+                    schema:
+                        type: string
+                        format: date
+                        example: 2024-02-23
+            responses:
+                '200':
+                    description: Counting contacts by date successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Counting contacts by date successfully!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            totalCount:
+                                                type: number
+                                                example: 7
+                                            data:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/CountContactsByDate'
+                                                example:
+                                                    -   dateReport: 2024-01-23
+                                                        count: 0
+                                                    -   dateReport: 2024-01-24
+                                                        count: 0
+                                                    -   dateReport: 2024-01-25
+                                                        count: 0
+                                                    -   dateReport: 2024-01-26
+                                                        count: 0
+                                                    -   dateReport: 2024-01-27
+                                                        count: 0
+                                                    -   dateReport: 2024-01-28
+                                                        count: 0
+                                                    -   dateReport: 2024-01-29
+                                                        count: 0
+                                                    -   dateReport: 2024-01-30
+                                                        count: 0
+                                                    -   dateReport: 2024-01-31
+                                                        count: 0
+                                                    -   dateReport: 2024-02-01
+                                                        count: 0
+                                                    -   dateReport: 2024-02-02
+                                                        count: 0
+                                                    -   dateReport: 2024-02-03
+                                                        count: 0
+                                                    -   dateReport: 2024-02-04
+                                                        count: 1
+                                                    -   dateReport: 2024-02-05
+                                                        count: 5
+                                                    -   dateReport: 2024-02-06
+                                                        count: 0
+                                                    -   dateReport: 2024-02-07
+                                                        count: 0
+                                                    -   dateReport: 2024-02-08
+                                                        count: 0
+                                                    -   dateReport: 2024-02-09
+                                                        count: 0
+                                                    -   dateReport: 2024-02-10
+                                                        count: 0
+                                                    -   dateReport: 2024-02-11
+                                                        count: 0
+                                                    -   dateReport: 2024-02-12
+                                                        count: 0
+                                                    -   dateReport: 2024-02-13
+                                                        count: 0
+                                                    -   dateReport: 2024-02-14
+                                                        count: 0
+                                                    -   dateReport: 2024-02-15
+                                                        count: 0
+                                                    -   dateReport: 2024-02-16
+                                                        count: 0
+                                                    -   dateReport: 2024-02-17
+                                                        count: 0
+                                                    -   dateReport: 2024-02-18
+                                                        count: 0
+                                                    -   dateReport: 2024-02-19
+                                                        count: 0
+                                                    -   dateReport: 2024-02-20
+                                                        count: 1
+                                                    -   dateReport: 2024-02-21
+                                                        count: 0
+                                                    -   dateReport: 2024-02-22
+                                                        count: 0
+                                                    -   dateReport: 2024-02-23
+                                                        count: 0
+                '400':
+                    description: Failed to count contacts by date!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Invalid date range!
+                                                    -   Failed to get contacts count by date range!
+                                                    -   Failed to count contacts by date range!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+            security:
+                - bearerAuth: []
 components:
     schemas:
         Property:
@@ -7982,6 +8340,18 @@ components:
                     -   categoryId: 3
                         name: Villa
                         count: 0
+
+        CountContactsByDate:
+            type: object
+            properties:
+                dateReport:
+                    type: string
+                    format: date
+                    example: 2024-01-23
+                count:
+                    type: number
+                    example: 1
+                    default: 0
     securitySchemes:
         bearerAuth:
             type: http

@@ -2,9 +2,32 @@ const { ROLE_NAME, TRANSACTION, REPORT } = require('../core/data.constant')
 const { BadRequestError, NotFoundError } = require('../core/error.response')
 const { ERROR_MESSAGES } = require('../core/message.constant')
 const db = require('../models')
-const { propertyRepo, locationRepo, userRepo, serviceRepo, imageRepo, transactionRepo } = require('../models/repo')
+const {
+    propertyRepo,
+    locationRepo,
+    userRepo,
+    serviceRepo,
+    imageRepo,
+    transactionRepo,
+    contactRepo
+} = require('../models/repo')
 const { checkBalance } = require('../models/repo/transaction.repo')
 const { calculateExpiresDate } = require('../utils')
+
+/**
+ * Count contacts created by date of seller
+ * @param {Object} query  - query object contains userId, fromDateRange, toDateRange
+ * @returns {Promise<Object>} - List number of contacts by date and total number of contacts
+ */
+const countContactsByDate = async (query) => {
+    const {
+        userId,
+        fromDateRange = REPORT.DEFAULT_DATE_RANGE.FROM(),
+        toDateRange = REPORT.DEFAULT_DATE_RANGE.TO()
+    } = query
+    await userRepo.findUserById(userId)
+    return contactRepo.countContactsByDate({ userId, fromDateRange, toDateRange })
+}
 
 /**
  * Count properties created by date of seller
@@ -152,6 +175,7 @@ const getAllProperties = async ({ options, userId }) => {
 }
 
 module.exports = {
+    countContactsByDate,
     countPropertiesCreatedByDate,
     countPropertiesByCategory,
     countPropertiesByFeature,
