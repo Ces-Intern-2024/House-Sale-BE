@@ -327,6 +327,86 @@ paths:
                                                 -   Invalid Province!
                                                 -   Invalid District!
                                                 -   Invalid Ward!
+    /properties/count-available-property:
+        get:
+            tags:
+                - Property
+            summary: Count available properties by feature and category (NEW 21/03)
+            description: Count available properties by feature and category
+            operationId: countAvailableProperty
+            responses:
+                '200':
+                    description: Get all available property count by feature and category successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get all available property count by feature and category successfully!
+                                    metaData:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/CountAvailablePropertyByFeatureAndCategory'
+                                        example:
+                                            -   featureId: 1
+                                                name: Sale
+                                                totalCount: 7
+                                                categories:
+                                                    -   categoryId: 1
+                                                        name: Apartment
+                                                        count: 1
+                                                    -   categoryId: 5
+                                                        name: Hotel
+                                                        count: 0
+                                                    -   categoryId: 2
+                                                        name: House
+                                                        count: 6
+                                                    -   categoryId: 4
+                                                        name: Serviced Apartment
+                                                        count: 0
+                                                    -   categoryId: 3
+                                                        name: Villa
+                                                        count: 0
+                                            -   featureId: 2
+                                                name: Rent
+                                                totalCount: 12
+                                                categories:
+                                                    -   categoryId: 1
+                                                        name: Apartment
+                                                        count: 0
+                                                    -   categoryId: 5
+                                                        name: Hotel
+                                                        count: 0
+                                                    -   categoryId: 2
+                                                        name: House
+                                                        count: 12
+                                                    -   categoryId: 4
+                                                        name: Serviced Apartment
+                                                        count: 0
+                                                    -   categoryId: 3
+                                                        name: Villa
+                                                        count: 0
+                '400':
+                    description: Failed to get all available property count by feature and category!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to get all available property count by feature and category!
     /properties/{propertyId}:
         get:
             tags:
@@ -7853,6 +7933,55 @@ components:
                     type: number
                     example: 5
                     default: 0
+        Category:
+            type: object
+            properties:
+                        categoryId:
+                            type: number
+                            example: 1
+                        name:
+                            type: string
+                            example: Apartment
+                        count:
+                            type: number
+                            example: 1
+                            default: 0
+        CountAvailablePropertyByFeatureAndCategory:
+            type: object
+            properties:
+                featureId:
+                    type: number
+                    example: 1
+                name:
+                    type: string
+                    example: Sale
+                totalCount:
+                    type: number
+                    example: 7
+                categories:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Category'
+            example:
+                featureId: 1
+                name: Sale
+                totalCount: 7
+                categories:
+                    -   categoryId: 1
+                        name: Apartment
+                        count: 1
+                    -   categoryId: 5
+                        name: Hotel
+                        count: 0
+                    -   categoryId: 2
+                        name: House
+                        count: 6
+                    -   categoryId: 4
+                        name: Serviced Apartment
+                        count: 0
+                    -   categoryId: 3
+                        name: Villa
+                        count: 0
     securitySchemes:
         bearerAuth:
             type: http

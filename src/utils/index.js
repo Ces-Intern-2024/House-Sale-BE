@@ -30,7 +30,7 @@ const createDateRange = (fromDate, toDate) => {
 
 const calculateSavedRemainingRentalTime = (expiresAt) => {
     const remainingTime = new Date(expiresAt) - new Date()
-    return remainingTime
+    return remainingTime > 0 ? remainingTime : 0
 }
 
 const calculateExpiresDate = (duration) => {

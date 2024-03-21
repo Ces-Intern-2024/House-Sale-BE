@@ -172,6 +172,55 @@ const validatePropertyOptions = async ({ propertyOptions, role = ROLE_NAME.USER 
     }
 }
 
+/**
+ * Get all available property count by feature and category
+ * @returns {Promise<[{...Feature, totalCount: number, categories: [...Category, count]}]>} - List of available properties count by feature and category
+ */
+const getAllAvailablePropertyCountByFeatureAndCategory = async () => {
+    try {
+        const featureList = await db.Features.findAll({
+            attributes: ['featureId', 'name'],
+            raw: true
+        })
+
+        const categoryList = await db.Categories.findAll({
+            attributes: ['categoryId', 'name'],
+            raw: true
+        })
+
+        const propertyCountData = await db.Properties.findAll({
+            attributes: [
+                'featureId',
+                'categoryId',
+                [db.sequelize.fn('COUNT', db.sequelize.col('propertyId')), 'count']
+            ],
+            where: { status: PROPERTY_STATUS.AVAILABLE },
+            group: ['featureId', 'categoryId'],
+            distinct: true,
+            raw: true
+        })
+
+        const countByFeatureAndCategory = Object.fromEntries(
+            propertyCountData.map((item) => [`${item.featureId}-${item.categoryId}`, item.count])
+        )
+
+        const featureAndCategoryCounts = featureList.map((feature) => {
+            const categories = categoryList.map((category) => {
+                const count = countByFeatureAndCategory[`${feature.featureId}-${category.categoryId}`] || 0
+                return { ...category, count }
+            })
+            const totalCount = categories.reduce((sum, category) => sum + category.count, 0)
+            return { ...feature, totalCount, categories }
+        })
+
+        return featureAndCategoryCounts
+    } catch (error) {
+        throw new BadRequestError(
+            ERROR_MESSAGES.PROPERTY.REPORT.GET_ALL_AVAILABLE_PROPERTY_COUNT_BY_FEATURE_AND_CATEGORY
+        )
+    }
+}
+
 const getAllProperties = async ({ validOptions, queries, userId, role = ROLE_NAME.USER }) => {
     const { page, limit, order } = queries
 
@@ -520,5 +569,6 @@ module.exports = {
     validatePropertyOptions,
     getAllProperties,
     getProperty,
-    updatePropertyStatus
+    updatePropertyStatus,
+    getAllAvailablePropertyCountByFeatureAndCategory
 }
