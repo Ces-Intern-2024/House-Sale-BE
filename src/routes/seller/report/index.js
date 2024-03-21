@@ -13,5 +13,10 @@ router.get(
     validate(sellerValidation.report.countPropertiesCreatedByDate),
     asyncHandler(sellerController.countPropertiesCreatedByDate)
 )
+router.get(
+    '/count-contacts-by-date',
+    validate(sellerValidation.report.countContactsByDate),
+    asyncHandler(sellerController.countContactsByDate)
+)
 
 module.exports = router

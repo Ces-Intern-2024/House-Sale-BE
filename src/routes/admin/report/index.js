@@ -14,4 +14,10 @@ router.get(
     asyncHandler(adminController.countPropertiesCreatedByDate)
 )
 
+router.get(
+    '/count-contacts-by-date',
+    validate(adminValidation.report.countContactsByDate),
+    asyncHandler(adminController.countContactsByDate)
+)
+
 module.exports = router

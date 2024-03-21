@@ -5,8 +5,19 @@ const {
     transactionRepo,
     categoryRepo,
     conversionRateRepo,
-    serviceRepo
+    serviceRepo,
+    contactRepo
 } = require('../models/repo')
+
+/**
+ * Count contacts created by date
+ * @param {Object} query  - query object contains fromDateRange, toDateRange
+ * @returns {Promise<Object>} - List number of contacts by date and total number of contacts
+ */
+const countContactsByDate = async (query) => {
+    const { fromDateRange = REPORT.DEFAULT_DATE_RANGE.FROM(), toDateRange = REPORT.DEFAULT_DATE_RANGE.TO() } = query
+    return contactRepo.countContactsByDate({ fromDateRange, toDateRange })
+}
 
 /**
  * Count properties created by date
@@ -275,6 +286,7 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    countContactsByDate,
     countPropertiesCreatedByDate,
     countPropertiesByCategory,
     countPropertiesByFeature,

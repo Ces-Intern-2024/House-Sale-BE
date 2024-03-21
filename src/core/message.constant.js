@@ -34,7 +34,8 @@ const SUCCESS_MESSAGES = {
         REPORT: {
             COUNT_PROPERTIES_BY_FEATURE: 'Counting properties by feature successfully!',
             COUNT_PROPERTIES_BY_CATEGORY: 'Counting properties by category successfully!',
-            COUNT_PROPERTIES_CREATED_BY_DATE: 'Counting properties created by date successfully!'
+            COUNT_PROPERTIES_CREATED_BY_DATE: 'Counting properties created by date successfully!',
+            COUNT_CONTACTS_BY_DATE: 'Counting contacts by date successfully!'
         }
     },
 
@@ -72,7 +73,8 @@ const SUCCESS_MESSAGES = {
         REPORT: {
             COUNT_PROPERTIES_BY_FEATURE: 'Counting properties by feature successfully!',
             COUNT_PROPERTIES_BY_CATEGORY: 'Counting properties by category successfully!',
-            COUNT_PROPERTIES_CREATED_BY_DATE: 'Counting properties created by date successfully!'
+            COUNT_PROPERTIES_CREATED_BY_DATE: 'Counting properties created by date successfully!',
+            COUNT_CONTACTS_BY_DATE: 'Counting contacts by date successfully!'
         }
     },
 
@@ -281,7 +283,9 @@ const ERROR_MESSAGES = {
     },
 
     CONTACT: {
-        FAILED_TO_CREATE_CONTACT: 'Failed to create new contact!'
+        FAILED_TO_CREATE_CONTACT: 'Failed to create new contact!',
+        GET_CONTACTS_COUNT_BY_DATE_RANGE: 'Failed to get contacts count by date range!',
+        COUNT_CONTACTS_BY_DATE_RANGE: 'Failed to count contacts by date range!'
     },
 
     FAVORITES_LIST: {
