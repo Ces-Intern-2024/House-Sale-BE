@@ -58,7 +58,8 @@ const SUCCESS_MESSAGES = {
     PROPERTY: {
         GET_ALL: 'Get list properties successfully!',
         GET: 'Get property successfully!',
-        DELETE_LIST_PROPERTIES: 'Delete list property successfully!'
+        DELETE_LIST_PROPERTIES: 'Delete list property successfully!',
+        GET_ALL_AVAILABLE_COUNT: 'Get all available property count by feature and category successfully!'
     },
 
     SELLER: {
@@ -255,7 +256,9 @@ const ERROR_MESSAGES = {
             COUNT_PROPERTIES_BY_FEATURE: 'Failed to count properties by feature!',
             COUNT_PROPERTIES_BY_CATEGORY: 'Failed to count properties by category!',
             GET_PROPERTIES_CREATION_DATA_BY_DATE_RANGE: 'Failed to get properties creation data by date range!',
-            COUNT_PROPERTIES_CREATED_BY_DATE: 'Failed to count properties created by date!'
+            COUNT_PROPERTIES_CREATED_BY_DATE: 'Failed to count properties created by date!',
+            GET_ALL_AVAILABLE_PROPERTY_COUNT_BY_FEATURE_AND_CATEGORY:
+                'Failed to get all available property count by feature and category!'
         }
     },
 

@@ -4,7 +4,7 @@ const db = require('../models')
 const { PROPERTY_STATUS } = require('./data.constant')
 const { BadRequestError } = require('./error.response')
 
-const autoUpdatePropertyStatus = cron.schedule('*/15 * * * *', () => {
+const autoUpdatePropertyStatus = cron.schedule('*/1 * * * *', () => {
     db.Properties.update(
         {
             status: PROPERTY_STATUS.UNAVAILABLE,
