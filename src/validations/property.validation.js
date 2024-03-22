@@ -48,7 +48,7 @@ const createNewProperty = {
                     wardCode: Joi.string().required(),
                     street: Joi.string().required(),
                     address: Joi.string(),
-                    landArea: Joi.number().required(),
+                    landArea: Joi.number(),
                     areaOfUse: Joi.number().required(),
                     numberOfFloor: Joi.number().required(),
                     numberOfBedRoom: Joi.number().required(),

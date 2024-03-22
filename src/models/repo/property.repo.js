@@ -25,6 +25,7 @@ const { ERROR_MESSAGES } = require('../../core/message.constant')
 const { findUserById } = require('./user.repo')
 const { findService } = require('./service.repo')
 const { checkBalance, createRentServiceTransactionAndUpdateUserBalance } = require('./transaction.repo')
+const { getFullLocationText } = require('./location.repo')
 
 const getScopesArray = (scopes) => scopes.map((scope) => COMMON_SCOPES[scope])
 
@@ -254,8 +255,8 @@ const getProperty = async ({ propertyId, userId, role = ROLE_NAME.USER }) => {
         if (!property) {
             throw new NotFoundError(ERROR_MESSAGES.PROPERTY.NOT_FOUND)
         }
-
-        return property
+        const fullLocationText = await getFullLocationText(property.location)
+        return { ...property.toJSON(), fullLocationText }
     } catch (error) {
         if (error instanceof NotFoundError) throw error
         throw new BadRequestError(ERROR_MESSAGES.PROPERTY.GET)
