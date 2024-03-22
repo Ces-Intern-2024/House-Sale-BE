@@ -411,7 +411,7 @@ paths:
         get:
             tags:
             -   Property
-            summary: Get property by Id (UPDATED 04/03)
+            summary: Get property by Id (UPDATED 22/03)
             description: Returns a property has status "Available" by propertyId
             operationId: getProperty
             parameters:
@@ -2193,7 +2193,7 @@ paths:
         get:
             tags:
             -   Seller
-            summary: Get property of seller by Id (UPDATED 04/03)
+            summary: Get property of seller by Id (UPDATED 22/03)
             description: Return a property of seller by Id has status Available, Unavailable or Disabled
             operationId: getProperty
             parameters:
@@ -4967,7 +4967,7 @@ paths:
         get:
             tags:
             -   Admin - Manage Property
-            summary: Get property by ADMIN (NEW)
+            summary: Get property by ADMIN (UPDATED 22/03)
             description: Returns a property by Id
             operationId: getPropertyById
             responses:
@@ -7540,7 +7540,10 @@ components:
                             example: 0899619250
                         avatar:
                             type: string
-                            example: null
+                            example: null,
+                fullLocationText:
+                    type: string
+                    example: 207 Xuan Dieu, Xuan Dieu, Thuan Phuoc, Hai Chau, Da Nang
         Province:
             type: object
             properties:
@@ -7952,6 +7955,9 @@ components:
                             imageUrl:
                                 type: string
                                 example: https://toanhuyhoang.com/wp-content/uploads/2023/09/z4961049532378_ad7a21ff4f9720289b0e09ce80cb0e2b.jpg
+                fullLocationText:
+                    type: string
+                    example: 207 Xuan Dieu, Xuan Dieu, Thuan Phuoc, Hai Chau, Da Nang
         NewPropertyBody:
             properties:
                 name:
@@ -8032,6 +8038,7 @@ components:
                 - "street"
                 - "price"
                 - "currencyCode"
+                - "areaOfUse"
                 - "numberOfBedRoom"
                 - "numberOfToilet"
                 - "numberOfFloor"

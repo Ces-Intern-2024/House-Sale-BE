@@ -2,6 +2,24 @@ const db = require('..')
 const { BadRequestError, NotFoundError } = require('../../core/error.response')
 const { ERROR_MESSAGES } = require('../../core/message.constant')
 
+/**
+ * Get full location text from location information
+ * @param {Object} params
+ * @param {string} params.provinceCode
+ * @param {string} params.districtCode
+ * @param {string} params.wardCode
+ * @param {string} params.street
+ * @param {string} params.address
+ * @returns {Promise<string>} - Full location text
+ */
+const getFullLocationText = async ({ provinceCode, districtCode, wardCode, street, address }) => {
+    const province = await db.Provinces.findOne({ where: { provinceCode } })
+    const district = await db.Districts.findOne({ where: { districtCode } })
+    const ward = await db.Wards.findOne({ where: { wardCode } })
+
+    return [address, street, ward.nameEn, district.nameEn, province.nameEn].filter(Boolean).join(', ')
+}
+
 const checkProvinceCode = async (provinceCode) => {
     const { provinceCode: validProvinceCode } = (await db.Provinces.findOne({ where: { provinceCode } })) || {}
     if (!validProvinceCode) {
@@ -115,6 +133,7 @@ const createLocation = async ({ provinceCode, districtCode, wardCode, address, s
 }
 
 module.exports = {
+    getFullLocationText,
     createLocation,
     getAllWardsByDistrictCode,
     getAllDistrictsByProvinceCode,
