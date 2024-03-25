@@ -17,8 +17,8 @@ tags:
     -   name: User
     -   name: Favorite Property
     -   name: Seller
+    -   name: Seller - Transaction
     -   name: Seller - Report
-    -   name: Transaction
     -   name: Admin - Manage Category
     -   name: Admin - Manage User
     -   name: Admin - Manage Property
@@ -26,6 +26,7 @@ tags:
     -   name: Admin - Manage Conversion Rate
     -   name: Admin - Manage Service
     -   name: Admin - Report
+    -   name: Admin - Manage Maintenance Mode
 paths:
     /features:
         get:
@@ -1263,6 +1264,22 @@ paths:
                                             message:
                                                 type: string
                                                 example: User not found!
+                '503':
+                    description: Maintenance mode is on!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 503
+                                            message:
+                                                type: string
+                                                example: This service is under maintenance mode. Please come back later!
             security:
                 - bearerAuth: []
     /user/profile:
@@ -1466,6 +1483,22 @@ paths:
                                             message:
                                                 type: string
                                                 example: User not found!
+                '503':
+                    description: Maintenance mode is on!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 503
+                                            message:
+                                                type: string
+                                                example: This service is under maintenance mode. Please come back later!
             security:
               - bearerAuth: []
     /user/update-avatar:
@@ -1576,6 +1609,22 @@ paths:
                                             message:
                                                 type: string
                                                 example: User not found
+                '503':
+                    description: Maintenance mode is on!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 503
+                                            message:
+                                                type: string
+                                                example: This service is under maintenance mode. Please come back later!
             security:
                 - bearerAuth: []
     /user/upgrade-seller:
@@ -1733,6 +1782,22 @@ paths:
                                             message:
                                                 type: string
                                                 example: Failed to send email!
+                '503':
+                    description: Maintenance mode is on!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 503
+                                            message:
+                                                type: string
+                                                example: This service is under maintenance mode. Please come back later!
             security:
                 - bearerAuth: []
     /seller/properties:
@@ -1995,8 +2060,6 @@ paths:
                                     metaData:
                                         type: object
                                         example: {}
-
-
                 '400':
                     description: Not enough money!
                     content:
@@ -2082,6 +2145,22 @@ paths:
                                                 enum:
                                                     -   User not found!
                                                     -   Service not found!
+                '503':
+                    description: Maintenance mode is on!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 503
+                                            message:
+                                                type: string
+                                                example: This service is under maintenance mode. Please come back later!
             security:
               - bearerAuth: []
         delete:
@@ -2187,6 +2266,22 @@ paths:
                                             message:
                                                 type: string
                                                 example: Property not found!
+                '503':
+                    description: Maintenance mode is on!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 503
+                                            message:
+                                                type: string
+                                                example: This service is under maintenance mode. Please come back later!
             security:
               - bearerAuth: []
     /seller/properties/{propertyId}:
@@ -2397,6 +2492,22 @@ paths:
                                             message:
                                                 type: string
                                                 example: Property not found!
+                '503':
+                    description: Maintenance mode is on!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 503
+                                            message:
+                                                type: string
+                                                example: This service is under maintenance mode. Please come back later!
             security:
               - bearerAuth: []
     /seller/properties/{propertyId}/status:
@@ -2526,6 +2637,22 @@ paths:
                                             message:
                                                 type: string
                                                 example: Property not found!
+                '503':
+                    description: Maintenance mode is on!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 503
+                                            message:
+                                                type: string
+                                                example: This service is under maintenance mode. Please come back later!
             security:
                 - bearerAuth: []
     /seller/report/count-properties-by-feature:
@@ -3412,13 +3539,29 @@ paths:
                                                 enum:
                                                     -   User not found!
                                                     -   Property not found!
+                '503':
+                    description: Maintenance mode is on!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 503
+                                            message:
+                                                type: string
+                                                example: This service is under maintenance mode. Please come back later!
             security:
                 - bearerAuth: []
     /transaction/deposit:
         get:
             tags:
-                - Transaction
-            summary: Get all user deposit transactions (UPDATED 06/03)
+                - Seller - Transaction
+            summary: Get all seller deposit transactions (UPDATED 06/03)
             description: Get all deposit transactions of user by queries (fromDate - toDate) (default in 7 days before today and ordered by createdAt in descending order, limit 10 items per page, page 1)
             operationId: getAllTransactions
             parameters:
@@ -3568,7 +3711,7 @@ paths:
                 - bearerAuth: []
         post:
             tags:
-                - Transaction
+                - Seller - Transaction
             summary: Deposit credit to seller's balance (NEW 05/03)
             description: Deposit credit to seller's balance
             operationId: depositUserBalance
@@ -3679,13 +3822,29 @@ paths:
                                             message:
                                                 type: string
                                                 example: User not found!
+                '503':
+                    description: Maintenance mode is on!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 503
+                                            message:
+                                                type: string
+                                                example: This service is under maintenance mode. Please come back later!
             security:
                 - bearerAuth: []
     /transaction/rent-service:
         get:
             tags:
-                - Transaction
-            summary: Get all user's rent service transactions (UPDATED 06/03)
+                - Seller - Transaction
+            summary: Get all seller's rent service transactions (UPDATED 06/03)
             description: Get all rent service transactions of user by queries (fromDate - toDate) (default in 7 days before today and ordered by createdAt in descending order, limit 10 items per page, page 1)
             operationId: getAllRentServiceTransactions
             parameters:
@@ -6810,12 +6969,12 @@ paths:
         get:
             tags:
             -   Admin - Report
-            summary: Count properties by category (NEW 19/03)
-            description: Return count properties by category
-            operationId: countPropertiesByCategory
+            summary: Count properties by feature (NEW 19/03)
+            description: Return count properties by feature
+            operationId: countPropertiesByFeature
             responses:
                 '200':
-                    description: Counting properties by category successfully!
+                    description: Counting properties by feature successfully!
                     content:
                         application/json:
                             schema:
@@ -6826,29 +6985,20 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example: Counting properties by category successfully!
+                                        example: Counting properties by feature successfully!
                                     metaData:
                                         type: array
                                         items:
-                                            $ref: '#/components/schemas/CountPropertiesByCategory'
+                                            $ref: '#/components/schemas/CountPropertiesByFeature'
                                         example:
-                                            -   categoryId: 1
-                                                name: Apartment
-                                                count: 1
-                                            -   categoryId: 2
-                                                name: House
-                                                count: 8
-                                            -   categoryId: 3
-                                                name: Villa
-                                                count: 0
-                                            -   categoryId: 4
-                                                name: Serviced Apartment
-                                                count: 0
-                                            -   categoryId: 5
-                                                name: Hotel
-                                                count: 0
+                                            -   featureId: 1
+                                                name: Sale
+                                                count: 6
+                                            -   featureId: 2
+                                                name: Rent
+                                                count: 17
                 '400':
-                    description: Failed to get count properties by feature!
+                    description: Failed to count properties by feature!
                     content:
                         application/json:
                             schema:
@@ -6906,12 +7056,12 @@ paths:
         get:
             tags:
             -   Admin - Report
-            summary: Count properties by feature (NEW 19/03)
-            description: Return count properties by feature
-            operationId: countPropertiesByFeature
+            summary: Count properties by category (NEW 19/03)
+            description: Return count properties by category
+            operationId: countPropertiesByCategory
             responses:
                 '200':
-                    description: Counting properties by feature successfully!
+                    description: Counting properties by category successfully!
                     content:
                         application/json:
                             schema:
@@ -6922,20 +7072,29 @@ paths:
                                         example: 200
                                     message:
                                         type: string
-                                        example: Counting properties by feature successfully!
+                                        example: Counting properties by category successfully!
                                     metaData:
                                         type: array
                                         items:
-                                            $ref: '#/components/schemas/CountPropertiesByFeature'
+                                            $ref: '#/components/schemas/CountPropertiesByCategory'
                                         example:
-                                            -   featureId: 1
-                                                name: Sale
-                                                count: 6
-                                            -   featureId: 2
-                                                name: Rent
-                                                count: 17
+                                            -   categoryId: 1
+                                                name: Apartment
+                                                count: 1
+                                            -   categoryId: 2
+                                                name: House
+                                                count: 8
+                                            -   categoryId: 3
+                                                name: Villa
+                                                count: 0
+                                            -   categoryId: 4
+                                                name: Serviced Apartment
+                                                count: 0
+                                            -   categoryId: 5
+                                                name: Hotel
+                                                count: 0
                 '400':
-                    description: Failed to get count properties by feature!
+                    description: Failed to get count properties by category!
                     content:
                         application/json:
                             schema:
@@ -6950,7 +7109,7 @@ paths:
                                             message:
                                                 type: string
                                                 enum:
-                                                    -   Failed to count properties by feature!
+                                                    -   Failed to count properties by category!
                 '401':
                     description: Unauthorized!
                     content:
@@ -7291,6 +7450,198 @@ paths:
                                                     -   Invalid date range!
                                                     -   Failed to get contacts count by date range!
                                                     -   Failed to count contacts by date range!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+            security:
+                - bearerAuth: []
+    /admin/manage-maintenance-mode:
+        get:
+            tags:
+                - Admin - Manage Maintenance Mode
+            summary: Get maintenance mode by ADMIN (NEW 25/03)
+            description: Get maintenance mode by ADMIN
+            operationId: getMaintenanceModeByAdmin
+            responses:
+                '200':
+                    description: Get maintenance mode successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get maintenance mode successfully!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            isMaintenance:
+                                                type: boolean
+                                                example: false
+                                            description:
+                                                type: string
+                                                example: Maintenance mode is off!
+                '400':
+                    description: Failed to get maintenance mode!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to get maintenance mode!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: Maintenance mode not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: Maintenance mode not found!
+            security:
+                - bearerAuth: []
+        patch:
+            tags:
+                - Admin - Manage Maintenance Mode
+            summary: Update maintenance mode by ADMIN (NEW 25/03)
+            description: Update maintenance mode by ADMIN
+            operationId: updateMaintenanceModeByAdmin
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                isMaintenance:
+                                    type: boolean
+                                    example: true
+                                description:
+                                    type: string
+                                    example: Maintenance mode is on!
+                            required:
+                                - isMaintenance
+                                - description with isMaintenance is true
+            responses:
+                '200':
+                    description: Maintenance mode has been enabled successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Maintenance mode has been enabled successfully!
+                                    metaData:
+                                        type: object
+                                        example: {}
+                '400':
+                    description: Failed to update maintenance mode!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to update maintenance mode!
                 '401':
                     description: Unauthorized!
                     content:

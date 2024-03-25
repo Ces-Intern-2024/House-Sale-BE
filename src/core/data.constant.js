@@ -16,6 +16,10 @@ const REPORT = {
     }
 }
 
+const MAINTENANCE_MODE_DESCRIPTION = {
+    OFF: 'Maintenance mode is off!'
+}
+
 const TRANSACTION = {
     EXPENSE_DESC: {
         CREATE_NEW_PROPERTY: (message) => {
@@ -298,6 +302,7 @@ const EMAIL_TEMPLATE = {
 }
 
 module.exports = {
+    MAINTENANCE_MODE_DESCRIPTION,
     REPORT,
     TIMEZONE,
     SERVICES,

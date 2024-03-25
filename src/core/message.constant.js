@@ -36,6 +36,11 @@ const SUCCESS_MESSAGES = {
             COUNT_PROPERTIES_BY_CATEGORY: 'Counting properties by category successfully!',
             COUNT_PROPERTIES_CREATED_BY_DATE: 'Counting properties created by date successfully!',
             COUNT_CONTACTS_BY_DATE: 'Counting contacts by date successfully!'
+        },
+        GET_MAINTENANCE_MODE: 'Get maintenance mode successfully!',
+        UPDATE_MAINTENANCE_MODE: {
+            ON: 'Maintenance mode has been enabled successfully!',
+            OFF: 'Maintenance mode has been disabled successfully!'
         }
     },
 
@@ -189,7 +194,13 @@ const ERROR_MESSAGES = {
     },
 
     ADMIN: {
-        RESET_USER_PASSWORD_FAILED: 'Failed to reset user password!'
+        RESET_USER_PASSWORD_FAILED: 'Failed to reset user password!',
+        NOT_FOUND_MAINTENANCE_MODE: 'Maintenance mode not found!',
+        GET_MAINTENANCE_MODE: 'Failed to get maintenance mode!',
+        UPDATE_MAINTENANCE_MODE: {
+            NEED_DESCRIPTION: 'You need to provide description when enabling maintenance mode!',
+            UPDATE_FAILED: 'Failed to update maintenance mode!'
+        }
     },
 
     LOCATION: {
@@ -320,6 +331,10 @@ const ERROR_MESSAGES = {
         CONVERSION_RATE_NOT_FOUND: 'Conversion rate not found!',
         SAME_EXCHANGE_RATE: 'New exchange rate must be different from the current exchange rate!',
         DELETE_CONVERSION_RATE: 'Failed to delete conversion rate!'
+    },
+
+    MAINTENANCE_MODE: {
+        NOTICE: 'This service is under maintenance mode. Please come back later!'
     }
 }
 

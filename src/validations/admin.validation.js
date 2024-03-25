@@ -1,5 +1,16 @@
 const Joi = require('joi')
 
+const manageMaintenanceMode = {
+    updateMaintenanceMode: {
+        body: Joi.object()
+            .required()
+            .keys({
+                isMaintenance: Joi.boolean().required(),
+                description: Joi.string().when('isMaintenance', { is: true, then: Joi.required() })
+            })
+    }
+}
+
 const report = {
     countPropertiesCreatedByDate: {
         query: Joi.object().required().keys({
@@ -265,6 +276,7 @@ const manageUser = {
 }
 
 module.exports = {
+    manageMaintenanceMode,
     report,
     manageService,
     manageConversionRate,

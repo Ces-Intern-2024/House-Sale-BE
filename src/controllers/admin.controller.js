@@ -2,6 +2,23 @@ const { adminService, emailService } = require('../services')
 const { OK, Created } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const updateMaintenanceMode = async (req, res) => {
+    const updatedMaintenanceMode = await adminService.updateMaintenanceMode(req.body)
+    new OK({
+        message: updatedMaintenanceMode
+            ? SUCCESS_MESSAGES.ADMIN.UPDATE_MAINTENANCE_MODE.ON
+            : SUCCESS_MESSAGES.ADMIN.UPDATE_MAINTENANCE_MODE.OFF
+    }).send(res)
+}
+
+const getMaintenanceMode = async (req, res) => {
+    const maintenanceMode = await adminService.getMaintenanceMode()
+    new OK({
+        message: SUCCESS_MESSAGES.ADMIN.GET_MAINTENANCE_MODE,
+        metaData: maintenanceMode
+    }).send(res)
+}
+
 const countContactsByDate = async (req, res) => {
     const countList = await adminService.countContactsByDate(req.query)
     new OK({
@@ -244,6 +261,8 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    updateMaintenanceMode,
+    getMaintenanceMode,
     countContactsByDate,
     countPropertiesCreatedByDate,
     countPropertiesByCategory,

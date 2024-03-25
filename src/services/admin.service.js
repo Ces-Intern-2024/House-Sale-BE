@@ -6,8 +6,26 @@ const {
     categoryRepo,
     conversionRateRepo,
     serviceRepo,
-    contactRepo
+    contactRepo,
+    maintenanceModeRepo
 } = require('../models/repo')
+
+/**
+ * Update maintenance mode
+ * @param {Object} maintenanceModeBody - the maintenance mode body
+ * @returns {Promise<boolean>} - the result of update maintenance mode
+ */
+const updateMaintenanceMode = async (maintenanceModeBody) => {
+    return maintenanceModeRepo.updateMaintenanceMode(maintenanceModeBody)
+}
+
+/**
+ * Get maintenance mode info
+ * @returns {Promise<MaintenanceMode>} - the maintenance mode
+ */
+const getMaintenanceMode = async () => {
+    return maintenanceModeRepo.getMaintenanceMode()
+}
 
 /**
  * Count contacts created by date
@@ -286,6 +304,8 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    updateMaintenanceMode,
+    getMaintenanceMode,
     countContactsByDate,
     countPropertiesCreatedByDate,
     countPropertiesByCategory,

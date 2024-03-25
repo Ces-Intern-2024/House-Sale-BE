@@ -4,6 +4,7 @@ const validate = require('../../middlewares/validate')
 const authentication = require('../../middlewares/authentication')
 const { userController } = require('../../controllers')
 const { userValidation } = require('../../validations')
+const checkMaintenanceMode = require('../../middlewares/checkMaintenanceMode')
 
 const router = express.Router()
 
@@ -26,6 +27,7 @@ router.get('/checkAuth', (req, res) => {
     res.send('Check Auth Success!')
 })
 router.post('/logout', validate(userValidation.logout), asyncHandler(userController.logout))
+router.use(checkMaintenanceMode)
 router.post('/change-password', validate(userValidation.changePassword), asyncHandler(userController.changePassword))
 router.get('/profile', asyncHandler(userController.getProfile))
 router.patch('/profile', validate(userValidation.updateProfile), asyncHandler(userController.updateProfile))
