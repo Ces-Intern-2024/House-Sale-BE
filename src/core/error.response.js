@@ -49,7 +49,14 @@ class FailedDependenciesError extends ErrorResponse {
     }
 }
 
+class MaintenanceModeError extends ErrorResponse {
+    constructor(message = ReasonPhrases.SERVICE_UNAVAILABLE, statusCode = StatusCodes.SERVICE_UNAVAILABLE) {
+        super(message, statusCode)
+    }
+}
+
 module.exports = {
+    MaintenanceModeError,
     ErrorResponse,
     BadRequestError,
     AuthFailureError,
