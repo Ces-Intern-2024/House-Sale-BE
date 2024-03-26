@@ -116,6 +116,10 @@ const SUCCESS_MESSAGES = {
         DEPOSIT_TO_USER_BALANCE_BY_ADMIN: ({ userId, newDeposit, currentBalance }) => {
             return `Successfully added ${newDeposit} Credit to the balance of user ID:${userId}. The current balance is now ${currentBalance} Credit!`
         }
+    },
+
+    MAINTENANCE_MODE: {
+        GET_MAINTENANCE_MODE: 'Get maintenance mode successfully!'
     }
 }
 
@@ -286,7 +290,10 @@ const ERROR_MESSAGES = {
         FAILED_TO_UPDATE_USER_BALANCE: 'Failed to update user balance!',
         INVALID_DESCRIPTION: 'Invalid description!',
         FAILED_TO_RENT_SERVICE: 'Failed to rent service!',
-        FAILED_TO_CREATE_RENT_SERVICE_TRANSACTION: 'Failed to create rent service transaction!'
+        FAILED_TO_CREATE_RENT_SERVICE_TRANSACTION: 'Failed to create rent service transaction!',
+        INVALID_EXCHANGE_RATE: 'Invalid exchange rate!',
+        FAILED_TO_CREATE_DEPOSIT_TRANSACTION: 'Failed to create deposit transaction!',
+        INVALID_DEPOSIT_AMOUNT: 'Invalid deposit amount!'
     },
 
     IMAGE: {
@@ -330,7 +337,9 @@ const ERROR_MESSAGES = {
         UPDATE_CONVERSION_RATE: 'Failed to update conversion rate!',
         CONVERSION_RATE_NOT_FOUND: 'Conversion rate not found!',
         SAME_EXCHANGE_RATE: 'New exchange rate must be different from the current exchange rate!',
-        DELETE_CONVERSION_RATE: 'Failed to delete conversion rate!'
+        DELETE_CONVERSION_RATE: 'Failed to delete conversion rate!',
+        EXCHANGE_RATE_NOT_FOUND: 'Exchange rate not found!',
+        GET_CURRENT_EXCHANGE_RATE: 'Failed to get current exchange rate!'
     },
 
     MAINTENANCE_MODE: {

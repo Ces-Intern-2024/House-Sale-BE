@@ -179,11 +179,16 @@ const getAllCategories = async () => {
  * Deposit credit to user balance by admin
  * @param {Object} params
  * @param {id} params.userId - the id of user to deposit
- * @param {number} params.amount - the amount of deposit
+ * @param {number} params.amountInDollars -  the amount in dollars to deposit
+ * @param {number} params.amountInCredits - the amount in credits to deposit
+ * @param {number} params.exchangeRate - the exchange rate from dollar to credit
  * @returns {Promise<Object>} - the new deposit and current balance of user
  */
-const depositUserBalance = async ({ userId, amount }) => {
-    return transactionRepo.depositCredit({ userId, info: { amount, description: TRANSACTION.DEPOSIT_BY_ADMIN_DESC } })
+const depositUserBalance = async ({ userId, info }) => {
+    return transactionRepo.depositCredit({
+        userId,
+        info: { ...info, description: TRANSACTION.DEPOSIT_BY_ADMIN_DESC }
+    })
 }
 
 /**

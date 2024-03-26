@@ -18,11 +18,19 @@ module.exports = {
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE'
             },
-            amount: {
+            amountInDollars: {
                 type: Sequelize.DECIMAL(10, 2),
                 allowNull: false
             },
-            balance: {
+            amountInCredits: {
+                type: Sequelize.DECIMAL(10, 2),
+                allowNull: false
+            },
+            exchangeRate: {
+                type: Sequelize.DECIMAL(10, 2),
+                allowNull: false
+            },
+            balanceInCredits: {
                 type: Sequelize.DECIMAL(10, 2),
                 allowNull: false
             },

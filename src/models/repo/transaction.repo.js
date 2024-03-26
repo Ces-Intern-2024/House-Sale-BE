@@ -1,9 +1,11 @@
 const { Op } = require('sequelize')
 const db = require('..')
-const { TRANSACTION, PAGINATION_DEFAULT } = require('../../core/data.constant')
+const { TRANSACTION, PAGINATION_DEFAULT, EPSILON } = require('../../core/data.constant')
 const { NotFoundError, BadRequestError } = require('../../core/error.response')
 const { ERROR_MESSAGES } = require('../../core/message.constant')
 const { paginatedData, setStartAndEndDates } = require('../../utils')
+const { getCurrentExchangeRate } = require('./conversionRate.repo')
+const { getUserById } = require('./user.repo')
 
 /**
  * Rent service and update user balance
@@ -35,7 +37,13 @@ const rentService = async ({ userId, serviceId, description }) => {
 
     try {
         const newRentServiceTransaction = await db.RentServiceTransactions.create(
-            { userId, amount: price, balance: Number(balance) - Number(price), serviceId, description },
+            {
+                userId,
+                amountInCredits: price,
+                balanceInCredits: Number(balance) - Number(price),
+                serviceId,
+                description
+            },
             { transaction }
         )
         if (!newRentServiceTransaction) {
@@ -106,6 +114,41 @@ const getAllRentServiceTransactions = async (query) => {
 }
 
 /**
+ * Validate exchange rate
+ * @param {number} exchangeRate  - the exchange rate from request
+ * @param {number} currentExchangeRate - the current exchange rate
+ * @throws {BadRequestError} - if exchange rate is invalid
+ */
+const validateExchangeRate = (exchangeRate, currentExchangeRate) => {
+    if (Math.abs(exchangeRate - currentExchangeRate) > EPSILON) {
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_EXCHANGE_RATE)
+    }
+
+    return true
+}
+
+/**
+ * Validate deposit transaction info
+ * @param {number} amountInDollars - the amount in dollars
+ * @param {number} amountInCredits - the amount in credits
+ * @param {number} exchangeRate - the exchange rate
+ */
+const validateDepositTransactionInfo = async (amountInDollars, amountInCredits, exchangeRate) => {
+    const currentExchangeRate = await getCurrentExchangeRate()
+    if (
+        amountInDollars <= 0 ||
+        amountInCredits <= 0 ||
+        exchangeRate <= 0 ||
+        !validateExchangeRate(exchangeRate, currentExchangeRate) ||
+        Math.abs(amountInDollars - amountInCredits * exchangeRate) > EPSILON
+    ) {
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_DEPOSIT_AMOUNT)
+    }
+
+    return true
+}
+
+/**
  * Deposit credit to user balance
  * @param {object} params
  * @param {id} params.userId - the id of user
@@ -113,41 +156,49 @@ const getAllRentServiceTransactions = async (query) => {
  * @returns {Promise<Object>}
  */
 const depositCredit = async ({ userId, info }) => {
-    const user = await db.Users.findOne({ where: { userId } })
+    const user = await getUserById(userId)
     if (!user) {
         throw new BadRequestError(ERROR_MESSAGES.COMMON.USER_NOT_FOUND)
     }
+    const {
+        amountInDollars: rawAmountInDollars,
+        amountInCredits: rawAmountInCredits,
+        exchangeRate: rawExchangeRate,
+        description
+    } = info
+    const amountInDollars = Number(rawAmountInDollars)
+    const amountInCredits = Number(rawAmountInCredits)
+    const exchangeRate = Number(rawExchangeRate)
+    await validateDepositTransactionInfo(amountInDollars, amountInCredits, exchangeRate)
     const { balance } = user
-
-    const { amount, description } = info
-    if (amount < 0) {
-        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_AMOUNT)
-    }
-    if (!description || typeof description !== 'string') {
-        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_DESCRIPTION)
-    }
-
+    const balanceAfterDeposit = Number(balance) + Number(amountInCredits)
     const transaction = await db.sequelize.transaction()
 
     try {
         const depositTransaction = await db.DepositsTransactions.create(
-            { userId, amount, balance: Number(balance) + Number(amount), description },
+            {
+                userId,
+                amountInDollars,
+                amountInCredits,
+                exchangeRate,
+                balanceInCredits: balanceAfterDeposit,
+                description
+            },
             { transaction }
         )
         if (!depositTransaction) {
-            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.FAILED_TO_DEPOSIT_CREDIT)
+            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.FAILED_TO_CREATE_DEPOSIT_TRANSACTION)
         }
 
-        const updatedUser = await user.increment({ balance: amount }, { transaction })
-        if (!updatedUser) {
+        const [updated] = await db.Users.update({ balance: balanceAfterDeposit }, { where: { userId }, transaction })
+        if (!updated) {
             throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.FAILED_TO_UPDATE_USER_BALANCE)
         }
         await transaction.commit()
-        await updatedUser.reload()
-        return { newDeposit: amount, currentBalance: updatedUser.balance }
+        return { newDeposit: amountInCredits, currentBalance: balanceAfterDeposit }
     } catch (error) {
         await transaction.rollback()
-        if (error instanceof BadRequestError) {
+        if (error instanceof BadRequestError || error instanceof NotFoundError) {
             throw error
         }
         throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.FAILED_TO_DEPOSIT_CREDIT)
@@ -218,8 +269,8 @@ const createRentServiceTransactionAndUpdateUserBalance = async (
     const newRentServiceTransaction = await db.RentServiceTransactions.create(
         {
             userId,
-            amount,
-            balance: Number(balance) - Number(amount),
+            amountInCredits: Number(amount),
+            balanceInCredits: Number(balance) - Number(amount),
             serviceId,
             description
         },

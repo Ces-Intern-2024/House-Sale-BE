@@ -25,7 +25,7 @@ const getAllRentServiceTransactions = async (query) => {
  * Deposit credit to user balance
  * @param {object} params
  * @param {id} params.userId - the id of user
- * @param {Object} params - the info of deposit credit contains amount and description
+ * @param {Object} params - the info of deposit credit contains amountInDollars, amountInCredits, exchangeRate, description
  * @returns {Promise<Object>}
  */
 const depositCredit = async ({ userId, info }) => {

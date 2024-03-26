@@ -26,11 +26,19 @@ module.exports = (sequelize, DataTypes) => {
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE'
             },
-            amount: {
+            amountInDollars: {
                 type: DataTypes.DECIMAL(10, 2),
                 allowNull: false
             },
-            balance: {
+            amountInCredits: {
+                type: DataTypes.DECIMAL(10, 2),
+                allowNull: false
+            },
+            exchangeRate: {
+                type: DataTypes.DECIMAL(10, 2),
+                allowNull: false
+            },
+            balanceInCredits: {
                 type: DataTypes.DECIMAL(10, 2),
                 allowNull: false
             },
