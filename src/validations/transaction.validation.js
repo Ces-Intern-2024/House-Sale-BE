@@ -2,7 +2,9 @@ const Joi = require('joi')
 
 const depositCredit = {
     body: Joi.object().required().keys({
-        amount: Joi.number().required(),
+        amountInDollars: Joi.number().required(),
+        amountInCredits: Joi.number().required(),
+        exchangeRate: Joi.number().required(),
         description: Joi.string().required()
     })
 }

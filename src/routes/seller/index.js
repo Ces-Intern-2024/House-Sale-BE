@@ -8,5 +8,6 @@ router.use(authentication('Seller'))
 router.use(checkMaintenanceMode)
 router.use('/properties', require('./manageProperty'))
 router.use('/report', require('./report'))
+router.use('/transaction', require('./manageTransaction'))
 
 module.exports = router

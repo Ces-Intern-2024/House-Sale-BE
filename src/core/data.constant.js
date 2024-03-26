@@ -3,6 +3,8 @@ const db = require('../models')
 
 const TIMEZONE = 'Asia/Ho_Chi_Minh'
 
+const EPSILON = 0.01
+
 const ROLE_NAME = {
     USER: 'User',
     SELLER: 'Seller',
@@ -11,7 +13,10 @@ const ROLE_NAME = {
 
 const REPORT = {
     DEFAULT_DATE_RANGE: {
-        FROM: () => new Date(new Date() - 30 * 24 * 60 * 60 * 1000),
+        FROM: () => {
+            const now = new Date()
+            return new Date(now.getFullYear(), now.getMonth(), 1)
+        },
         TO: () => new Date()
     }
 }
@@ -302,6 +307,7 @@ const EMAIL_TEMPLATE = {
 }
 
 module.exports = {
+    EPSILON,
     MAINTENANCE_MODE_DESCRIPTION,
     REPORT,
     TIMEZONE,

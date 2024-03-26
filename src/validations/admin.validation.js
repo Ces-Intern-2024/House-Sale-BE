@@ -120,7 +120,9 @@ const manageTransaction = {
             userId: Joi.number().required()
         }),
         body: Joi.object().required().keys({
-            amount: Joi.number().required()
+            amountInDollars: Joi.number().required(),
+            amountInCredits: Joi.number().required(),
+            exchangeRate: Joi.number().required()
         })
     },
 

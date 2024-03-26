@@ -48,7 +48,29 @@ const getAllConversionRates = async () => {
     }
 }
 
+/**
+ * Get current exchange rate
+ * @returns {Promise<number>} exchange rate
+ */
+const getCurrentExchangeRate = async () => {
+    try {
+        const [currentConversionRate] = await getAllConversionRates()
+        if (!currentConversionRate) {
+            throw new NotFoundError(ERROR_MESSAGES.CONVERSION_RATE.CONVERSION_RATE_NOT_FOUND)
+        }
+        const { exchangeRate } = currentConversionRate
+        if (!exchangeRate) {
+            throw new NotFoundError(ERROR_MESSAGES.CONVERSION_RATE.EXCHANGE_RATE_NOT_FOUND)
+        }
+        return Number(exchangeRate)
+    } catch (error) {
+        if (error instanceof NotFoundError) throw error
+        throw new BadRequestError(ERROR_MESSAGES.CONVERSION_RATE.GET_CURRENT_EXCHANGE_RATE)
+    }
+}
+
 module.exports = {
+    getCurrentExchangeRate,
     deleteConversionRate,
     updateConversionRate,
     createConversionRate,

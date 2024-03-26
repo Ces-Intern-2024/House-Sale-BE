@@ -1,8 +1,8 @@
 const express = require('express')
-const { transactionController } = require('../../../controllers')
-const asyncHandler = require('../../../middlewares/asyncHandler')
-const validate = require('../../../middlewares/validate')
-const { transactionValidation } = require('../../../validations')
+const { transactionController } = require('../../../../controllers')
+const asyncHandler = require('../../../../middlewares/asyncHandler')
+const validate = require('../../../../middlewares/validate')
+const { transactionValidation } = require('../../../../validations')
 
 const router = express.Router()
 

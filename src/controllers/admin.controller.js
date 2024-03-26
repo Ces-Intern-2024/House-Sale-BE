@@ -150,8 +150,10 @@ const getAllCategories = async (req, res) => {
 
 const depositUserBalance = async (req, res) => {
     const { userId } = req.params
-    const { amount } = req.body
-    const { newDeposit, currentBalance } = await adminService.depositUserBalance({ userId, amount })
+    const { newDeposit, currentBalance } = await adminService.depositUserBalance({
+        userId,
+        info: req.body
+    })
     new OK({
         message: SUCCESS_MESSAGES.TRANSACTION.DEPOSIT_TO_USER_BALANCE_BY_ADMIN({ userId, newDeposit, currentBalance })
     }).send(res)

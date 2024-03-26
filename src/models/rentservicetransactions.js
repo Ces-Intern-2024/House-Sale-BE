@@ -35,11 +35,11 @@ module.exports = (sequelize, DataTypes) => {
                 onUpdate: 'CASCADE',
                 onDelete: 'CASCADE'
             },
-            amount: {
+            amountInCredits: {
                 type: DataTypes.DECIMAL(10, 2),
                 allowNull: false
             },
-            balance: {
+            balanceInCredits: {
                 type: DataTypes.DECIMAL(10, 2),
                 allowNull: false
             },
