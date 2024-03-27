@@ -3623,6 +3623,258 @@ paths:
                                                 example: User not found!
             security:
                 - bearerAuth: []
+    /seller/report/total-amount-deposited:
+        get:
+            tags:
+                - Seller - Report
+            summary: Get total amount deposited by seller (NEW 27/03)
+            description: Get total amount deposited by seller
+            operationId: getTotalAmountDepositedOfSeller
+            responses:
+                '200':
+                    description: Get total amount deposited successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get total amount deposited successfully!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            totalAmountInDollars:
+                                                type: number
+                                                format: decimal(10,2)
+                                                example: 866.35
+                                            totalAmountInCredits:
+                                                type: number
+                                                format: decimal(10,2)
+                                                example: 815
+                '400':
+                    description: Failed to get total amount deposited!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Failed to get total amount deposited!
+                                                    -   userId is required!
+                                                    -   Failed to get user by userId!
+                                                    -   Failed to get total amount deposited in dollars!
+                                                    -   Failed to get total amount deposited in credits!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
+            security:
+                - bearerAuth: []
+    /seller/report/total-amount-deposited-by-date:
+        get:
+            tags:
+                - Seller - Report
+            summary: Get total amount deposited by date (NEW 27/03)
+            description: Return list total amount deposited in dollars and credits by date
+            operationId: getTotalAmountDepositedByDateOfSeller
+            parameters:
+                -   name: fromDateRange
+                    in: query
+                    description: The start date to count amount deposited by date
+                    required: true
+                    schema:
+                        type: string
+                        format: date
+                        example: 2024-03-21
+                -   name: toDateRange
+                    in: query
+                    description: The end date to count amount deposited by date
+                    required: true
+                    schema:
+                        type: string
+                        format: date
+                    example: 2024-03-26
+            responses:
+                '200':
+                    description: Get total amount deposited by date successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get total amount deposited by date successfully!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            totalAmountInDollars:
+                                                type: number
+                                                example: 866.35
+                                            totalAmountInCredits:
+                                                type: number
+                                                example: 815
+                                            data:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/CountAmountDepositedByDate'
+                                                example:
+                                                    -   dateReport: 2024-03-21
+                                                        amountInCredits: 0
+                                                        amountInDollars: 0
+                                                    -   dateReport: 2024-03-22
+                                                        amountInCredits: 0
+                                                        amountInDollars: 0
+                                                    -   dateReport: 2024-03-23
+                                                        amountInCredits: 0
+                                                        amountInDollars: 0
+                                                    -   dateReport: 2024-03-24
+                                                        amountInCredits: 0
+                                                        amountInDollars: 0
+                                                    -   dateReport: 2024-03-25
+                                                        amountInCredits: "600.00"
+                                                        amountInDollars: "600.00"
+                                                    -   dateReport: 2024-03-26
+                                                        amountInCredits: "215.00"
+                                                        amountInDollars: "266.35"
+                '400':
+                    description: Failed to get total amount deposited by date!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Invalid date range!
+                                                    -   Failed to get total amount deposited by date!
+                                                    -   userId is required!
+                                                    -   Failed to get user by userId!
+                                                    -   Failed to get deposited data by date range!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
+            security:
+                - bearerAuth: []
     /seller/transaction/deposit:
         get:
             tags:
@@ -7586,6 +7838,225 @@ paths:
                                                 example: Your account is not active!
             security:
                 - bearerAuth: []
+    /admin/report/total-amount-deposited:
+        get:
+            tags:
+            -   Admin - Report
+            summary: Total amount deposited in dollars (NEW 27/03)
+            description: Return total amount deposited by all sellers in dollars
+            operationId: totalAmountDepositedInDollars
+            responses:
+                '200':
+                    description: Get total amount deposited by all sellers successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get total amount deposited by all sellers successfully!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            totalAmount:
+                                                type: number
+                                                format: decimal(10,2)
+                                                example: 1766.35
+                '400':
+                    description: Failed to get total amount deposited in dollars!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Failed to get total amount deposited in dollars!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+            security:
+                - bearerAuth: []
+    /admin/report/total-amount-deposited-by-date:
+        get:
+            tags:
+            -   Admin - Report
+            summary: Total amount deposited by date (NEW 27/03)
+            description: Return total amount deposited by date
+            operationId: getTotalAmountDepositedByDate
+            parameters:
+                -   name: fromDateRange
+                    in: query
+                    description: The start date to count total amount deposited by date
+                    required: true
+                    schema:
+                        type: string
+                        format: date
+                        example: 2024-03-23
+                -   name: toDateRange
+                    in: query
+                    description: The end date to count total amount deposited by date
+                    required: true
+                    schema:
+                        type: string
+                        format: date
+                        example: 2024-03-30
+            responses:
+                '200':
+                    description: Get total amount deposited by date successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get total amount deposited by date successfully!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            totalAmountInDollars:
+                                                type: number
+                                                example: 916.35
+                                            totalAmountInCredits:
+                                                type: number
+                                                example: 865
+                                            data:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/CountAmountDepositedByDate'
+                                                example:
+                                                    -   dateReport: 2024-03-21
+                                                        amountInCredits: 0
+                                                        amountInDollars: 0
+                                                    -   dateReport: 2024-03-22
+                                                        amountInCredits: 0
+                                                        amountInDollars: 0
+                                                    -   dateReport: 2024-03-23
+                                                        amountInCredits: 0
+                                                        amountInDollars: 0
+                                                    -   dateReport: 2024-03-24
+                                                        amountInCredits: 0
+                                                        amountInDollars: 0
+                                                    -   dateReport: 2024-03-25
+                                                        amountInCredits: "600.00"
+                                                        amountInDollars: "600.00"
+                                                    -   dateReport: 2024-03-26
+                                                        amountInCredits: "265.00"
+                                                        amountInDollars: "316.35"
+                                                    -   dateReport: 2024-03-27
+                                                        amountInCredits: 0
+                                                        amountInDollars: 0
+                                                    -   dateReport: 2024-03-28
+                                                        amountInCredits: 0
+                                                        amountInDollars: 0
+                                                    -   dateReport: 2024-03-29
+                                                        amountInCredits: 0
+                                                        amountInDollars: 0
+                '400':
+                    description: Failed to get total amount deposited by date!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Invalid date range!
+                                                    -   Failed to get total amount deposited by date range!
+                                                    -   Failed to get total amount deposited by date!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+            security:
+                - bearerAuth: []
     /admin/manage-maintenance-mode:
         get:
             tags:
@@ -7778,6 +8249,7 @@ paths:
                                                 example: Your account is not active!
             security:
                 - bearerAuth: []
+
 components:
     schemas:
         Property:
@@ -8804,7 +9276,6 @@ components:
                     -   categoryId: 3
                         name: Villa
                         count: 0
-
         CountContactsByDate:
             type: object
             properties:
@@ -8815,6 +9286,21 @@ components:
                 count:
                     type: number
                     example: 1
+                    default: 0
+        CountAmountDepositedByDate:
+            type: object
+            properties:
+                dateReport:
+                    type: string
+                    format: date
+                    example: 2024-03-25
+                amountInCredits:
+                    type: number
+                    example: 215.00
+                    default: 0
+                amountInDollars:
+                    type: number
+                    example: 266.35
                     default: 0
     securitySchemes:
         bearerAuth:

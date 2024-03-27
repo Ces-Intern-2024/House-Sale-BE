@@ -11,6 +11,23 @@ const {
 } = require('../models/repo')
 
 /**
+ * Count amount deposited in each type by date in credits and dollars and total amount deposited in each type
+ * @param {Object} params - the query from request contains fromDateRange, toDateRange
+ * @returns {Promise<{totalAmountInDollars: number, totalAmountInCredits: number, data: Array.<{dateReport: string, amountInDollars: number, amountInCredits: number}>}>}
+ */
+const getTotalAmountDepositedByDate = async (query) => {
+    return transactionRepo.getTotalAmountDepositedByDate(query)
+}
+
+/**
+ * Get total amount deposited by all sellers in dollars
+ * @returns {Promise<number>} - the total amount deposited in dollars
+ */
+const getTotalAmountDeposited = async () => {
+    return transactionRepo.getTotalAmountDepositedInDollars()
+}
+
+/**
  * Update maintenance mode
  * @param {Object} maintenanceModeBody - the maintenance mode body
  * @returns {Promise<boolean>} - the result of update maintenance mode
@@ -309,6 +326,8 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    getTotalAmountDepositedByDate,
+    getTotalAmountDeposited,
     updateMaintenanceMode,
     getMaintenanceMode,
     countContactsByDate,

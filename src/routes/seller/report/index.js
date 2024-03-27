@@ -18,5 +18,11 @@ router.get(
     validate(sellerValidation.report.countContactsByDate),
     asyncHandler(sellerController.countContactsByDate)
 )
+router.get('/total-amount-deposited', asyncHandler(sellerController.getTotalAmountDepositedBySeller))
+router.get(
+    '/total-amount-deposited-by-date',
+    validate(sellerValidation.report.getTotalAmountDepositedByDate),
+    asyncHandler(sellerController.getTotalAmountDepositedByDate)
+)
 
 module.exports = router

@@ -35,7 +35,9 @@ const SUCCESS_MESSAGES = {
             COUNT_PROPERTIES_BY_FEATURE: 'Counting properties by feature successfully!',
             COUNT_PROPERTIES_BY_CATEGORY: 'Counting properties by category successfully!',
             COUNT_PROPERTIES_CREATED_BY_DATE: 'Counting properties created by date successfully!',
-            COUNT_CONTACTS_BY_DATE: 'Counting contacts by date successfully!'
+            COUNT_CONTACTS_BY_DATE: 'Counting contacts by date successfully!',
+            TOTAL_AMOUNT_DEPOSITED_BY_ALL_SELLERS: 'Get total amount deposited by all sellers successfully!',
+            TOTAL_AMOUNT_DEPOSITED_BY_DATE: 'Get total amount deposited by date successfully!'
         },
         GET_MAINTENANCE_MODE: 'Get maintenance mode successfully!',
         UPDATE_MAINTENANCE_MODE: {
@@ -79,7 +81,9 @@ const SUCCESS_MESSAGES = {
             COUNT_PROPERTIES_BY_FEATURE: 'Counting properties by feature successfully!',
             COUNT_PROPERTIES_BY_CATEGORY: 'Counting properties by category successfully!',
             COUNT_PROPERTIES_CREATED_BY_DATE: 'Counting properties created by date successfully!',
-            COUNT_CONTACTS_BY_DATE: 'Counting contacts by date successfully!'
+            COUNT_CONTACTS_BY_DATE: 'Counting contacts by date successfully!',
+            TOTAL_AMOUNT_DEPOSITED: 'Get total amount deposited successfully!',
+            TOTAL_AMOUNT_DEPOSITED_BY_DATE: 'Get total amount deposited by date successfully!'
         }
     },
 
@@ -293,7 +297,13 @@ const ERROR_MESSAGES = {
         FAILED_TO_CREATE_RENT_SERVICE_TRANSACTION: 'Failed to create rent service transaction!',
         INVALID_EXCHANGE_RATE: 'Invalid exchange rate!',
         FAILED_TO_CREATE_DEPOSIT_TRANSACTION: 'Failed to create deposit transaction!',
-        INVALID_DEPOSIT_AMOUNT: 'Invalid deposit amount!'
+        INVALID_DEPOSIT_AMOUNT: 'Invalid deposit amount!',
+        GET_TOTAL_AMOUNT_DEPOSITED: 'Failed to get total amount deposited!',
+        GET_DEPOSITED_DATA_BY_DATE_RANGE: 'Failed to get deposited data by date range!',
+        COUNT_AMOUNT_DEPOSITED_BY_DATE: 'Failed to count amount deposited by date!',
+        GET_TOTAL_AMOUNT_DEPOSITED_IN_DOLLARS: 'Failed to get total amount deposited in dollars!',
+        GET_TOTAL_AMOUNT_DEPOSITED_IN_CREDITS: 'Failed to get total amount deposited in credits!',
+        GET_TOTAL_AMOUNT_DEPOSITED_BY_DATE: 'Failed to get total amount deposited by date!'
     },
 
     IMAGE: {

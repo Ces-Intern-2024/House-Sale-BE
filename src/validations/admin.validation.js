@@ -24,6 +24,13 @@ const report = {
             fromDateRange: Joi.date().iso().required(),
             toDateRange: Joi.date().iso().required()
         })
+    },
+
+    getTotalAmountDepositedByDate: {
+        query: Joi.object().required().keys({
+            fromDateRange: Joi.date().iso().required(),
+            toDateRange: Joi.date().iso().required()
+        })
     }
 }
 
