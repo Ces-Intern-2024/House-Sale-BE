@@ -37,7 +37,8 @@ const SUCCESS_MESSAGES = {
             COUNT_PROPERTIES_CREATED_BY_DATE: 'Counting properties created by date successfully!',
             COUNT_CONTACTS_BY_DATE: 'Counting contacts by date successfully!',
             TOTAL_AMOUNT_DEPOSITED_BY_ALL_SELLERS: 'Get total amount deposited by all sellers successfully!',
-            TOTAL_AMOUNT_DEPOSITED_BY_DATE: 'Get total amount deposited by date successfully!'
+            TOTAL_AMOUNT_DEPOSITED_BY_DATE: 'Get total amount deposited by date successfully!',
+            TOTAL_CREDITS_USED_BY_DATE: 'Get total credits used by date successfully!'
         },
         GET_MAINTENANCE_MODE: 'Get maintenance mode successfully!',
         UPDATE_MAINTENANCE_MODE: {
@@ -83,7 +84,9 @@ const SUCCESS_MESSAGES = {
             COUNT_PROPERTIES_CREATED_BY_DATE: 'Counting properties created by date successfully!',
             COUNT_CONTACTS_BY_DATE: 'Counting contacts by date successfully!',
             TOTAL_AMOUNT_DEPOSITED: 'Get total amount deposited successfully!',
-            TOTAL_AMOUNT_DEPOSITED_BY_DATE: 'Get total amount deposited by date successfully!'
+            TOTAL_AMOUNT_DEPOSITED_BY_DATE: 'Get total amount deposited by date successfully!',
+            TOTAL_CREDITS_USED: 'Get total credits used successfully!',
+            TOTAL_CREDITS_USED_BY_DATE: 'Get total credits used by date successfully!'
         }
     },
 
@@ -303,7 +306,10 @@ const ERROR_MESSAGES = {
         COUNT_AMOUNT_DEPOSITED_BY_DATE: 'Failed to count amount deposited by date!',
         GET_TOTAL_AMOUNT_DEPOSITED_IN_DOLLARS: 'Failed to get total amount deposited in dollars!',
         GET_TOTAL_AMOUNT_DEPOSITED_IN_CREDITS: 'Failed to get total amount deposited in credits!',
-        GET_TOTAL_AMOUNT_DEPOSITED_BY_DATE: 'Failed to get total amount deposited by date!'
+        GET_TOTAL_AMOUNT_DEPOSITED_BY_DATE: 'Failed to get total amount deposited by date!',
+        GET_TOTAL_CREDITS_USED: 'Failed to get total credits used!',
+        GET_CREDITS_USED_DATA_BY_DATE_RANGE: 'Failed to get credits used data by date range!',
+        GET_TOTAL_CREDITS_USED_BY_DATE: 'Failed to get total credits used by date!'
     },
 
     IMAGE: {

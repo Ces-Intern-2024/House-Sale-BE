@@ -9,6 +9,106 @@ const { getCurrentExchangeRate } = require('./conversionRate.repo')
 const { getUserById } = require('./user.repo')
 
 /**
+ * Get total credits used by date r
+ * @param {Object} params
+ * @param {id} params.userId
+ * @param {string} params.fromDateRange
+ * @param {string} params.toDateRange
+ * @returns {Promise<{Array.<{dateReport: string, amountInCredits: number}>}>}
+ */
+const getCreditsUsedDataByDateRange = async ({ userId, fromDateRange, toDateRange }) => {
+    try {
+        const { fromDate, toDate } = setStartAndEndDates(fromDateRange, toDateRange)
+        if (fromDate > toDate) {
+            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_DATE_RANGE)
+        }
+
+        const creditDataByDate = await db.RentServiceTransactions.findAll({
+            attributes: [
+                [db.sequelize.fn('DATE', db.sequelize.col('createdAt')), 'date'],
+                [db.sequelize.fn('SUM', db.sequelize.col('amountInCredits')), 'amountInCredits']
+            ],
+            where: {
+                ...(userId ? { userId } : {}),
+                createdAt: {
+                    [Op.between]: [fromDate, toDate]
+                }
+            },
+            group: [db.sequelize.fn('DATE', db.sequelize.col('createdAt'))],
+            raw: true
+        })
+
+        return creditDataByDate
+    } catch (error) {
+        if (error instanceof BadRequestError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.GET_CREDITS_USED_DATA_BY_DATE_RANGE)
+    }
+}
+
+/**
+ * Calculate daily amounts and total amount credits used
+ * @param {Array.<string>} dateRange
+ * @param {Array.<date: string, amountInCredits: string>} dataByDate
+ * @returns {Promise<{totalAmountInCredits,dailyAmounts: Map.<date: string, amountInCredits: number> }>}
+ */
+const calculateDailyAmountsAndTotalAmountCreditsUsed = (dateRange, dataByDate) => {
+    let totalAmountInCredits = 0
+    const dailyAmounts = new Map(dateRange.map((date) => [moment(date).format('YYYY-MM-DD'), 0]))
+    dataByDate.forEach((item) => {
+        if (item.date) {
+            dailyAmounts.set(item.date, item.amountInCredits)
+            totalAmountInCredits += Number(item.amountInCredits)
+        }
+    })
+    return { totalAmountInCredits, dailyAmounts }
+}
+
+/**
+ * Get total credits used by date
+ * @param {Object} params
+ * @param {id} params.userId
+ * @param {string} params.fromDateRange
+ * @param {string} params.toDateRange
+ * @returns {Promise<{totalAmountInCredits: number, data: Array.<{dateReport: string, amountInCredits: number}>}>}
+ */
+const getTotalCreditsUsedByDate = async ({ userId, fromDateRange, toDateRange }) => {
+    try {
+        const creditsUsedDataByDate = await getCreditsUsedDataByDateRange({ userId, fromDateRange, toDateRange })
+        const dateRangeArray = createDateRange(fromDateRange, toDateRange)
+        const { totalAmountInCredits, dailyAmounts } = calculateDailyAmountsAndTotalAmountCreditsUsed(
+            dateRangeArray,
+            creditsUsedDataByDate
+        )
+        const creditsUsedByDate = Array.from(dailyAmounts).map(([dateReport, amountInCredits]) => ({
+            dateReport,
+            amountInCredits
+        }))
+        return { totalAmountInCredits, data: creditsUsedByDate }
+    } catch (error) {
+        if (error instanceof BadRequestError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.GET_TOTAL_CREDITS_USED_BY_DATE)
+    }
+}
+
+/**
+ * Get total credits used by seller
+ * @param {id} userId
+ * @returns {Promise<number>} - the total credits used by seller
+ */
+const getTotalCreditsUsed = async (userId) => {
+    try {
+        const totalCredits = await db.RentServiceTransactions.sum('amountInCredits', { where: { userId } })
+        return totalCredits || 0
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.GET_TOTAL_CREDITS_USED)
+    }
+}
+
+/**
  * Get deposited data by date range
  * @param {Object} params
  * @param {id} params.userId
@@ -110,7 +210,7 @@ const getTotalAmountDepositedInDollars = async (userId) => {
     const condition = userId ? { userId } : {}
     try {
         const totalAmountInDollars = await db.DepositsTransactions.sum('amountInDollars', { where: condition })
-        return totalAmountInDollars
+        return totalAmountInDollars || 0
     } catch (error) {
         throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.GET_TOTAL_AMOUNT_DEPOSITED_IN_DOLLARS)
     }
@@ -125,7 +225,7 @@ const getTotalAmountDepositedInCredits = async (userId) => {
     const condition = userId ? { userId } : {}
     try {
         const totalAmountInCredits = await db.DepositsTransactions.sum('amountInCredits', { where: condition })
-        return totalAmountInCredits
+        return totalAmountInCredits || 0
     } catch (error) {
         throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.GET_TOTAL_AMOUNT_DEPOSITED_IN_CREDITS)
     }
@@ -434,6 +534,8 @@ const createRentServiceTransactionAndUpdateUserBalance = async (
 }
 
 module.exports = {
+    getTotalCreditsUsedByDate,
+    getTotalCreditsUsed,
     getTotalAmountDepositedByDate,
     getTotalAmountDepositedInDollars,
     getTotalAmountDepositedInCredits,

@@ -3875,6 +3875,265 @@ paths:
                                                 example: User not found!
             security:
                 - bearerAuth: []
+    /seller/report/total-credits-used:
+        get:
+            tags:
+              - Seller - Report
+            summary: Get total credits used by seller (NEW 27/03)
+            description: Get total credits used by seller
+            operationId: getTotalCreditsUsedBySeller
+            responses:
+                '200':
+                    description: Get total credits used successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get total credits used successfully!
+                                    metaData:
+                                        type: number
+                                        example: 1150
+                '400':
+                    description: Failed to get total credits used!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Failed to get total credits used!
+                                                    -   userId is required!
+                                                    -   Failed to get user by userId!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
+            security:
+                - bearerAuth: []
+    /seller/report/total-credits-used-by-date:
+        get:
+            tags:
+              - Seller - Report
+            summary: Get total credits used by date (NEW 27/03)
+            description: Return list total credits used by date
+            operationId: getTotalCreditsUsedByDateOfSeller
+            parameters:
+                -   name: fromDateRange
+                    in: query
+                    description: The start date to count credits used by date
+                    required: true
+                    schema:
+                        type: string
+                        format: date
+                        example: 2024-03-12
+                -   name: toDateRange
+                    in: query
+                    description: The end date to count credits used by date
+                    required: true
+                    schema:
+                        type: string
+                        format: date
+                        example: 2024-03-30
+            responses:
+                '200':
+                    description: Get total credits used by date successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get total credits used by date successfully!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            totalCreditsUsed:
+                                                type: number
+                                                example: 1150
+                                            data:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/CountCreditsUsedByDate'
+                                                example:
+                                                    -   dateReport: 2024-03-12
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-13
+                                                        totalCreditsUsed: 200.00
+                                                    -   dateReport: 2024-03-14
+                                                        totalCreditsUsed: 890.00
+                                                    -   dateReport: 2024-03-15
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-16
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-17
+                                                        totalCreditsUsed: 15.00
+                                                    -   dateReport: 2024-03-18
+                                                        totalCreditsUsed: 30.00
+                                                    -   dateReport: 2024-03-19
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-20
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-21
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-22
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-23
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-24
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-25
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-26
+                                                        totalCreditsUsed: 15.00
+                                                    -   dateReport: 2024-03-27
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-28
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-29
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-30
+                                                        totalCreditsUsed: 0
+                '400':
+                    description: Failed to get total credits used by date!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Invalid date range!
+                                                    -   Failed to get total credits used by date!
+                                                    -   userId is required!
+                                                    -   Failed to get user by userId!
+                                                    -   Failed to get credits used data by date range!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+                '404':
+                    description: User not found!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 404
+                                            message:
+                                                type: string
+                                                example: User not found!
+            security:
+                - bearerAuth: []
     /seller/transaction/deposit:
         get:
             tags:
@@ -8057,6 +8316,173 @@ paths:
                                                 example: Your account is not active!
             security:
                 - bearerAuth: []
+    /admin/report/total-credits-used-by-date:
+        get:
+            tags:
+            -   Admin - Report
+            summary: Total credits used by date (NEW 27/03)
+            description: Return total credits used by date
+            operationId: getTotalCreditsUsedByDate
+            parameters:
+                -   name: fromDateRange
+                    in: query
+                    description: The start date to count total credits used by date
+                    required: true
+                    schema:
+                        type: string
+                        format: date
+                        example: 2024-03-01
+                -   name: toDateRange
+                    in: query
+                    description: The end date to count total credits used by date
+                    required: true
+                    schema:
+                        type: string
+                        format: date
+                        example: 2024-03-30
+            responses:
+                '200':
+                    description: Get total credits used by date successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get total credits used by date successfully!
+                                    metaData:
+                                        type: object
+                                        properties:
+                                            totalCreditsUsed:
+                                                type: number
+                                                example: 865
+                                            data:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/CountCreditsUsedByDate'
+                                                example:
+                                                    -   dateReport: 2024-03-01
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-02
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-03
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-04
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-05
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-06
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-07
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-08
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-09
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-10
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-11
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-12
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-13
+                                                        totalCreditsUsed: 200.00
+                                                    -   dateReport: 2024-03-14
+                                                        totalCreditsUsed: 890.00
+                                                    -   dateReport: 2024-03-15
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-16
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-17
+                                                        totalCreditsUsed: 15.00
+                                                    -   dateReport: 2024-03-18
+                                                        totalCreditsUsed: 30.00
+                                                    -   dateReport: 2024-03-19
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-20
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-21
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-22
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-23
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-24
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-25
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-26
+                                                        totalCreditsUsed: 15.00
+                                                    -   dateReport: 2024-03-27
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-28
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-29
+                                                        totalCreditsUsed: 0
+                                                    -   dateReport: 2024-03-30
+                                                        totalCreditsUsed: 0
+
+                '400':
+                    description: Failed to get total amount deposited by date!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Invalid date range!
+                                                    -   Failed to get total amount deposited by date range!
+                                                    -   Failed to get total amount deposited by date!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+            security:
+                - bearerAuth: []
     /admin/manage-maintenance-mode:
         get:
             tags:
@@ -9301,6 +9727,17 @@ components:
                 amountInDollars:
                     type: number
                     example: 266.35
+                    default: 0
+        CountCreditsUsedByDate:
+            type: object
+            properties:
+                dateReport:
+                    type: string
+                    format: date
+                    example: 2024-03-25
+                amountInCredits:
+                    type: number
+                    example: 215.00
                     default: 0
     securitySchemes:
         bearerAuth:
