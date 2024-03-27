@@ -1,11 +1,155 @@
 const { Op } = require('sequelize')
+const moment = require('moment-timezone')
 const db = require('..')
 const { TRANSACTION, PAGINATION_DEFAULT, EPSILON } = require('../../core/data.constant')
 const { NotFoundError, BadRequestError } = require('../../core/error.response')
 const { ERROR_MESSAGES } = require('../../core/message.constant')
-const { paginatedData, setStartAndEndDates } = require('../../utils')
+const { paginatedData, setStartAndEndDates, createDateRange } = require('../../utils')
 const { getCurrentExchangeRate } = require('./conversionRate.repo')
 const { getUserById } = require('./user.repo')
+
+/**
+ * Get deposited data by date range
+ * @param {Object} params
+ * @param {id} params.userId
+ * @param {string} params.fromDateRange - the start date of date range
+ * @param {string} params.toDateRange - the end date of date range
+ * @returns {Promise<Array.<{date: string, amountInDollars: number, amountInCredits: number}>>}
+ */
+const getDepositedDataByDateRange = async ({ userId, fromDateRange, toDateRange }) => {
+    try {
+        const { fromDate, toDate } = setStartAndEndDates(fromDateRange, toDateRange)
+        if (fromDate > toDate) {
+            throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.INVALID_DATE_RANGE)
+        }
+
+        const creditDataByDate = await db.DepositsTransactions.findAll({
+            attributes: [
+                [db.sequelize.fn('DATE', db.sequelize.col('createdAt')), 'date'],
+                [db.sequelize.fn('SUM', db.sequelize.col('amountInDollars')), 'amountInDollars'],
+                [db.sequelize.fn('SUM', db.sequelize.col('amountInCredits')), 'amountInCredits']
+            ],
+            where: {
+                ...(userId ? { userId } : {}),
+                createdAt: {
+                    [Op.between]: [fromDate, toDate]
+                }
+            },
+            group: [db.sequelize.fn('DATE', db.sequelize.col('createdAt'))],
+            raw: true
+        })
+
+        return creditDataByDate
+    } catch (error) {
+        if (error instanceof BadRequestError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.GET_DEPOSITED_DATA_BY_DATE_RANGE)
+    }
+}
+
+/**
+ * Calculate daily amounts and total amount deposited
+ * @param {Array.<string>} dateRange
+ * @param {Array.<{date: string, amountInDollars: number, amountInCredits: number}>} dataByDate
+ * @returns {totalAmountInDollars: number, totalAmountInCredits: number, dailyAmounts: Map.<date:string, {amountInDollars: number, amountInCredits: number}>}
+ */
+const calculateDailyAmountsAndTotalAmountDeposited = (dateRange, dataByDate) => {
+    let totalAmountInCredits = 0
+    let totalAmountInDollars = 0
+    const dailyAmounts = new Map(
+        dateRange.map((date) => [moment(date).format('YYYY-MM-DD'), { amountInCredits: 0, amountInDollars: 0 }])
+    )
+    dataByDate.forEach((item) => {
+        if (item.date) {
+            dailyAmounts.set(item.date, {
+                amountInCredits: item.amountInCredits,
+                amountInDollars: item.amountInDollars
+            })
+            totalAmountInDollars += Number(item.amountInDollars)
+            totalAmountInCredits += Number(item.amountInCredits)
+        }
+    })
+    return { totalAmountInDollars, totalAmountInCredits, dailyAmounts }
+}
+
+/**
+ * Count amount deposited in each type by date in credits and dollars and total amount deposited in each type
+ * @param {Object} params
+ * @param {id} params.userId
+ * @param {string} params.fromDateRange
+ * @param {string} params.toDateRange
+ * @returns {Promise<{totalAmountInDollars: number, totalAmountInCredits: number, data: Array.<{dateReport: string, amountInDollars: number, amountInCredits: number}>}>}
+ */
+const getTotalAmountDepositedByDate = async ({ userId, fromDateRange, toDateRange }) => {
+    try {
+        const depositedDataByDate = await getDepositedDataByDateRange({ userId, fromDateRange, toDateRange })
+        const dateRangeArray = createDateRange(fromDateRange, toDateRange)
+        const { totalAmountInDollars, totalAmountInCredits, dailyAmounts } =
+            calculateDailyAmountsAndTotalAmountDeposited(dateRangeArray, depositedDataByDate)
+        const creditsDepositedByDate = Array.from(dailyAmounts).map(([dateReport, amounts]) => ({
+            dateReport,
+            ...amounts
+        }))
+
+        return { totalAmountInDollars, totalAmountInCredits, data: creditsDepositedByDate }
+    } catch (error) {
+        if (error instanceof BadRequestError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.GET_TOTAL_AMOUNT_DEPOSITED_BY_DATE)
+    }
+}
+
+/**
+ * Get total amount deposited in dollars
+ * @param {id} userId
+ * @returns {Promise<number>} - the total amount deposited in dol lars
+ */
+const getTotalAmountDepositedInDollars = async (userId) => {
+    const condition = userId ? { userId } : {}
+    try {
+        const totalAmountInDollars = await db.DepositsTransactions.sum('amountInDollars', { where: condition })
+        return totalAmountInDollars
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.GET_TOTAL_AMOUNT_DEPOSITED_IN_DOLLARS)
+    }
+}
+
+/**
+ * Get total amount deposited in credits
+ * @param {id} userId
+ * @returns {Promise<number>} - the total amount deposited in credits
+ */
+const getTotalAmountDepositedInCredits = async (userId) => {
+    const condition = userId ? { userId } : {}
+    try {
+        const totalAmountInCredits = await db.DepositsTransactions.sum('amountInCredits', { where: condition })
+        return totalAmountInCredits
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.GET_TOTAL_AMOUNT_DEPOSITED_IN_CREDITS)
+    }
+}
+
+/**
+ * Get total amount deposited in credits and dollars
+ * @param {id} userId
+ * @returns {Promise<{totalAmountInDollars: number,amountInCredits: number }>}
+ */
+const getTotalAmountDeposited = async (userId) => {
+    try {
+        const [totalAmountInDollars, totalAmountInCredits] = await Promise.all([
+            getTotalAmountDepositedInDollars(userId),
+            getTotalAmountDepositedInCredits(userId)
+        ])
+        return { totalAmountInDollars, totalAmountInCredits }
+    } catch (error) {
+        if (error instanceof BadRequestError) {
+            throw error
+        }
+        throw new BadRequestError(ERROR_MESSAGES.TRANSACTION.GET_TOTAL_AMOUNT_DEPOSITED)
+    }
+}
 
 /**
  * Rent service and update user balance
@@ -290,6 +434,10 @@ const createRentServiceTransactionAndUpdateUserBalance = async (
 }
 
 module.exports = {
+    getTotalAmountDepositedByDate,
+    getTotalAmountDepositedInDollars,
+    getTotalAmountDepositedInCredits,
+    getTotalAmountDeposited,
     checkBalance,
     createRentServiceTransactionAndUpdateUserBalance,
     rentService,

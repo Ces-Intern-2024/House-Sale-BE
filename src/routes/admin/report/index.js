@@ -13,11 +13,16 @@ router.get(
     validate(adminValidation.report.countPropertiesCreatedByDate),
     asyncHandler(adminController.countPropertiesCreatedByDate)
 )
-
 router.get(
     '/count-contacts-by-date',
     validate(adminValidation.report.countContactsByDate),
     asyncHandler(adminController.countContactsByDate)
+)
+router.get('/total-amount-deposited', asyncHandler(adminController.getTotalAmountDepositedByAllSeller))
+router.get(
+    '/total-amount-deposited-by-date',
+    validate(adminValidation.report.getTotalAmountDepositedByDate),
+    asyncHandler(adminController.getTotalAmountDepositedByDate)
 )
 
 module.exports = router

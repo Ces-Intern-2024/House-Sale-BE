@@ -15,6 +15,30 @@ const { checkBalance } = require('../models/repo/transaction.repo')
 const { calculateExpiresDate } = require('../utils')
 
 /**
+ * Count amount deposited in each type by date in credits and dollars and total amount deposited in each type
+ * @param {Object} params
+ * @param {id} params.userId
+ * @param {string} params.fromDateRange
+ * @param {string} params.toDateRange
+ * @returns {Promise<{totalAmountInDollars: number, totalAmountInCredits: number, data: Array.<{dateReport: string, amountInDollars: number, amountInCredits: number}>}>}
+ */
+const getTotalAmountDepositedByDate = async (query) => {
+    const { userId, fromDateRange, toDateRange } = query
+    await userRepo.findUserById(userId)
+    return transactionRepo.getTotalAmountDepositedByDate({ userId, fromDateRange, toDateRange })
+}
+
+/**
+ * Get total amount deposited in credits and dollars by seller
+ * @param {id} userId
+ * @returns {Promise<Object>} - Total amount deposited in credits and total amount deposited in dollars by seller
+ */
+const getTotalAmountDepositedBySeller = async (userId) => {
+    await userRepo.findUserById(userId)
+    return transactionRepo.getTotalAmountDeposited(userId)
+}
+
+/**
  * Count contacts created by date of seller
  * @param {Object} query  - query object contains userId, fromDateRange, toDateRange
  * @returns {Promise<Object>} - List number of contacts by date and total number of contacts
@@ -109,6 +133,9 @@ const createProperty = async ({ propertyData, userId, option }) => {
         if (error instanceof BadRequestError || error instanceof NotFoundError) {
             throw error
         }
+        if (error instanceof db.Sequelize.ValidationError) {
+            throw new BadRequestError(error.errors[0].message)
+        }
         throw new BadRequestError(ERROR_MESSAGES.PROPERTY.CREATE)
     }
 }
@@ -175,6 +202,8 @@ const getAllProperties = async ({ options, userId }) => {
 }
 
 module.exports = {
+    getTotalAmountDepositedByDate,
+    getTotalAmountDepositedBySeller,
     countContactsByDate,
     countPropertiesCreatedByDate,
     countPropertiesByCategory,

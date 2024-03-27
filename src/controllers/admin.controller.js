@@ -2,6 +2,22 @@ const { adminService, emailService } = require('../services')
 const { OK, Created } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const getTotalAmountDepositedByDate = async (req, res) => {
+    const result = await adminService.getTotalAmountDepositedByDate(req.query)
+    new OK({
+        message: SUCCESS_MESSAGES.ADMIN.REPORT.TOTAL_AMOUNT_DEPOSITED_BY_DATE,
+        metaData: result
+    }).send(res)
+}
+
+const getTotalAmountDepositedByAllSeller = async (req, res) => {
+    const totalAmount = await adminService.getTotalAmountDeposited()
+    new OK({
+        message: SUCCESS_MESSAGES.ADMIN.REPORT.TOTAL_AMOUNT_DEPOSITED_BY_ALL_SELLERS,
+        metaData: totalAmount
+    }).send(res)
+}
+
 const updateMaintenanceMode = async (req, res) => {
     const updatedMaintenanceMode = await adminService.updateMaintenanceMode(req.body)
     new OK({
@@ -263,6 +279,8 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    getTotalAmountDepositedByDate,
+    getTotalAmountDepositedByAllSeller,
     updateMaintenanceMode,
     getMaintenanceMode,
     countContactsByDate,
