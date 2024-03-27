@@ -15,6 +15,27 @@ const { checkBalance } = require('../models/repo/transaction.repo')
 const { calculateExpiresDate } = require('../utils')
 
 /**
+ * Get total credits used by date
+ * @param {Object} query - query object contains userId, fromDateRange, toDateRange
+ * @returns {Promise<{totalCredits: number, data: Array.<{dateReport: string, amountInCredits: number}>}>}
+ */
+const getTotalCreditsUsedByDate = async (query) => {
+    const { userId, fromDateRange, toDateRange } = query
+    await userRepo.findUserById(userId)
+    return transactionRepo.getTotalCreditsUsedByDate({ userId, fromDateRange, toDateRange })
+}
+
+/**
+ * Get total credits used by seller
+ * @param {id} userId
+ * @returns {Promise<number>} - Total credits used by seller
+ */
+const getTotalCreditsUsedBySeller = async (userId) => {
+    await userRepo.findUserById(userId)
+    return transactionRepo.getTotalCreditsUsed(userId)
+}
+
+/**
  * Count amount deposited in each type by date in credits and dollars and total amount deposited in each type
  * @param {Object} params
  * @param {id} params.userId
@@ -202,6 +223,8 @@ const getAllProperties = async ({ options, userId }) => {
 }
 
 module.exports = {
+    getTotalCreditsUsedByDate,
+    getTotalCreditsUsedBySeller,
     getTotalAmountDepositedByDate,
     getTotalAmountDepositedBySeller,
     countContactsByDate,

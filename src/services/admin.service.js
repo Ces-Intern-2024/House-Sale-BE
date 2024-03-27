@@ -9,6 +9,14 @@ const {
     contactRepo,
     maintenanceModeRepo
 } = require('../models/repo')
+/**
+ * Get total credits used by all sellers by date
+ * @param {Object} query - query object contains fromDateRange, toDateRange
+ * @returns {Promise<{totalCredits: number, data: Array.<{dateReport: string, amountInCredits: number}>}>}
+ */
+const getTotalCreditsUsedByDate = async (query) => {
+    return transactionRepo.getTotalCreditsUsedByDate(query)
+}
 
 /**
  * Count amount deposited in each type by date in credits and dollars and total amount deposited in each type
@@ -326,6 +334,7 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    getTotalCreditsUsedByDate,
     getTotalAmountDepositedByDate,
     getTotalAmountDeposited,
     updateMaintenanceMode,

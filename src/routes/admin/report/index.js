@@ -24,5 +24,10 @@ router.get(
     validate(adminValidation.report.getTotalAmountDepositedByDate),
     asyncHandler(adminController.getTotalAmountDepositedByDate)
 )
+router.get(
+    '/total-credits-used-by-date',
+    validate(adminValidation.report.getTotalCreditsUsedByDate),
+    asyncHandler(adminController.getTotalCreditsUsedByDate)
+)
 
 module.exports = router

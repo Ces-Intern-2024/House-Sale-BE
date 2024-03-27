@@ -2,6 +2,14 @@ const { adminService, emailService } = require('../services')
 const { OK, Created } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const getTotalCreditsUsedByDate = async (req, res) => {
+    const result = await adminService.getTotalCreditsUsedByDate(req.query)
+    new OK({
+        message: SUCCESS_MESSAGES.ADMIN.REPORT.TOTAL_CREDITS_USED_BY_DATE,
+        metaData: result
+    }).send(res)
+}
+
 const getTotalAmountDepositedByDate = async (req, res) => {
     const result = await adminService.getTotalAmountDepositedByDate(req.query)
     new OK({
@@ -279,6 +287,7 @@ const getAllUsers = async (req, res) => {
 }
 
 module.exports = {
+    getTotalCreditsUsedByDate,
     getTotalAmountDepositedByDate,
     getTotalAmountDepositedByAllSeller,
     updateMaintenanceMode,
