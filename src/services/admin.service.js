@@ -9,6 +9,15 @@ const {
     contactRepo,
     maintenanceModeRepo
 } = require('../models/repo')
+
+/**
+ * Get total accounts by role except admin
+ * @returns {Promise<Array.<{roleId: number, roleName: string, total: number}>}
+ */
+const getTotalAccountsByRole = async () => {
+    return userRepo.getTotalAccountsByRole()
+}
+
 /**
  * Get total credits used by all sellers by date
  * @param {Object} query - query object contains fromDateRange, toDateRange
@@ -334,6 +343,7 @@ const getAllUsers = async ({ queries }) => {
 }
 
 module.exports = {
+    getTotalAccountsByRole,
     getTotalCreditsUsedByDate,
     getTotalAmountDepositedByDate,
     getTotalAmountDeposited,

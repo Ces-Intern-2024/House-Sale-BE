@@ -8483,6 +8483,103 @@ paths:
                                                 example: Your account is not active!
             security:
                 - bearerAuth: []
+    /admin/report/total-accounts-by-role:
+        get:
+            tags:
+            -   Admin - Report
+            summary: Get total accounts by role (NEW 28/03)
+            description: Return total accounts by role
+            operationId: getTotalAccountsByRole
+            responses:
+                '200':
+                    description: Get total accounts by role successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get total accounts by role successfully!
+                                    metaData:
+                                        type: array
+                                        items:
+                                            type: object
+                                            properties:
+                                                roleId:
+                                                    type: number
+                                                    example: 1
+                                                roleName:
+                                                    type: string
+                                                    example: User
+                                                totalAccounts:
+                                                    type: number
+                                                    example: 5
+                                        example:
+                                            -   roleId: 1
+                                                roleName: User
+                                                totalAccounts: 5
+                                            -   roleId: 2
+                                                roleName: Seller
+                                                totalAccounts: 5
+                '400':
+                    description: Failed to get total accounts by role!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Failed to get total accounts by role!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+            security:
+                - bearerAuth: []
     /admin/manage-maintenance-mode:
         get:
             tags:

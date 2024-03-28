@@ -5,6 +5,7 @@ const { generateVerifyEmailCode, paginatedData, hashPassword } = require('../../
 const { ERROR_MESSAGES } = require('../../core/message.constant')
 const { PAGINATION_DEFAULT, COMMON_EXCLUDE_ATTRIBUTES } = require('../../core/data.constant')
 const { checkLocation } = require('./location.repo')
+const { rolesId } = require('../../config/roles.config')
 
 const validateUserId = (userId) => {
     if (!userId) {
@@ -124,7 +125,7 @@ const getAllUsers = async ({ queries }) => {
             ...(email && { email: { [db.Sequelize.Op.like]: `%${email}%` } })
         }
         const listUsers = await db.Users.findAndCountAll({
-            where: conditions,
+            where: { ...conditions, roleId: { [db.Sequelize.Op.not]: rolesId.Admin } },
             offset: (Number(page) - 1) * Number(limit),
             limit: Number(limit),
             order: [[orderBy, sortBy]],
@@ -315,7 +316,40 @@ const resetUserPassword = async (userId) => {
     }
 }
 
+/**
+ * Get total accounts by role except admin
+ * @returns {Promise<Array.<{roleId: number, roleName: string, total: number}>}
+ */
+const getTotalAccountsByRole = async () => {
+    try {
+        const totalAccountsByRole = await db.Users.findAll({
+            where: { roleId: { [db.Sequelize.Op.not]: rolesId.Admin } },
+            attributes: ['roleId', [db.Sequelize.fn('COUNT', 'roleId'), 'totalAccounts']],
+            include: [
+                {
+                    model: db.Roles,
+                    as: 'role',
+                    attributes: ['roleName']
+                }
+            ],
+            group: ['roleId'],
+            raw: true
+        })
+
+        const result = totalAccountsByRole.map((role) => ({
+            roleId: role.roleId,
+            roleName: role['role.roleName'],
+            totalAccounts: parseInt(role.totalAccounts, 10)
+        }))
+
+        return result
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.USER.GET_TOTAL_ACCOUNTS_BY_ROLE)
+    }
+}
+
 module.exports = {
+    getTotalAccountsByRole,
     findUserById,
     validateUserId,
     resetUserPassword,
