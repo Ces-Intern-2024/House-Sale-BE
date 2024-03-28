@@ -38,7 +38,8 @@ const SUCCESS_MESSAGES = {
             COUNT_CONTACTS_BY_DATE: 'Counting contacts by date successfully!',
             TOTAL_AMOUNT_DEPOSITED_BY_ALL_SELLERS: 'Get total amount deposited by all sellers successfully!',
             TOTAL_AMOUNT_DEPOSITED_BY_DATE: 'Get total amount deposited by date successfully!',
-            TOTAL_CREDITS_USED_BY_DATE: 'Get total credits used by date successfully!'
+            TOTAL_CREDITS_USED_BY_DATE: 'Get total credits used by date successfully!',
+            TOTAL_ACCOUNTS_BY_ROLE: 'Get total accounts by role successfully!'
         },
         GET_MAINTENANCE_MODE: 'Get maintenance mode successfully!',
         UPDATE_MAINTENANCE_MODE: {
@@ -201,7 +202,9 @@ const ERROR_MESSAGES = {
         LOGOUT: {
             INVALID_REFRESH_TOKEN: 'RefreshToken not valid!',
             FAILED_TO_LOGOUT: 'Failed to logout!'
-        }
+        },
+
+        GET_TOTAL_ACCOUNTS_BY_ROLE: 'Failed to get total accounts by role!'
     },
 
     ADMIN: {

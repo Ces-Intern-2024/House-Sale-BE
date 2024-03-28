@@ -29,5 +29,6 @@ router.get(
     validate(adminValidation.report.getTotalCreditsUsedByDate),
     asyncHandler(adminController.getTotalCreditsUsedByDate)
 )
+router.get('/total-accounts-by-role', asyncHandler(adminController.getTotalAccountsByRole))
 
 module.exports = router
