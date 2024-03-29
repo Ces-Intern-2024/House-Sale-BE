@@ -121,11 +121,11 @@ const getAllUsers = async ({ queries }) => {
             sortBy = PAGINATION_DEFAULT.USER.SORT_BY
         } = queries
         const conditions = {
-            ...(roleId && { roleId }),
+            ...(roleId ? { roleId } : { roleId: { [db.Sequelize.Op.not]: rolesId.Admin } }),
             ...(email && { email: { [db.Sequelize.Op.like]: `%${email}%` } })
         }
         const listUsers = await db.Users.findAndCountAll({
-            where: { ...conditions, roleId: { [db.Sequelize.Op.not]: rolesId.Admin } },
+            where: conditions,
             offset: (Number(page) - 1) * Number(limit),
             limit: Number(limit),
             order: [[orderBy, sortBy]],

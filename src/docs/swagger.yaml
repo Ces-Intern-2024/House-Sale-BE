@@ -4681,7 +4681,6 @@ paths:
                         enum:
                             - 1
                             - 2
-                            - 3
                 -   name: email
                     in: query
                     description: A email-keyword to search for users
