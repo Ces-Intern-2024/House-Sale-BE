@@ -278,9 +278,9 @@ const manageUser = {
 
     getAllUsers: {
         query: Joi.object().keys({
-            roleId: Joi.number().valid(1, 2, 3).messages({
+            roleId: Joi.number().valid(1, 2).messages({
                 'number.base': 'Role ID must be a number',
-                'any.only': 'Role ID must be one of 1, 2, 3'
+                'any.only': 'Role ID must be one of 1, 2'
             }),
             email: Joi.string(),
             limit: Joi.number().integer().min(1).message('Limit must be a number and greater than 0').default(10),
