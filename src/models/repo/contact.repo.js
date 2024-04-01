@@ -5,6 +5,22 @@ const { ERROR_MESSAGES } = require('../../core/message.constant')
 const { setStartAndEndDates, createDateRange, calculateDailyCountsAndTotalCount } = require('../../utils')
 
 /**
+ * Get total contacts of seller
+ * @param {id} userId
+ * @returns {Promise<number>} - Total contacts of seller
+ */
+const getTotalContactsBySeller = async (userId) => {
+    try {
+        const totalContacts = await db.Contacts.count({
+            where: { sellerId: userId }
+        })
+        return totalContacts
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.CONTACT.GET_TOTAL_CONTACTS_BY_SELLER)
+    }
+}
+
+/**
  * Get contact count by date range (only day with at least 1 contact)
  * @param {Objects} params
  * @param {String} params.userId - sellerId
@@ -71,5 +87,6 @@ const countContactsByDate = async ({ userId, fromDateRange, toDateRange }) => {
 }
 
 module.exports = {
+    getTotalContactsBySeller,
     countContactsByDate
 }

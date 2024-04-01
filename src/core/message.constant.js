@@ -87,7 +87,8 @@ const SUCCESS_MESSAGES = {
             TOTAL_AMOUNT_DEPOSITED: 'Get total amount deposited successfully!',
             TOTAL_AMOUNT_DEPOSITED_BY_DATE: 'Get total amount deposited by date successfully!',
             TOTAL_CREDITS_USED: 'Get total credits used successfully!',
-            TOTAL_CREDITS_USED_BY_DATE: 'Get total credits used by date successfully!'
+            TOTAL_CREDITS_USED_BY_DATE: 'Get total credits used by date successfully!',
+            TOTAL_CONTACTS: 'Get total contacts successfully!'
         }
     },
 
@@ -322,7 +323,8 @@ const ERROR_MESSAGES = {
     CONTACT: {
         FAILED_TO_CREATE_CONTACT: 'Failed to create new contact!',
         GET_CONTACTS_COUNT_BY_DATE_RANGE: 'Failed to get contacts count by date range!',
-        COUNT_CONTACTS_BY_DATE_RANGE: 'Failed to count contacts by date range!'
+        COUNT_CONTACTS_BY_DATE_RANGE: 'Failed to count contacts by date range!',
+        GET_TOTAL_CONTACTS_BY_SELLER: 'Failed to get total contacts by seller!'
     },
 
     FAVORITES_LIST: {
