@@ -30,4 +30,5 @@ router.get(
     validate(sellerValidation.report.getTotalCreditsUsedByDate),
     asyncHandler(sellerController.getTotalCreditsUsedByDate)
 )
+router.get('/total-contacts', asyncHandler(sellerController.getTotalContactsBySeller))
 module.exports = router

@@ -2,6 +2,15 @@ const { sellerService } = require('../services')
 const { OK, Created } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const getTotalContactsBySeller = async (req, res) => {
+    const userId = req.user?.userId
+    const totalContacts = await sellerService.getTotalContactsBySeller(userId)
+    new OK({
+        message: SUCCESS_MESSAGES.SELLER.REPORT.TOTAL_CONTACTS,
+        metaData: totalContacts
+    }).send(res)
+}
+
 const getTotalCreditsUsedByDate = async (req, res) => {
     const userId = req.user?.userId
     const result = await sellerService.getTotalCreditsUsedByDate({ userId, ...req.query })
@@ -140,6 +149,7 @@ const getAllProperties = async (req, res) => {
 }
 
 module.exports = {
+    getTotalContactsBySeller,
     getTotalCreditsUsedByDate,
     getTotalCreditsUsedBySeller,
     getTotalAmountDepositedByDate,
