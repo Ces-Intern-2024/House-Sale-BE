@@ -40,6 +40,14 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: true
             },
+            lat: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
+            lng: {
+                type: Sequelize.STRING,
+                allowNull: false
+            },
             createdAt: {
                 allowNull: false,
                 type: 'TIMESTAMP',
