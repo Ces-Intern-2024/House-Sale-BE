@@ -1,4 +1,5 @@
 const db = require('..')
+const geocoder = require('../../config/map.config')
 const { BadRequestError, NotFoundError } = require('../../core/error.response')
 const { ERROR_MESSAGES } = require('../../core/message.constant')
 
@@ -120,10 +121,21 @@ const getAllWardsByDistrictCode = async (districtCode) => {
     }
 }
 
+const getCoordinates = async ({ provinceCode, districtCode, wardCode, address, street }) => {
+    try {
+        const locationText = await getFullLocationText({ provinceCode, districtCode, wardCode, address, street })
+        const res = await geocoder.geocode(locationText)
+        return { lat: res[0].latitude, lng: res[0].longitude }
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.LOCATION.GET_COORDINATES)
+    }
+}
+
 const createLocation = async ({ provinceCode, districtCode, wardCode, address, street }, transaction) => {
     await checkLocation({ provinceCode, districtCode, wardCode })
+    const { lat, lng } = await getCoordinates({ provinceCode, districtCode, wardCode, address, street })
     const newLocation = await db.Locations.create(
-        { provinceCode, districtCode, wardCode, address, street },
+        { provinceCode, districtCode, wardCode, address, street, lat, lng },
         { transaction }
     )
     if (!newLocation) {
@@ -133,6 +145,7 @@ const createLocation = async ({ provinceCode, districtCode, wardCode, address, s
 }
 
 module.exports = {
+    getCoordinates,
     getFullLocationText,
     createLocation,
     getAllWardsByDistrictCode,

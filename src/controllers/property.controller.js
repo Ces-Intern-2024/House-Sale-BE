@@ -2,6 +2,14 @@ const { propertyService } = require('../services')
 const { OK } = require('../core/success.response')
 const { SUCCESS_MESSAGES } = require('../core/message.constant')
 
+const getMaxPropertyPrice = async (req, res) => {
+    const maxPrice = await propertyService.getMaxPropertyPrice()
+    new OK({
+        message: SUCCESS_MESSAGES.PROPERTY.GET_MAX_PRICE,
+        metaData: maxPrice
+    }).send(res)
+}
+
 const getAllAvailablePropertyCountByFeatureAndCategory = async (req, res) => {
     const propertyCountList = await propertyService.getAllAvailablePropertyCountByFeatureAndCategory()
     new OK({
@@ -29,6 +37,7 @@ const getProperty = async (req, res) => {
 }
 
 module.exports = {
+    getMaxPropertyPrice,
     getAllAvailablePropertyCountByFeatureAndCategory,
     getAllProperties,
     getProperty

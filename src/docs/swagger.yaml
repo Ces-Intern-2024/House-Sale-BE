@@ -474,6 +474,46 @@ paths:
                                             message:
                                                 type: string
                                                 example: Failed to get all available property count by feature and category!
+    /properties/max-price:
+        get:
+            tags:
+                - Property
+            summary: Get max price of properties (NEW 02/4)
+            description: Get max price of properties
+            operationId: getMaxPropertyPrice
+            responses:
+                '200':
+                    description: Get max price of all properties successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Get max price of all properties successfully!
+                                    metaData:
+                                        type: number
+                                        example: 5350473
+                '400':
+                    description: Failed to get max price of all properties!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                example: Failed to get max price of all properties!
     /properties/{propertyId}:
         get:
             tags:
@@ -2464,6 +2504,7 @@ paths:
                                                     -   Failed to get user by userId!
                                                     -   Service ID is required!
                                                     -   Failed to get service by serviceId!
+                                                    -   Failed to get coordinates!
                 '401':
                     description: Unauthorized!
                     content:
@@ -9052,6 +9093,12 @@ components:
                         address:
                             type: string
                             example: 100 Vo Nguyen Giap
+                        lat:
+                            type: string
+                            example: 16.047079
+                        lng:
+                            type: string
+                            example: 108.220736
                 images:
                     type: array
                     items:
@@ -9484,6 +9531,12 @@ components:
                         address:
                             type: string
                             example: 100 Vo Nguyen Giap
+                        lat:
+                            type: string
+                            example: 16.047079
+                        lng:
+                            type: string
+                            example: 108.220736
                 images:
                     type: array
                     items:

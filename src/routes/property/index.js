@@ -11,6 +11,7 @@ router.get(
     '/count-available-property',
     asyncHandler(propertyController.getAllAvailablePropertyCountByFeatureAndCategory)
 )
+router.get('/max-price', asyncHandler(propertyController.getMaxPropertyPrice))
 router.get('/:propertyId', validate(propertyValidation.getProperty), asyncHandler(propertyController.getProperty))
 
 module.exports = router

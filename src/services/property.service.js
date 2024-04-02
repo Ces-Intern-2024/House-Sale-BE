@@ -2,6 +2,14 @@ const { ROLE_NAME } = require('../core/data.constant')
 const { propertyRepo } = require('../models/repo')
 
 /**
+ * Get maximum property price
+ * @returns {Promise<number>} - Maximum property price
+ */
+const getMaxPropertyPrice = async () => {
+    return propertyRepo.getMaxPropertyPrice()
+}
+
+/**
  * Get all properties by property options
  * @param {Object} params
  * @param {Object} params.propertyOptions - Property options to filter properties
@@ -45,6 +53,7 @@ const getAllAvailablePropertyCountByFeatureAndCategory = async () => {
 }
 
 module.exports = {
+    getMaxPropertyPrice,
     getAllAvailablePropertyCountByFeatureAndCategory,
     getAllProperties,
     getProperty,

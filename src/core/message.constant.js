@@ -69,7 +69,8 @@ const SUCCESS_MESSAGES = {
         GET_ALL: 'Get list properties successfully!',
         GET: 'Get property successfully!',
         DELETE_LIST_PROPERTIES: 'Delete list property successfully!',
-        GET_ALL_AVAILABLE_COUNT: 'Get all available property count by feature and category successfully!'
+        GET_ALL_AVAILABLE_COUNT: 'Get all available property count by feature and category successfully!',
+        GET_MAX_PRICE: 'Get max price of all properties successfully!'
     },
 
     SELLER: {
@@ -232,7 +233,8 @@ const ERROR_MESSAGES = {
         DISTRICTS_NOT_FOUND: 'No district found!',
         WARDS_NOT_FOUND: 'No ward found!',
         REQUIRE_PROVINCE: 'Province code is required!',
-        REQUIRE_DISTRICT: 'District code is required!'
+        REQUIRE_DISTRICT: 'District code is required!',
+        GET_COORDINATES: 'Failed to get coordinates!'
     },
 
     AUTHENTICATION: {
@@ -287,7 +289,8 @@ const ERROR_MESSAGES = {
             COUNT_PROPERTIES_CREATED_BY_DATE: 'Failed to count properties created by date!',
             GET_ALL_AVAILABLE_PROPERTY_COUNT_BY_FEATURE_AND_CATEGORY:
                 'Failed to get all available property count by feature and category!'
-        }
+        },
+        GET_MAX_PRICE: 'Failed to get max price of all properties!'
     },
 
     TRANSACTION: {

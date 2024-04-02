@@ -557,7 +557,21 @@ const countPropertiesCreatedByDate = async ({ userId, fromDateRange, toDateRange
     }
 }
 
+/**
+ * Get maximum property price
+ * @returns {Promise<number>} - Maximum property price
+ */
+const getMaxPropertyPrice = async () => {
+    try {
+        const maxPrice = await db.Properties.max('price')
+        return maxPrice
+    } catch (error) {
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.GET_MAX_PRICE)
+    }
+}
+
 module.exports = {
+    getMaxPropertyPrice,
     countPropertiesCreatedByDate,
     countPropertiesByCategory,
     countPropertiesByFeature,
