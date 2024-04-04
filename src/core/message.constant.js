@@ -39,7 +39,8 @@ const SUCCESS_MESSAGES = {
             TOTAL_AMOUNT_DEPOSITED_BY_ALL_SELLERS: 'Get total amount deposited by all sellers successfully!',
             TOTAL_AMOUNT_DEPOSITED_BY_DATE: 'Get total amount deposited by date successfully!',
             TOTAL_CREDITS_USED_BY_DATE: 'Get total credits used by date successfully!',
-            TOTAL_ACCOUNTS_BY_ROLE: 'Get total accounts by role successfully!'
+            TOTAL_ACCOUNTS_BY_ROLE: 'Get total accounts by role successfully!',
+            COUNT_PROPERTIES_BY_FEATURE_CATEGORY: 'Counting properties by feature and category successfully!'
         },
         GET_MAINTENANCE_MODE: 'Get maintenance mode successfully!',
         UPDATE_MAINTENANCE_MODE: {
@@ -287,8 +288,7 @@ const ERROR_MESSAGES = {
             COUNT_PROPERTIES_BY_CATEGORY: 'Failed to count properties by category!',
             GET_PROPERTIES_CREATION_DATA_BY_DATE_RANGE: 'Failed to get properties creation data by date range!',
             COUNT_PROPERTIES_CREATED_BY_DATE: 'Failed to count properties created by date!',
-            GET_ALL_AVAILABLE_PROPERTY_COUNT_BY_FEATURE_AND_CATEGORY:
-                'Failed to get all available property count by feature and category!'
+            GET_ALL_PROPERTY_COUNT_BY_FEATURE_AND_CATEGORY: 'Failed to get all property count by feature and category!'
         },
         GET_MAX_PRICE: 'Failed to get max price of all properties!'
     },

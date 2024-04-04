@@ -177,7 +177,7 @@ const validatePropertyOptions = async ({ propertyOptions, role = ROLE_NAME.USER 
  * Get all available property count by feature and category
  * @returns {Promise<[{...Feature, totalCount: number, categories: [...Category, count]}]>} - List of available properties count by feature and category
  */
-const getAllAvailablePropertyCountByFeatureAndCategory = async () => {
+const getAllPropertyCountByFeatureAndCategory = async (role = ROLE_NAME.USER) => {
     try {
         const featureList = await db.Features.findAll({
             attributes: ['featureId', 'name'],
@@ -195,7 +195,7 @@ const getAllAvailablePropertyCountByFeatureAndCategory = async () => {
                 'categoryId',
                 [db.sequelize.fn('COUNT', db.sequelize.col('propertyId')), 'count']
             ],
-            where: { status: PROPERTY_STATUS.AVAILABLE },
+            where: { status: PROPERTY_STATUS_PERMISSION.GET_ALL[role] },
             group: ['featureId', 'categoryId'],
             distinct: true,
             raw: true
@@ -216,9 +216,7 @@ const getAllAvailablePropertyCountByFeatureAndCategory = async () => {
 
         return featureAndCategoryCounts
     } catch (error) {
-        throw new BadRequestError(
-            ERROR_MESSAGES.PROPERTY.REPORT.GET_ALL_AVAILABLE_PROPERTY_COUNT_BY_FEATURE_AND_CATEGORY
-        )
+        throw new BadRequestError(ERROR_MESSAGES.PROPERTY.REPORT.GET_ALL_PROPERTY_COUNT_BY_FEATURE_AND_CATEGORY)
     }
 }
 
@@ -585,5 +583,5 @@ module.exports = {
     getAllProperties,
     getProperty,
     updatePropertyStatus,
-    getAllAvailablePropertyCountByFeatureAndCategory
+    getAllPropertyCountByFeatureAndCategory
 }

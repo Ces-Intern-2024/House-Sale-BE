@@ -8,6 +8,7 @@ const router = express.Router()
 
 router.get('/count-properties-by-feature', asyncHandler(adminController.countPropertiesByFeature))
 router.get('/count-properties-by-category', asyncHandler(adminController.countPropertiesByCategory))
+router.get('/count-properties-by-feature-category', asyncHandler(adminController.countPropertiesByFeatureCategory))
 router.get(
     '/count-properties-created-by-date',
     validate(adminValidation.report.countPropertiesCreatedByDate),

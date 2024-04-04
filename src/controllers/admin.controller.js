@@ -67,6 +67,14 @@ const countPropertiesCreatedByDate = async (req, res) => {
     }).send(res)
 }
 
+const countPropertiesByFeatureCategory = async (req, res) => {
+    const countList = await adminService.countPropertiesByFeatureCategory()
+    new OK({
+        message: SUCCESS_MESSAGES.ADMIN.REPORT.COUNT_PROPERTIES_BY_FEATURE_CATEGORY,
+        metaData: countList
+    }).send(res)
+}
+
 const countPropertiesByCategory = async (req, res) => {
     const countList = await adminService.countPropertiesByCategory()
     new OK({
@@ -303,6 +311,7 @@ module.exports = {
     getMaintenanceMode,
     countContactsByDate,
     countPropertiesCreatedByDate,
+    countPropertiesByFeatureCategory,
     countPropertiesByCategory,
     countPropertiesByFeature,
     deleteService,
