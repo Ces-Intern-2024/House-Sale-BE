@@ -418,7 +418,7 @@ paths:
                                     metaData:
                                         type: array
                                         items:
-                                            $ref: '#/components/schemas/CountAvailablePropertyByFeatureAndCategory'
+                                            $ref: '#/components/schemas/CountPropertyByFeatureAndCategory'
                                         example:
                                             -   featureId: 1
                                                 name: Sale
@@ -459,7 +459,7 @@ paths:
                                                         name: Villa
                                                         count: 0
                 '400':
-                    description: Failed to get all available property count by feature and category!
+                    description: Failed to get all property count by feature and category!
                     content:
                         application/json:
                             schema:
@@ -473,7 +473,7 @@ paths:
                                                 example: 400
                                             message:
                                                 type: string
-                                                example: Failed to get all available property count by feature and category!
+                                                example: Failed to get all property count by feature and category!
     /properties/max-price:
         get:
             tags:
@@ -7894,6 +7894,125 @@ paths:
                                                 example: Your account is not active!
             security:
               - bearerAuth: []
+    /admin/report/count-properties-by-feature-category:
+        get:
+            tags:
+            -   Admin - Report
+            summary: Count properties by feature and category (NEW 04/4)
+            description: Return count properties by feature and category
+            operationId: countPropertiesByFeatureCategoryByAdmin
+            responses:
+                '200':
+                    description: Counting properties by feature and category successfully!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    status:
+                                        type: number
+                                        example: 200
+                                    message:
+                                        type: string
+                                        example: Counting properties by feature and category successfully!
+                                    metaData:
+                                        type: array
+                                        items:
+                                            $ref: '#/components/schemas/CountPropertyByFeatureAndCategory'
+                                        example:
+                                            -   featureId: 1
+                                                name: Sale
+                                                totalCount: 7
+                                                categories:
+                                                    -   categoryId: 1
+                                                        name: Apartment
+                                                        count: 1
+                                                    -   categoryId: 5
+                                                        name: Hotel
+                                                        count: 0
+                                                    -   categoryId: 2
+                                                        name: House
+                                                        count: 6
+                                                    -   categoryId: 4
+                                                        name: Serviced Apartment
+                                                        count: 0
+                                                    -   categoryId: 3
+                                                        name: Villa
+                                                        count: 0
+                                            -   featureId: 2
+                                                name: Rent
+                                                totalCount: 12
+                                                categories:
+                                                    -   categoryId: 1
+                                                        name: Apartment
+                                                        count: 0
+                                                    -   categoryId: 5
+                                                        name: Hotel
+                                                        count: 0
+                                                    -   categoryId: 2
+                                                        name: House
+                                                        count: 12
+                                                    -   categoryId: 4
+                                                        name: Serviced Apartment
+                                                        count: 0
+                                                    -   categoryId: 3
+                                                        name: Villa
+                                                        count: 0
+                '400':
+                    description: Failed to get all properties count by feature and category!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 400
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Failed to get all properties count by feature and category!
+                '401':
+                    description: Unauthorized!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 401
+                                            message:
+                                                type: string
+                                                enum:
+                                                    -   Please Authenticate!
+                                                    -   Invalid accessToken!
+                                                    -   Please verify your email!
+                                                    -   Permission denied!
+                '403':
+                    description: Your account is not active!
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    error:
+                                        type: object
+                                        properties:
+                                            status:
+                                                type: number
+                                                example: 403
+                                            message:
+                                                type: string
+                                                example: Your account is not active!
+            security:
+              - bearerAuth: []
     /admin/report/count-properties-created-by-date:
         get:
             tags:
@@ -9912,7 +10031,7 @@ components:
                             type: number
                             example: 1
                             default: 0
-        CountAvailablePropertyByFeatureAndCategory:
+        CountPropertyByFeatureAndCategory:
             type: object
             properties:
                 featureId:

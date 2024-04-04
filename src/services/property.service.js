@@ -49,7 +49,7 @@ const updateProperty = async ({ propertyId, userId, updatedData }) => {
  *@returns {Promise<[{...Feature, totalCount: number, categories: [...Category, count]}]>} - List of available properties count by feature and category
  */
 const getAllAvailablePropertyCountByFeatureAndCategory = async () => {
-    return propertyRepo.getAllAvailablePropertyCountByFeatureAndCategory()
+    return propertyRepo.getAllPropertyCountByFeatureAndCategory()
 }
 
 module.exports = {

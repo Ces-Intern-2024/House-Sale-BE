@@ -82,6 +82,14 @@ const countPropertiesCreatedByDate = async (query) => {
 }
 
 /**
+ * Get all property count by feature and category
+ * @returns {Promise<[{...Feature, totalCount: number, categories: [...Category, count]}]>} - List of properties count by feature and category
+ */
+const countPropertiesByFeatureCategory = async () => {
+    return propertyRepo.getAllPropertyCountByFeatureAndCategory(ROLE_NAME.ADMIN)
+}
+
+/**
  * Count properties by category
  * @returns {Promise<Object>} - List number of properties by category
  */
@@ -351,6 +359,7 @@ module.exports = {
     getMaintenanceMode,
     countContactsByDate,
     countPropertiesCreatedByDate,
+    countPropertiesByFeatureCategory,
     countPropertiesByCategory,
     countPropertiesByFeature,
     deleteListServices,
