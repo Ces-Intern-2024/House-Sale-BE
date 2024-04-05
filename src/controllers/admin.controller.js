@@ -281,7 +281,7 @@ const deleteListUsers = async (req, res) => {
     const { userId } = req.query
     await adminService.deleteListUsers(userId)
     new OK({
-        message: SUCCESS_MESSAGES.ADMIN.DELETE_LIST_PROPERTIES
+        message: SUCCESS_MESSAGES.ADMIN.DELETE_LIST_USERS
     }).send(res)
 }
 

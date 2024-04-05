@@ -3,9 +3,9 @@ info:
     title: House Sale API Documentation
     version: 1.0.0
 servers:
-    -   url: http://localhost:3000/v1/api
-    -   url: https://house-sale-be.onrender.com/v1/api
     -   url: https://housesale.tldev.id.vn/v1/api
+    -   url: https://house-sale-be.onrender.com/v1/api
+    -   url: http://localhost:3000/v1/api
 tags:
     -   name: Feature
     -   name: Category
