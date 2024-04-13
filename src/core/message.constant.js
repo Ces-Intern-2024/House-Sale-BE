@@ -22,6 +22,7 @@ const SUCCESS_MESSAGES = {
         GET_USER: 'Get user successfully!',
         GET_ALL_USERS: 'Get list users successfully!',
         DELETE_USER: 'Delete user successfully!',
+        DELETE_LIST_USERS: 'Delete list users successfully!',
         DELETE_LIST_PROPERTIES: 'Delete list properties successfully!',
         UPDATE_USER_ACTIVE_STATUS: {
             ACTIVE: 'User has been successfully activated!',
